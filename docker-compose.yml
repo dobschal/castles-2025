@@ -1,8 +1,15 @@
-version: '3'
-
 services:
 
-  postgres-database:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - castles
+
+  database:
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -13,7 +20,13 @@ services:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - castles
 
 volumes:
   db:
     driver: local
+
+networks:
+  castles:
+    external: true
