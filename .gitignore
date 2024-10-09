@@ -28,3 +28,4 @@ tailwind.config.js
 *.sln
 *.sw?
 /public/version.json
+/client/public/version.json
