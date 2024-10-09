@@ -4,7 +4,11 @@
   </component>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+fetch("http://localhost:3000/api/v1/version")
+  .then((res) => res.text())
+  .then((data) => console.log(data));
+</script>
 
 <style lang="css">
 .v-enter-active {

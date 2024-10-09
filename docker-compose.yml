@@ -1,5 +1,14 @@
 services:
 
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:80"
+    networks:
+      - castles
+
   server:
     build:
       context: ./server
