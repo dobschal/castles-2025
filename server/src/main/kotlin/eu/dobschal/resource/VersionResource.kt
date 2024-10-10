@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.eclipse.microprofile.config.inject.ConfigProperty
 
-@Path("/api/v1/version")
+@Path("/v1/version")
 @Produces(MediaType.APPLICATION_JSON)
 class VersionResource {
 
