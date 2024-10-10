@@ -4,6 +4,8 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    environment:
+      - API_URL=https://castles.dobschal.eu/api
     ports:
       - "4001:80"
     networks:

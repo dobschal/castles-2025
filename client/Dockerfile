@@ -5,8 +5,6 @@ RUN apk --no-cache add --virtual native-deps \
     g++ gcc libgcc libstdc++ linux-headers make python3 && \
     npm install --quiet node-gyp -g
 
-
-
 # make the 'app' folder the current working directory
 WORKDIR /app
 # copy both 'package.json' and 'package-lock.json' (if available)
