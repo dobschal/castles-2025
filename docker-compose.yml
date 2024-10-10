@@ -21,7 +21,7 @@ services:
       - castles
     environment:
       - JWT_PUBLIC_KEY_PATH=/jwt/publicKey.pem
-      - JWT_PPRIVATE_KEY_PATH=/jwt/privateKey.pem
+      - JWT_PRIVATE_KEY_PATH=/jwt/privateKey.pem
     volumes:
       - type: bind
         source: ./jwt
