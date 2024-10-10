@@ -49,6 +49,10 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.quarkiverse.mockk:quarkus-junit5-mockk:2.1.0")
     testImplementation("io.rest-assured:rest-assured")
+
+    // JWT
+    implementation("io.quarkus:quarkus-smallrye-jwt")
+    implementation("io.quarkus:quarkus-smallrye-jwt-build")
 }
 
 group = "eu.dobschal"

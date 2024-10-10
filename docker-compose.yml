@@ -19,6 +19,13 @@ services:
       - "4000:3000"
     networks:
       - castles
+    environment:
+      - JWT_PUBLIC_KEY_PATH=/jwt/publicKey.pem
+      - JWT_PPRIVATE_KEY_PATH=/jwt/privateKey.pem
+    volumes:
+      - type: bind
+        source: ./jwt
+        target: /jwt
 
   database:
     image: postgres:14.1-alpine

@@ -30,3 +30,4 @@ tailwind.config.js
 /public/version.json
 /client/public/version.json
 /.DS_Store
+/jwt
