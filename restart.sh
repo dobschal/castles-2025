@@ -1,8 +1,8 @@
 git fetch
-git pull
+git reset --hard origin/main
+docker compose build server
 docker compose down server
-docker compose build server --no-cache
 docker compose up server -d
+docker compose build client
 docker compose down client
-docker compose build client --no-cache
 docker compose up client -d

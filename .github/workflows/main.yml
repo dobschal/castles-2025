@@ -22,12 +22,5 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.HOST }}
 
-      - name: Check out the source
-        run: ssh hetzner 'cd /root/deployments/castles-2025 && git fetch && git reset --hard origin/main'
-
-      - name: Stop old server and build new image
-        run: ssh hetzner 'cd /root/deployments/castles-2025 && docker compose down server && docker compose build server --no-cache && docker compose down client && docker compose build client --no-cache'
-
-      - name: Start the server
-        if: ${{ always() }}
-        run: ssh hetzner 'cd /root/deployments/castles-2025 && docker compose up -d'
+      - name: Deploy
+        run: ssh hetzner 'cd /root/deployments/castles-2025 && ./restart.sh'
