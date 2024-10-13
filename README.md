@@ -8,6 +8,7 @@ Client and server are in this repository. It supports Docker.
 ### JWT Secrets
 
 In order to get the server running with docker you need to generate the JWT secrets. Just run the `generate-keys.sh` script.
+Ensure that the jwt folder has the correct rights. Run `chown -R 1001 ./jwt` in order to do so.
 
 ### Database
 
@@ -18,6 +19,9 @@ docker compose up database -d
 
 ### (Re-)Start Client and Server
 
+Run `docker compose up -d` to get the server and client running too.
+
+You can also user the restart script. (!!!) But be careful that is make a Git checkout on the main branch and cleans the docker system after build.
 Use the `restart.sh` script to start the client and server application.
 
 ## Configuration
