@@ -6,3 +6,4 @@ docker compose up server -d
 docker compose build client --no-cache
 docker compose down client
 docker compose up client -d
+docker image prune -a

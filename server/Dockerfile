@@ -63,8 +63,6 @@ COPY --from=build --chown=1001 /server/build/quarkus-app/*.jar /deployments/
 COPY --from=build --chown=1001 /server/build/quarkus-app/app/ /deployments/app/
 COPY --from=build --chown=1001 /server/build/quarkus-app/quarkus/ /deployments/quarkus/
 
-RUN chown -R 1001 /jwt/ && chmod -R 777 /jwt/
-
 EXPOSE 3000
 USER 1001
 
