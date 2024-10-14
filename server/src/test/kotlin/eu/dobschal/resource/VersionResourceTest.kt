@@ -14,7 +14,7 @@ class VersionResourceTest {
     fun `Version API is returning a version`() {
 
         RestAssured.given()
-            .get("$endpoint")
+            .get(endpoint)
             .then()
             .statusCode(Response.Status.OK.statusCode)
     }

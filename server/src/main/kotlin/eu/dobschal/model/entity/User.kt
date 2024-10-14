@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "map_tile")
+@Table(name = "castles_user")
 class User {
 
     @Id
