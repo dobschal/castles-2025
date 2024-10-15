@@ -3,6 +3,7 @@ package eu.dobschal.resource
 import eu.dobschal.model.dto.UserCredentialsDto
 import eu.dobschal.service.UserService
 import eu.dobschal.utils.USER_ROLE
+import jakarta.annotation.security.PermitAll
 import jakarta.annotation.security.RolesAllowed
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
@@ -17,10 +18,12 @@ class UserResource @Inject constructor(private val userService: UserService) {
 
     @POST
     @Path("/login")
+    @PermitAll
     fun login(request: UserCredentialsDto) = userService.loginUser(request.username, request.password)
 
     @POST
     @Path("/register")
+    @PermitAll
     fun register(request: UserCredentialsDto) = userService.registerUser(request.username, request.password)
 
     @GET

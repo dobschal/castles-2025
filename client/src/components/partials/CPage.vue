@@ -1,15 +1,16 @@
 <template>
-  <section>
+  <div>
     <slot />
-  </section>
+  </div>
 </template>
 
-<script setup lang="ts"></script>
-
 <style lang="scss" scoped>
-section {
+div {
+  margin: auto;
   display: flex;
+  flex-direction: column;
   width: 100%;
-  min-height: 100vh;
+  max-width: 640px;
+  padding: 0 2rem;
 }
 </style>

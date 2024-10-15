@@ -1,0 +1,70 @@
+<template>
+  <Page>
+    <h1>
+      <CText path="login.title" />
+    </h1>
+    <p v-if="hasError" class="error-message">
+      <CText path="login.error" />
+    </p>
+    <form @submit.prevent="submitForm">
+      <LabeledInput v-model="username" autofocus>
+        <CText path="general.username" />
+      </LabeledInput>
+      <LabeledInput type="password" v-model="password">
+        <CText path="general.password" />
+      </LabeledInput>
+      <CButton type="submit" :disabled="isLoading || !hasInput">
+        <CText path="login.action" />
+      </CButton>
+      <hr />
+      <CButton @click="router.push(RegistrationPageRoute.path)">
+        <CText path="login.toRegistration" />
+      </CButton>
+    </form>
+  </Page>
+</template>
+
+<script lang="ts" setup>
+import { computed, ref } from "vue";
+import Page from "@/components/partials/CPage.vue";
+import LabeledInput from "@/components/partials/CLabeledInput.vue";
+import CText from "@/components/partials/CText.vue";
+import CButton from "@/components/partials/CButton.vue";
+import { UserGateway } from "@/gateways/UserGateway.ts";
+import { useAuthStore } from "@/store/authStore.ts";
+import router from "@/core/router.ts";
+import { MainPageRoute, RegistrationPageRoute } from "@/routes.ts";
+
+const authStore = useAuthStore();
+const username = ref("");
+const password = ref("");
+const hasError = ref(false);
+const isLoading = ref(false);
+
+const hasInput = computed(
+  () => username.value.length > 0 && password.value.length > 0,
+);
+
+async function submitForm(): Promise<void> {
+  isLoading.value = true;
+  hasError.value = false;
+  try {
+    authStore.token = await UserGateway.instance.login(
+      username.value,
+      password.value,
+    );
+    await router.push(MainPageRoute.path);
+  } catch (error) {
+    console.error("Error during registration: ", error);
+    hasError.value = true;
+  } finally {
+    isLoading.value = false;
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.error-message {
+  color: red;
+}
+</style>

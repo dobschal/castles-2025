@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import MainLayout from "@/components/layouts/MainLayout.vue";
+import { useAuthStore } from "@/store/authStore.ts";
 
 /**
  * Any RouteRecordRaw object defined and exported here will be automatically
@@ -11,12 +12,37 @@ export type BeforeEnterReturnType = boolean | { path: string } | void;
 
 export const title = "Castles";
 
+export const LoginPageRoute: RouteRecordRaw = {
+  path: "/login",
+  name: "LoginPage",
+  component: () => import("@/components/pages/LoginPage.vue"),
+  meta: { title, layout: MainLayout },
+  beforeEnter(): BeforeEnterReturnType {
+    const authStore = useAuthStore();
+
+    if (authStore.hasToken) {
+      return { path: "/" };
+    }
+  },
+};
+
+export const RegistrationPageRoute: RouteRecordRaw = {
+  path: "/registration",
+  name: "RegistrationPage",
+  component: () => import("@/components/pages/RegistrationPage.vue"),
+  meta: { title, layout: MainLayout },
+  beforeEnter(): BeforeEnterReturnType {
+    const authStore = useAuthStore();
+
+    if (authStore.hasToken) {
+      return { path: "/" };
+    }
+  },
+};
+
 export const MainPageRoute: RouteRecordRaw = {
   path: "/",
   name: "MainPage",
   component: () => import("@/components/pages/MainPage.vue"),
-  meta: { title, layout: MainLayout },
-  beforeEnter(): BeforeEnterReturnType {
-    console.log("Yeah");
-  },
+  meta: { title, layout: MainLayout, roles: ["user"] },
 };

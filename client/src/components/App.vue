@@ -5,22 +5,34 @@
 </template>
 
 <script lang="ts" setup>
-console.log("API URL: ", import.meta.env.VITE_API_URL);
-
-fetch("http://localhost:3000/api/v1/version")
-  .then((res) => res.text())
-  .then((data) => console.log(data));
+console.info("API URL: ", import.meta.env.VITE_API_URL);
 </script>
 
-<style lang="css">
-.v-enter-active {
-  transition:
-    opacity 0.3s ease-in-out,
-    transform 0.3s ease-in;
+<style lang="scss">
+@font-face {
+  font-family: "MedievalSharp";
+  src: url("@/assets/fonts/MedievalSharp-Regular.ttf") format("truetype");
 }
 
-.v-enter-from {
-  opacity: 0;
-  transform: translateY(2rem);
+body {
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: "MedievalSharp", sans-serif;
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: antiquewhite;
+}
+
+* {
+  font-family: "MedievalSharp", sans-serif;
+  box-sizing: border-box;
+}
+
+hr {
+  border: none;
+  border-top: 4px solid rgb(117, 59, 22);
+  margin: 0 0 1rem 0;
+  box-shadow: 2px 2px 0 rgb(224, 154, 74);
 }
 </style>

@@ -1,5 +1,6 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.JwtResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.UserRepository
 import eu.dobschal.utils.JWT_ISSUER
@@ -30,7 +31,7 @@ class UserService @Inject constructor(private val userRepository: UserRepository
         return userRepository.createUser(username, hash(password))
     }
 
-    fun loginUser(username: String, password: String): String {
+    fun loginUser(username: String, password: String): JwtResponseDto {
         if (username.isBlank() || password.isBlank()) {
             throw BadRequestException("Username and password must not be empty")
         }
@@ -40,10 +41,12 @@ class UserService @Inject constructor(private val userRepository: UserRepository
             .takeIf { it?.password == hash(password) }
             ?: throw UnauthorizedException("Invalid credentials")
 
-        return Jwt.issuer(JWT_ISSUER)
-            .upn(user.username)
-            .groups(setOf(USER_ROLE))
-            .sign()
+        return JwtResponseDto(
+            Jwt.issuer(JWT_ISSUER)
+                .upn(user.username)
+                .groups(setOf(USER_ROLE))
+                .sign()
+        )
     }
 
     fun getCurrentUser(): User {

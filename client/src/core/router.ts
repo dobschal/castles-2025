@@ -6,6 +6,7 @@ import {
 } from "vue-router";
 import * as routesModule from "@/routes";
 import { MainPageRoute, title } from "@/routes";
+import { useAuthStore } from "@/store/authStore.ts";
 
 // Load all Route config objects exported from routes.ts
 export const routes = Object.values(routesModule)
@@ -37,6 +38,22 @@ const router = createRouter({
 
 router.beforeEach(async (to: RouteLocationNormalized) => {
   document.title = to.meta.title ? `${to.meta.title}` : title;
+
+  if (Array.isArray(to.meta.roles)) {
+    const authStore = useAuthStore();
+
+    if (
+      !authStore.roles.some((role) =>
+        (to.meta.roles as Array<string>).includes(role),
+      )
+    ) {
+      if (authStore.hasToken) {
+        return { path: "/" };
+      }
+
+      return { path: "/login" };
+    }
+  }
 });
 
 export default router;
