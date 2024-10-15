@@ -26,10 +26,10 @@
 
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import Page from "@/components/partials/CPage.vue";
-import LabeledInput from "@/components/partials/CLabeledInput.vue";
-import CText from "@/components/partials/CText.vue";
-import CButton from "@/components/partials/CButton.vue";
+import Page from "@/components/partials/general/CPage.vue";
+import LabeledInput from "@/components/partials/general/CLabeledInput.vue";
+import CText from "@/components/partials/general/CText.vue";
+import CButton from "@/components/partials/general/CButton.vue";
 import { UserGateway } from "@/gateways/UserGateway.ts";
 import router from "@/core/router.ts";
 import { LoginPageRoute } from "@/routes.ts";

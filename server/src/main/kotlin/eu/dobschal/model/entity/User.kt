@@ -9,7 +9,7 @@ class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Int? = null
 
     @Column(name = "username", nullable = false, unique = true)
     lateinit var username: String

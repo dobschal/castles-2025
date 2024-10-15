@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import eu.dobschal.model.dto.JwtResponseDto
 import eu.dobschal.model.dto.UserCredentialsDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.UserRepository
@@ -56,16 +57,13 @@ class UserResourceTest {
     @Test
     fun `Login with correct password returns valid JWT`() {
         userRepository.createUser("existing-user", hash("password"))
-        val jwt = given()
+        given()
             .body(UserCredentialsDto("existing-user", "password"))
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract()
-            .asString()
-        logger.info { "JWT from working login: $jwt" }
     }
 
     @Test
@@ -133,18 +131,17 @@ class UserResourceTest {
     @Test
     fun `Secured route is accessible with valid JWT`() {
         userRepository.createUser("existing-user", hash("password"))
-        val jwt = given()
+        val response = given()
             .body(UserCredentialsDto("existing-user", "password"))
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract()
-            .asString()
+            .extract().`as`(JwtResponseDto::class.java)
         val user = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt")
+            .header("Authorization", "Bearer ${response.jwt}")
             .`when`()
             .get("$endpoint/current")
             .then()

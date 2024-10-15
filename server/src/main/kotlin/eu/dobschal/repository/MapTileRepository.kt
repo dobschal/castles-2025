@@ -1,7 +1,6 @@
 package eu.dobschal.repository
 
 import eu.dobschal.model.entity.MapTile
-import eu.dobschal.model.enum.MapTileType
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
@@ -18,14 +17,8 @@ class MapTileRepository : PanacheRepository<MapTile> {
         return find("x >= ?1 and x < ?2 and y >= ?3 and y < ?4", x1, x2, y1, y2).list()
     }
 
-    fun createMapTile(x: Int, y: Int): MapTile {
-        val mapTile = MapTile().apply {
-            this.x = x
-            this.y = y
-            this.type = MapTileType.pickOneRandomly()
-        }
-        persist(mapTile)
-        return mapTile
+    fun saveMapTiles(mapTiles: List<MapTile>) {
+        persist(mapTiles)
     }
 
 }

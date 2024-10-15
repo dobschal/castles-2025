@@ -10,7 +10,7 @@ class MapTile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Int? = null
 
     @Column(name = "x", nullable = false)
     var x: Int? = null

@@ -1,5 +1,5 @@
 import { Gateway } from "@/gateways/Gateway.ts";
-import { JwtResponse } from "@/types/dto/JwtResponse.ts";
+import { LoginResponse } from "@/types/response/LoginResponse.ts";
 
 export class UserGateway extends Gateway {
   static get instance(): UserGateway {
@@ -11,10 +11,14 @@ export class UserGateway extends Gateway {
   }
 
   async login(username: string, password: string): Promise<string> {
-    const { jwt } = await this.request<JwtResponse>("POST", "/v1/users/login", {
-      username,
-      password,
-    });
+    const { jwt } = await this.request<LoginResponse>(
+      "POST",
+      "/v1/users/login",
+      {
+        username,
+        password,
+      },
+    );
 
     return jwt;
   }

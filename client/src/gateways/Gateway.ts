@@ -8,7 +8,7 @@ export class Gateway {
   async request<ResponseType>(
     method: "POST" | "GET" | "DELETE" | "PUT" | "PATCH",
     urlPath: string,
-    data: object | null,
+    data: object | undefined = undefined,
     headers = {},
   ): Promise<ResponseType> {
     const authStore = useAuthStore();
@@ -32,5 +32,11 @@ export class Gateway {
     }
 
     return rawResponse.json();
+  }
+
+  objectToQueryString(obj: object): string {
+    return Object.keys(obj)
+      .map((key) => `${key}=${obj[key]}`)
+      .join("&");
   }
 }

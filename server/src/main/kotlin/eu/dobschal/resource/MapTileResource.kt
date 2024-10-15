@@ -16,6 +16,7 @@ class MapTileResource @Inject constructor(private val mapTileService: MapTileSer
 
     @RolesAllowed(USER_ROLE)
     @GET
+    @Path("/")
     fun getMapTiles(
         @QueryParam("x1") x1: Int,
         @QueryParam("x2") x2: Int,
