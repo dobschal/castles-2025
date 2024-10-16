@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { MapTile } from "@/types/model/MapTile.ts";
+import { MapTileEntity } from "@/types/model/MapTileEntity.ts";
 
 export const useMapStore = defineStore(
   "map",
   () => {
-    const mapTiles = ref<Array<MapTile>>([]);
+    const mapTiles = ref<Array<MapTileEntity>>([]);
 
     return {
       mapTiles,

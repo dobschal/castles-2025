@@ -1,6 +1,6 @@
 import { MapTileType } from "@/types/enum/MapTileType.ts";
 
-export interface MapTile {
+export interface MapTileEntity {
   id: number;
   x: number;
   y: number;

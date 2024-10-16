@@ -6,6 +6,9 @@ export const useAuthStore = defineStore(
   () => {
     const token = ref("");
     const hasToken = computed(() => token.value !== "");
+
+    // TODO: Need to handle token expiration too
+
     const roles = computed<Array<string>>(() => {
       if (token.value === "") {
         return [];

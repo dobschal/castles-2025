@@ -13,6 +13,8 @@ export class Gateway {
   ): Promise<ResponseType> {
     const authStore = useAuthStore();
 
+    console.info("Request: ", method, this.baseUrl, urlPath);
+
     const options: RequestInit = {
       method,
       headers: {
