@@ -24,7 +24,7 @@
       class="mountain"
       alt="Mountain"
     />
-    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>
+    <!--    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>-->
   </div>
 </template>
 
@@ -46,7 +46,6 @@ defineProps<{
   position: absolute;
   width: 100px;
   height: 100px;
-  border: 3px red solid;
   user-select: none;
 
   &:hover {
@@ -58,27 +57,27 @@ defineProps<{
     pointer-events: none;
 
     &.water {
-      margin-left: -50%;
-      margin-top: -40%;
-      width: 180%;
+      margin-left: -30%;
+      margin-top: -30%;
+      width: 160%;
     }
 
     &.forest {
-      width: 165%;
-      margin-left: -30%;
+      width: 160%;
+      margin-left: -25%;
       margin-top: -35%;
     }
 
     &.plain {
-      width: 165%;
+      width: 150%;
       margin-left: -30%;
-      margin-top: -35%;
+      margin-top: -25%;
     }
 
     &.mountain {
-      margin-left: -50%;
-      margin-top: -60%;
-      width: 190%;
+      margin-left: -25%;
+      margin-top: -30%;
+      width: 150%;
     }
   }
 

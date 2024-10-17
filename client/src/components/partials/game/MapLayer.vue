@@ -69,6 +69,8 @@ const amountOfTilesY = computed(() =>
 // region hooks
 
 onMounted(async () => {
+  // TODO: Add touch screen support too
+
   window.addEventListener("resize", onWindowResize);
   window.addEventListener("mousedown", onMapMouseDown);
   window.addEventListener("mousemove", onMapMouseMove);
@@ -99,7 +101,7 @@ function getMapTileStyle(mapTile: MapTileEntity): MapTileStyle {
   return {
     left: x + "px",
     top: y + "px",
-    zIndex: 999 - mapTile.x * 10 + mapTile.y,
+    zIndex: 9999 - mapTile.x + mapTile.y * 10,
   };
 }
 

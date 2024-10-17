@@ -39,6 +39,8 @@ const router = createRouter({
 router.beforeEach(async (to: RouteLocationNormalized) => {
   document.title = to.meta.title ? `${to.meta.title}` : title;
 
+  deleteTokenIfExpired();
+
   if (Array.isArray(to.meta.roles)) {
     const authStore = useAuthStore();
 
@@ -55,5 +57,13 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     }
   }
 });
+
+function deleteTokenIfExpired(): void {
+  const authStore = useAuthStore();
+
+  if (authStore.isTokenExpired) {
+    authStore.token = "";
+  }
+}
 
 export default router;

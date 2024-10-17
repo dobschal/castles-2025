@@ -44,7 +44,7 @@ class UserService @Inject constructor(private val userRepository: UserRepository
         return JwtResponseDto(
             Jwt.issuer(JWT_ISSUER)
                 .upn(user.username)
-                .expiresIn(3600000)
+                .expiresIn(360000000)
                 .groups(setOf(USER_ROLE))
                 .sign()
         )

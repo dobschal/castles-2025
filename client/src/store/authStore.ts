@@ -5,9 +5,26 @@ export const useAuthStore = defineStore(
   "auth",
   () => {
     const token = ref("");
+
     const hasToken = computed(() => token.value !== "");
 
-    // TODO: Need to handle token expiration too
+    const isTokenExpired = computed(() => {
+      if (token.value === "") {
+        return true;
+      }
+
+      const payload = token.value.split(".")[1];
+      const decoded = atob(payload);
+      const parsed = JSON.parse(decoded);
+      const expiration = parsed.exp * 1000;
+      console.info(
+        "Session expires in ",
+        (expiration - Date.now()) / 1000 / 60 / 60 / 24,
+        " days",
+      );
+
+      return Date.now() > expiration;
+    });
 
     const roles = computed<Array<string>>(() => {
       if (token.value === "") {
@@ -25,6 +42,7 @@ export const useAuthStore = defineStore(
       token,
       hasToken,
       roles,
+      isTokenExpired,
     };
   },
 
