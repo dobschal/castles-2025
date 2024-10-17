@@ -24,7 +24,7 @@
       class="mountain"
       alt="Mountain"
     />
-    <!--    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>-->
+    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>
   </div>
 </template>
 

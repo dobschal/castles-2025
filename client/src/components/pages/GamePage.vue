@@ -14,5 +14,6 @@ import MapLayer from "@/components/partials/game/MapLayer.vue";
   width: 100%;
   height: calc(100vh - 4rem);
   overflow: hidden;
+  background: black;
 }
 </style>
