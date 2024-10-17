@@ -1,8 +1,9 @@
 import { useAuthStore } from "@/store/authStore.ts";
+import { API_URL } from "@/constants.ts";
 
 export class Gateway {
   get baseUrl(): string {
-    return import.meta.env.VITE_API_URL;
+    return API_URL;
   }
 
   async request<ResponseType>(

@@ -5,7 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-console.info("API URL: ", import.meta.env.VITE_API_URL);
+import { API_URL } from "@/constants.ts";
+
+console.info("API URL: ", API_URL);
 </script>
 
 <style lang="scss">
