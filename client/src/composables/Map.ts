@@ -22,7 +22,7 @@ export function useMap(): Map {
   const offsetY = ref(0);
 
   // Used to calculate the rotation of the map
-  const radians = 45 * (Math.PI / 180); // TODO: Move out of function
+  const radians = 45 * (Math.PI / 180);
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
 

@@ -1,4 +1,4 @@
-import { SHOW_TOAST } from "@/events.ts";
+import { TOAST } from "@/events.ts";
 
 let componentCounter = 0;
 
@@ -12,7 +12,7 @@ export function isTouchDevice(): boolean {
 
 export function handleFatalError(error: unknown): void {
   console.error("Error: ", error);
-  SHOW_TOAST.dispatch({
+  TOAST.dispatch({
     type: "danger",
     messageKey: "general.serverError",
   });

@@ -18,6 +18,8 @@ const { t } = useI18n();
 
 const emit = defineEmits(["close-action"]);
 
+// TODO: Check if buildings are close by...
+
 onMounted(() => {
   setMapTilesStates();
   LOADED_MAP_TILES.on(setMapTilesStates);

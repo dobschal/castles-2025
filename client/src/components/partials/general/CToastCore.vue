@@ -31,7 +31,7 @@
 import { ToastConfig } from "@/types/core/ToastConfig.ts";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { SHOW_TOAST } from "@/events.ts";
+import { TOAST } from "@/events.ts";
 
 interface ToastModel extends ToastConfig {
   id: number;
@@ -46,7 +46,7 @@ const toasts = ref<Array<ToastModel>>([]);
 const now = ref(Date.now());
 let interval;
 
-SHOW_TOAST.on((config: ToastConfig) => {
+TOAST.on((config: ToastConfig) => {
   const id = toastCount++;
   toasts.value.push({
     timestamp: Date.now(),
