@@ -6,6 +6,8 @@
 
 <script setup lang="ts">
 import MapLayer from "@/components/partials/game/MapLayer.vue";
+
+// TODO: Action Overlay with a message on bottom explaning the action, waiting for an event to fire to close it
 </script>
 
 <style lang="scss" scoped>
