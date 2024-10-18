@@ -9,8 +9,8 @@ import jakarta.transaction.Transactional
 @ApplicationScoped
 class MapTileRepository : PanacheRepository<MapTile> {
 
-    fun mapTileExists(x: Int, y: Int): Boolean {
-        return find("x = ?1 and y = ?2", x, y).count() > 0
+    fun findByXAndY(x: Int, y: Int): MapTile? {
+        return find("x = ?1 and y = ?2", x, y).firstResult()
     }
 
     fun findMapTilesBetween(x1: Int, x2: Int, y1: Int, y2: Int): List<MapTile> {

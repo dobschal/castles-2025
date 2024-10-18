@@ -1,6 +1,6 @@
 package eu.dobschal.service
 
-import eu.dobschal.model.dto.JwtResponseDto
+import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.UserRepository
 import eu.dobschal.utils.JWT_ISSUER

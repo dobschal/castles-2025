@@ -12,4 +12,12 @@ class BuildingRepository : PanacheRepository<Building> {
     fun findUsersStartVillage(userId: Int): Building? {
         return find("user.id = ?1 AND type = ?2 ORDER BY createdAt ASC", userId, BuildingType.VILLAGE).firstResult()
     }
+
+    fun save(building: Building) {
+        persist(building)
+    }
+
+    fun findBuildingsBetween(x1: Int, x2: Int, y1: Int, y2: Int): List<Building> {
+        return find("x >= ?1 and x < ?2 and y >= ?3 and y < ?4", x1, x2, y1, y2).list()
+    }
 }

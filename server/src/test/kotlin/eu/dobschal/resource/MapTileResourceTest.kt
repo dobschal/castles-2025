@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
-import eu.dobschal.model.dto.JwtResponseDto
 import eu.dobschal.model.dto.UserCredentialsDto
+import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.repository.MapTileRepository
 import eu.dobschal.repository.UserRepository
 import eu.dobschal.utils.hash
@@ -32,6 +32,7 @@ class MapTileResourceTest {
     @Transactional
     fun tearDown() {
         mapTileRepository.deleteAll()
+        userRepository.deleteAll()
     }
 
     @Test

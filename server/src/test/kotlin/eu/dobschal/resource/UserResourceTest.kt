@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
-import eu.dobschal.model.dto.JwtResponseDto
 import eu.dobschal.model.dto.UserCredentialsDto
+import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.UserRepository
 import eu.dobschal.utils.hash

@@ -22,7 +22,7 @@ class Building {
     @Column(name = "type", nullable = false)
     lateinit var type: BuildingType
 
-    @ManyToOne(cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     var user: User? = null
 
