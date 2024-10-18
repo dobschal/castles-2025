@@ -15,11 +15,15 @@ export interface Map {
 export function useMap(): Map {
   const mapStore = useMapStore();
   const mapTileSize = ref(100);
-  const mapTileDiagonal = ref(Math.sqrt(2 * Math.pow(mapTileSize.value, 2)));
   const windowWidth = ref(window.innerWidth);
   const windowHeight = ref(window.innerHeight);
   const offsetX = ref(0);
   const offsetY = ref(0);
+
+  // Used to calculate the rotation of the map
+  const radians = 45 * (Math.PI / 180); // TODO: Move out of function
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
 
   // The amount of tiles in x and y direction is calculated
   // based on the window size and the tile size
@@ -34,26 +38,25 @@ export function useMap(): Map {
   // tiles around the player. This is actually hard to calculate
   // because the map is rotated 45deg... if it is working, leave it as it is
   const centerPosition = computed(() => {
-    const centerX = Math.round(
-      (-offsetX.value + windowWidth.value / 2) / mapTileDiagonal.value,
-    );
-    const centerY = Math.round(
-      (-offsetY.value - windowHeight.value / 2) / mapTileDiagonal.value,
-    );
+    const screenX = (windowWidth.value - offsetX.value * 2) / 2;
+    const screenY = (windowHeight.value - 64 - offsetY.value * 2) / 2; // 64px is the height of the top bar
 
-    return {
-      x: Math.round(centerX - centerY),
-      y: Math.round(centerY + centerX),
-    };
+    const rotatedScreenX = screenX * cos - screenY * sin;
+    const rotatedScreenY = screenX * sin + screenY * cos;
+
+    const x = Math.round(rotatedScreenX / mapTileSize.value);
+    const y = Math.round(rotatedScreenY / mapTileSize.value);
+
+    return { x, y };
   });
 
   async function load(): Promise<void> {
     const amountOfTiles = Math.max(amountOfTilesX.value, amountOfTilesY.value);
     mapStore.mapTiles = await MapGateway.instance.getMapTiles({
-      x1: Math.floor(centerPosition.value.x - amountOfTiles),
-      y1: Math.floor(centerPosition.value.y - amountOfTiles),
-      x2: Math.ceil(centerPosition.value.x + amountOfTiles),
-      y2: Math.ceil(centerPosition.value.y + amountOfTiles),
+      x1: Math.floor(centerPosition.value.x - amountOfTiles / 1.5),
+      y1: Math.floor(centerPosition.value.y - amountOfTiles / 1.5),
+      x2: Math.ceil(centerPosition.value.x + amountOfTiles / 1.5),
+      y2: Math.ceil(centerPosition.value.y + amountOfTiles / 1.5),
     });
   }
 

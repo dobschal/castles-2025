@@ -7,6 +7,7 @@
       :map-tile="mapTile"
     />
   </div>
+  <div class="center"></div>
 </template>
 
 <script lang="ts" setup>
@@ -76,15 +77,15 @@ onBeforeUnmount(() => {
 // region methods
 
 function getMapStyle(): Record<string, string> {
-  const aspectRatio = windowWidth.value / windowHeight.value;
+  // const aspectRatio = windowWidth.value / windowHeight.value;
 
   // We need to move the map a bit, because of teh 45deg rotation the map is a bit off...
   return {
-    marginLeft: -windowWidth.value * 0.3 * (aspectRatio - 2) + "px",
-    marginTop:
-      -windowHeight.value * 0.3 * (aspectRatio - 2) +
-      windowHeight.value * 0.2 +
-      "px",
+    // marginLeft: -windowWidth.value * 0.3 * (aspectRatio - 2) + "px",
+    // marginTop:
+    //   -windowHeight.value * 0.3 * (aspectRatio - 2) +
+    //   windowHeight.value * 0.2 +
+    //   "px",
     transform: `translateX(${offsetX.value}px) translateY(${offsetY.value}px) rotate(-45deg)`,
   };
 }
@@ -168,6 +169,18 @@ function onToucheEnd(): void {
   width: 100%;
   height: 100vh;
   transform: rotate(-45deg);
-  transform-origin: center;
+  transform-origin: top left;
+}
+
+.center {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99999;
 }
 </style>
