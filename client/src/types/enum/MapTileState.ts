@@ -1,0 +1,5 @@
+export enum MapTileState {
+  DEFAULT = "DEFAULT",
+  FORBIDDEN = "FORBIDDEN",
+  ACCEPTABLE = "ACCEPTABLE",
+}

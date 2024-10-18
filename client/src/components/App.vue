@@ -3,14 +3,16 @@
     <router-view />
   </component>
   <CToastCore />
+  <CDialogCore />
 </template>
 
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import { VersionGateway } from "@/gateways/VersionGateway.ts";
 import { useVersionStore } from "@/store/versionStore.ts";
-import { SHOW_TOAST } from "@/events.ts";
 import CToastCore from "@/components/partials/general/CToastCore.vue";
+import CDialogCore from "@/components/partials/general/CDialogCore.vue";
+import { handleFatalError } from "@/core/util.ts";
 
 onMounted(() => {
   loadServerVersion();
@@ -21,11 +23,7 @@ async function loadServerVersion(): Promise<void> {
     useVersionStore().serverVersion =
       await VersionGateway.instance.getVersion();
   } catch (error) {
-    console.error("Error on loading server version: ", error);
-    SHOW_TOAST.dispatch({
-      type: "danger",
-      messageKey: "general.serverError",
-    });
+    handleFatalError(error);
   }
 }
 </script>

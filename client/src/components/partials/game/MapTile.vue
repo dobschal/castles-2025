@@ -1,5 +1,10 @@
 <template>
-  <div class="map-tile">
+  <div
+    class="map-tile"
+    @mousedown="onMouseDown"
+    @mouseup="onMouseUp"
+    :class="[mapTile.state]"
+  >
     <img
       v-if="mapTile.type === MapTileType.FOREST"
       :src="forestTile"
@@ -30,15 +35,31 @@
 
 <script setup lang="ts">
 import { MapTileType } from "@/types/enum/MapTileType.ts";
-import { MapTileEntity } from "@/types/model/MapTileEntity.ts";
 import mountainTile from "@/assets/tiles/mountain.png";
 import waterTile from "@/assets/tiles/water.png";
 import forestTile from "@/assets/tiles/forest.png";
 import plainTile from "@/assets/tiles/plain.png";
+import { CLICKED_MAP_TILE } from "@/events.ts";
+import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 
-defineProps<{
-  mapTile: MapTileEntity;
+const props = defineProps<{
+  mapTile: MapTileDto;
 }>();
+let mouseDownTimestamp = 0;
+
+// TODO: Need touch support too
+
+function onMouseDown(): void {
+  mouseDownTimestamp = Date.now();
+}
+
+function onMouseUp(): void {
+  if (Date.now() - mouseDownTimestamp > 200) {
+    return;
+  }
+
+  CLICKED_MAP_TILE.dispatch(props.mapTile);
+}
 </script>
 
 <style lang="scss" scoped>
@@ -47,6 +68,10 @@ defineProps<{
   width: 100px;
   height: 100px;
   user-select: none;
+
+  &.FORBIDDEN {
+    opacity: 0.5;
+  }
 
   &:hover {
     background-color: yellow;

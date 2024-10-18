@@ -3,7 +3,9 @@ export const de = {
     username: "Benutzername",
     password: "Passwort",
     serverError:
-      "Server konnte nicht erreicht werden. Bitte versuchen Sie es später erneut.",
+      "Server konnte nicht erreicht werden. Bitte versuche es später erneut.",
+    no: "Nein",
+    yes: "Ja",
   },
   registration: {
     title: "Registrierung",
@@ -15,8 +17,12 @@ export const de = {
   login: {
     title: "Login",
     error:
-      "Fehler bei der Anmeldung aufgetreten. Bitte überprüfen Sie Ihre Eingaben.",
+      "Fehler bei der Anmeldung aufgetreten. Bitte überprüfe deine Eingaben.",
     action: "Anmelden",
     toRegistration: "Zur Registrierung",
+  },
+  startVillageAction: {
+    text: "Bitte wähle einen Standort für dein erstes Dorf.",
+    dialog: "Möchtest du hier starten?",
   },
 };

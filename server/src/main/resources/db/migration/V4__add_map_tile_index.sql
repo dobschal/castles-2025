@@ -1,3 +1,5 @@
-CREATE INDEX map_tile_index ON map_tile (x, y)
+DELETE
+FROM map_tile
+WHERE TRUE;
 
---- TODO: Check if that is making the query faster
+CREATE UNIQUE INDEX map_tile_index ON map_tile (x, y)

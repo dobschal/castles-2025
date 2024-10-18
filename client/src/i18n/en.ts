@@ -3,6 +3,8 @@ export const en = {
     username: "Username",
     password: "Password",
     serverError: "Server could not be reached. Please try again later.",
+    no: "No",
+    yes: "Yes",
   },
   registration: {
     title: "Registration",
@@ -16,5 +18,9 @@ export const en = {
     error: "An error occurred during login. Please check your input.",
     action: "Login",
     toRegistration: "To registration",
+  },
+  startVillageAction: {
+    text: "Please choose a location for your first village.",
+    dialog: "Do you want to start here?",
   },
 };

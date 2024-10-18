@@ -5,7 +5,7 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "map_tile")
+@Table(name = "map_tile", uniqueConstraints = [UniqueConstraint(columnNames = ["x", "y"])])
 class MapTile {
 
     @Id

@@ -1,7 +1,7 @@
 interface IEvent<DataType> {
   on: (callback: (data: DataType) => void) => void;
   off: (callback: (data: DataType) => void) => void;
-  dispatch: (data: DataType) => void;
+  dispatch: (data: DataType) => unknown;
 }
 
 /**
@@ -10,7 +10,7 @@ interface IEvent<DataType> {
  */
 export function defineEvent<DataType>(): IEvent<DataType> {
   const _listeners: Array<{
-    callback: (data: DataType) => void;
+    callback: (data: DataType) => unknown;
   }> = [];
 
   return {
@@ -26,8 +26,17 @@ export function defineEvent<DataType>(): IEvent<DataType> {
 
       _listeners.splice(index, 1);
     },
-    dispatch(data: DataType): void {
-      _listeners.forEach((l) => l.callback(data));
+    async dispatch(data: DataType): Promise<void> {
+      const promises: Array<Promise<unknown>> = [];
+      for (const listener of _listeners) {
+        const response = listener.callback(data);
+
+        if (response instanceof Promise) {
+          promises.push(response);
+        }
+      }
+
+      await Promise.all(promises);
     },
   };
 }

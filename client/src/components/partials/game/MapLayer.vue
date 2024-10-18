@@ -14,10 +14,10 @@
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useMapStore } from "@/store/mapStore.ts";
 import MapTile from "@/components/partials/game/MapTile.vue";
-import { MapTileEntity } from "@/types/model/MapTileEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
 import { useMap } from "@/composables/Map.ts";
+import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 
 interface MapTileStyle {
   left: string;
@@ -90,7 +90,7 @@ function getMapStyle(): Record<string, string> {
   };
 }
 
-function getMapTileStyle(mapTile: MapTileEntity): MapTileStyle {
+function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
   const x = mapTile.x * mapTileSize.value - mapTileSize.value / 2;
   const y = mapTile.y * mapTileSize.value - mapTileSize.value / 2;
 

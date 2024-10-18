@@ -2,11 +2,13 @@
   <div class="map-wrapper">
     <MapLayer></MapLayer>
   </div>
+  <ActionOverlay />
 </template>
 
 <script setup lang="ts">
 import MapLayer from "@/components/partials/game/MapLayer.vue";
 import { useGame } from "@/composables/Game.ts";
+import ActionOverlay from "@/components/partials/game/ActionOverlay.vue";
 
 useGame();
 </script>

@@ -1,6 +1,7 @@
 import { MapGateway } from "@/gateways/MapGateway.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { computed, ComputedRef, Ref, ref } from "vue";
+import { LOADED_MAP_TILES } from "@/events.ts";
 
 export interface Map {
   load: () => Promise<void>;
@@ -58,6 +59,7 @@ export function useMap(): Map {
       x2: Math.ceil(centerPosition.value.x + amountOfTiles / 1.5),
       y2: Math.ceil(centerPosition.value.y + amountOfTiles / 1.5),
     });
+    LOADED_MAP_TILES.dispatch();
   }
 
   return {
