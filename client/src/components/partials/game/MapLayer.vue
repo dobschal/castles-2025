@@ -15,7 +15,7 @@ import { MapGateway } from "@/gateways/MapGateway.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import MapTile from "@/components/partials/game/MapTile.vue";
 import { MapTileEntity } from "@/types/model/MapTileEntity.ts";
-import { Optional } from "@/types/Optional.ts";
+import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
 
 interface MapTileStyle {
