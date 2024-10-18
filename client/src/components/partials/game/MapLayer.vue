@@ -16,7 +16,7 @@ import MapTile from "@/components/partials/game/MapTile.vue";
 import { MapTileEntity } from "@/types/model/MapTileEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
-import { useMapService } from "@/services/MapService.ts";
+import { useMap } from "@/composables/Map.ts";
 
 interface MapTileStyle {
   left: string;
@@ -36,7 +36,7 @@ const {
   offsetX,
   offsetY,
   mapTileSize,
-} = useMapService();
+} = useMap();
 
 const isDragging = ref(false);
 const mouseDownTime = ref(0);

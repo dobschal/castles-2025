@@ -45,6 +45,8 @@ const hasInput = computed(
   () => username.value.length > 0 && password.value.length > 0,
 );
 
+// TODO: Move to user service...
+
 async function submitForm(): Promise<void> {
   isLoading.value = true;
   hasError.value = false;

@@ -2,7 +2,7 @@ import { MapGateway } from "@/gateways/MapGateway.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { computed, ComputedRef, Ref, ref } from "vue";
 
-export interface MapService {
+export interface Map {
   load: () => Promise<void>;
   centerPosition: ComputedRef<{ x: number; y: number }>;
   windowWidth: Ref<number>;
@@ -12,7 +12,7 @@ export interface MapService {
   mapTileSize: Ref<number>;
 }
 
-export function useMapService(): MapService {
+export function useMap(): Map {
   const mapStore = useMapStore();
   const mapTileSize = ref(100);
   const mapTileDiagonal = ref(Math.sqrt(2 * Math.pow(mapTileSize.value, 2)));
