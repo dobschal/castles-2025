@@ -1,10 +1,10 @@
 package eu.dobschal.resource
 
+import eu.dobschal.model.dto.VersionResponseDto
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
-import jakarta.ws.rs.core.Response
 import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @Path("/v1/version")
@@ -15,9 +15,7 @@ class VersionResource {
     lateinit var version: String
 
     @GET
-    fun apiVersion(): Response {
-        return Response
-            .ok(version)
-            .build()
+    fun apiVersion(): VersionResponseDto {
+        return VersionResponseDto(version)
     }
 }

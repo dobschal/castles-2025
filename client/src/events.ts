@@ -1,6 +1,4 @@
-import {defineEvent} from "@/core/event";
+import { defineEvent } from "@/core/event";
+import { ToastConfig } from "@/types/core/ToastConfig.ts";
 
-
-export default {
-    closeModal: defineEvent<void>(),
-};
+export const SHOW_TOAST = defineEvent<ToastConfig>();

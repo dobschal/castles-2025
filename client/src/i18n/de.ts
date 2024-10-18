@@ -2,6 +2,8 @@ export const de = {
   general: {
     username: "Benutzername",
     password: "Passwort",
+    serverError:
+      "Server konnte nicht erreicht werden. Bitte versuchen Sie es später erneut.",
   },
   registration: {
     title: "Registrierung",

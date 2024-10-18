@@ -2,6 +2,7 @@ export const en = {
   general: {
     username: "Username",
     password: "Password",
+    serverError: "Server could not be reached. Please try again later.",
   },
   registration: {
     title: "Registration",

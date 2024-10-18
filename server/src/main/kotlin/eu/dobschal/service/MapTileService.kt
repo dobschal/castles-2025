@@ -35,7 +35,7 @@ class MapTileService @Inject constructor(private val mapTileRepository: MapTileR
             logger.info { "Creating new map tiles took ${t2 - t1}ms" }
             if (newMapTiles.isNotEmpty()) {
 
-                // TODO: This is very slow... >7sec for 10_000 tiles
+                // TODO: This is very slow... >7sec for 10_000 tiles ... maybe index?
 
                 mapTileRepository.saveMapTiles(newMapTiles)
             }

@@ -2,12 +2,32 @@
   <component :is="$route.meta.layout ?? 'div'">
     <router-view />
   </component>
+  <CToastCore />
 </template>
 
 <script lang="ts" setup>
-import { API_URL } from "@/constants.ts";
+import { onMounted } from "vue";
+import { VersionGateway } from "@/gateways/VersionGateway.ts";
+import { useVersionStore } from "@/store/versionStore.ts";
+import { SHOW_TOAST } from "@/events.ts";
+import CToastCore from "@/components/partials/general/CToastCore.vue";
 
-console.info("API URL: ", API_URL);
+onMounted(() => {
+  loadServerVersion();
+});
+
+async function loadServerVersion(): Promise<void> {
+  try {
+    useVersionStore().serverVersion =
+      await VersionGateway.instance.getVersion();
+  } catch (error) {
+    console.error("Error on loading server version: ", error);
+    SHOW_TOAST.dispatch({
+      type: "danger",
+      messageKey: "general.serverError",
+    });
+  }
+}
 </script>
 
 <style lang="scss">
