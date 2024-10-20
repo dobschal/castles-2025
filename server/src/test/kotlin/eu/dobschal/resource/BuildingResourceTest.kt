@@ -229,5 +229,63 @@ class BuildingResourceTest {
         assert(buildingRepository.listAll().size == 1)
     }
 
+    @Test
+    fun `Get buildings works`() {
+        val mapTile = MapTile().apply {
+            x = 1
+            y = 1
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(listOf(mapTile))
+        val request = SaveStartVillageRequestDto(1, 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/start-village")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=0&x2=2&y1=0&y2=2")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 1)
+    }
+
+    @Test
+    fun `Get buildings returns empty list when no building in range`() {
+        val mapTile = MapTile().apply {
+            x = 1
+            y = 1
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(listOf(mapTile))
+        val request = SaveStartVillageRequestDto(1, 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/start-village")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=2&x2=10&y1=2&y2=50")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 0)
+    }
+
 
 }

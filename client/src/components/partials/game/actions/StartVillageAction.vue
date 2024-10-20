@@ -11,14 +11,12 @@ import { MapTileState } from "@/types/enum/MapTileState.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { useI18n } from "vue-i18n";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
-import { handleFatalError } from "@/core/util.ts";
+import { handleFatalError, TODO } from "@/core/util.ts";
 
 const mapStore = useMapStore();
 const { t } = useI18n();
 
 const emit = defineEmits(["close-action"]);
-
-// TODO: Check if buildings are close by...
 
 onMounted(() => {
   setMapTilesStates();
@@ -43,6 +41,8 @@ function setMapTilesStates(): void {
 
 function onMapTileClicked(mapTile: MapTileDto): void {
   if (mapTile.state === MapTileState.ACCEPTABLE) {
+    ensureNoBuildingsAreCloseBy(mapTile);
+    ensureNoUnitIsOnTile(mapTile);
     DIALOG.dispatch({
       questionKey: "startVillageAction.dialog",
       yesButtonKey: "general.yes",
@@ -52,6 +52,14 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       },
     });
   }
+}
+
+function ensureNoBuildingsAreCloseBy(mapTile: MapTileDto): void {
+  TODO("check that no buildings are close by", mapTile);
+}
+
+function ensureNoUnitIsOnTile(mapTile: MapTileDto): void {
+  TODO("check that no unit is on field", mapTile);
 }
 
 async function startVillage(mapTile: MapTileDto): Promise<void> {

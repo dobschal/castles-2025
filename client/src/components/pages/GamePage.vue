@@ -7,10 +7,10 @@
 
 <script setup lang="ts">
 import MapLayer from "@/components/partials/game/MapLayer.vue";
-import { useGame } from "@/composables/Game.ts";
+import { useBuildingLogic } from "@/composables/BuildingLogic.ts";
 import ActionOverlay from "@/components/partials/game/ActionOverlay.vue";
 
-useGame();
+useBuildingLogic();
 </script>
 
 <style lang="scss" scoped>

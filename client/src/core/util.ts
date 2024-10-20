@@ -17,3 +17,7 @@ export function handleFatalError(error: unknown): void {
     messageKey: "general.serverError",
   });
 }
+
+export function TODO(...something: unknown[]): void {
+  console.warn("TODO: ", ...something);
+}

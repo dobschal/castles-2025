@@ -2,8 +2,9 @@ import { MapGateway } from "@/gateways/MapGateway.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { computed, ComputedRef, Ref, ref } from "vue";
 import { LOADED_MAP_TILES } from "@/events.ts";
+import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
 
-export interface Map {
+export interface MapLogic {
   load: () => Promise<void>;
   centerPosition: ComputedRef<{ x: number; y: number }>;
   windowWidth: Ref<number>;
@@ -13,7 +14,7 @@ export interface Map {
   mapTileSize: Ref<number>;
 }
 
-export function useMap(): Map {
+export function useMapLogic(): MapLogic {
   const mapStore = useMapStore();
   const mapTileSize = ref(100);
   const windowWidth = ref(window.innerWidth);
@@ -53,13 +54,14 @@ export function useMap(): Map {
 
   async function load(): Promise<void> {
     const amountOfTiles = Math.max(amountOfTilesX.value, amountOfTilesY.value);
-    mapStore.mapTiles = await MapGateway.instance.getMapTiles({
+    const range: TwoPointDto = {
       x1: Math.floor(centerPosition.value.x - amountOfTiles / 1.5),
       y1: Math.floor(centerPosition.value.y - amountOfTiles / 1.5),
       x2: Math.ceil(centerPosition.value.x + amountOfTiles / 1.5),
       y2: Math.ceil(centerPosition.value.y + amountOfTiles / 1.5),
-    });
-    LOADED_MAP_TILES.dispatch();
+    };
+    mapStore.mapTiles = await MapGateway.instance.getMapTiles(range);
+    LOADED_MAP_TILES.dispatch(range);
   }
 
   return {

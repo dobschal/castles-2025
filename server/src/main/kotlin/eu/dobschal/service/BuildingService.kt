@@ -49,4 +49,6 @@ class BuildingService @Inject constructor(
             throw BadRequestException("Building placement is too close to other buildings")
         }
     }
+
+    fun getBuildings(x1: Int, x2: Int, y1: Int, y2: Int) = buildingRepository.findBuildingsBetween(x1, x2, y1, y2)
 }
