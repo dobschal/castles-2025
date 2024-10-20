@@ -15,7 +15,7 @@ export const title = "Castles";
 export const LoginPageRoute: RouteRecordRaw = {
   path: "/login",
   name: "LoginPage",
-  component: () => import("@/components/pages/LoginPage.vue"),
+  component: () => import("@/components/pages/Login.vue"),
   meta: { title, layout: MainLayout },
   beforeEnter(): BeforeEnterReturnType {
     const authStore = useAuthStore();
@@ -29,7 +29,7 @@ export const LoginPageRoute: RouteRecordRaw = {
 export const RegistrationPageRoute: RouteRecordRaw = {
   path: "/registration",
   name: "RegistrationPage",
-  component: () => import("@/components/pages/RegistrationPage.vue"),
+  component: () => import("@/components/pages/Registration.vue"),
   meta: { title, layout: MainLayout },
   beforeEnter(): BeforeEnterReturnType {
     const authStore = useAuthStore();
@@ -43,6 +43,6 @@ export const RegistrationPageRoute: RouteRecordRaw = {
 export const MainPageRoute: RouteRecordRaw = {
   path: "/",
   name: "MainPage",
-  component: () => import("@/components/pages/GamePage.vue"),
+  component: () => import("@/components/pages/Game.vue"),
   meta: { title, layout: MainLayout, roles: ["user"] },
 };

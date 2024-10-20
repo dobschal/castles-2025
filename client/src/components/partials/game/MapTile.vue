@@ -39,7 +39,7 @@ import mountainTile from "@/assets/tiles/mountain.png";
 import waterTile from "@/assets/tiles/water.png";
 import forestTile from "@/assets/tiles/forest.png";
 import plainTile from "@/assets/tiles/plain.png";
-import { CLICKED_MAP_TILE } from "@/events.ts";
+import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 
 const props = defineProps<{
@@ -58,7 +58,7 @@ function onMouseUp(): void {
     return;
   }
 
-  CLICKED_MAP_TILE.dispatch(props.mapTile);
+  MAP_TILE_CLICKED.dispatch(props.mapTile);
 }
 </script>
 

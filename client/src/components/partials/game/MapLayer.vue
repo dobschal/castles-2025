@@ -16,7 +16,6 @@ import { useMapStore } from "@/store/mapStore.ts";
 import MapTile from "@/components/partials/game/MapTile.vue";
 import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
-import { useMapLogic } from "@/composables/MapLogic.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 
 interface MapTileStyle {
@@ -29,16 +28,6 @@ interface MapTileStyle {
 
 const map = ref<Optional<HTMLElement>>();
 const mapStore = useMapStore();
-const {
-  load,
-  centerPosition,
-  windowHeight,
-  windowWidth,
-  offsetX,
-  offsetY,
-  mapTileSize,
-} = useMapLogic();
-
 const isDragging = ref(false);
 const mouseDownTime = ref(0);
 const touchDownTime = ref(0);
@@ -59,8 +48,6 @@ onMounted(async () => {
     window.addEventListener("touchmove", onTouchMove);
     window.addEventListener("touchend", onToucheEnd);
   }
-
-  await load();
 });
 
 onBeforeUnmount(() => {
@@ -77,26 +64,18 @@ onBeforeUnmount(() => {
 // region methods
 
 function getMapStyle(): Record<string, string> {
-  // const aspectRatio = windowWidth.value / windowHeight.value;
-
-  // We need to move the map a bit, because of teh 45deg rotation the map is a bit off...
   return {
-    // marginLeft: -windowWidth.value * 0.3 * (aspectRatio - 2) + "px",
-    // marginTop:
-    //   -windowHeight.value * 0.3 * (aspectRatio - 2) +
-    //   windowHeight.value * 0.2 +
-    //   "px",
-    transform: `translateX(${offsetX.value}px) translateY(${offsetY.value}px) rotate(-45deg)`,
+    transform: `translateX(${mapStore.offsetX}px) translateY(${mapStore.offsetY}px) rotate(-45deg)`,
   };
 }
 
 function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
-  const x = mapTile.x * mapTileSize.value - mapTileSize.value / 2;
-  const y = mapTile.y * mapTileSize.value - mapTileSize.value / 2;
+  const x = mapTile.x * mapStore.mapTileSize - mapStore.mapTileSize / 2;
+  const y = mapTile.y * mapStore.mapTileSize - mapStore.mapTileSize / 2;
 
   return {
-    ...(mapTile.x === centerPosition.value.x &&
-    mapTile.y === centerPosition.value.y
+    ...(mapTile.x === mapStore.centerPosition.x &&
+    mapTile.y === mapStore.centerPosition.y
       ? { border: "10px solid red" }
       : {}),
     left: x + "px",
@@ -106,9 +85,8 @@ function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
 }
 
 function onWindowResize(): void {
-  windowWidth.value = window.innerWidth;
-  windowHeight.value = window.innerHeight;
-  load();
+  mapStore.windowWidth = window.innerWidth;
+  mapStore.windowHeight = window.innerHeight;
 }
 
 function onMapMouseDown(): void {
@@ -121,16 +99,12 @@ function onMapMouseMove(event: MouseEvent): void {
     return;
   }
 
-  offsetX.value += event.movementX;
-  offsetY.value += event.movementY;
+  mapStore.offsetX += event.movementX;
+  mapStore.offsetY += event.movementY;
 }
 
 function onMapMouseUp(): void {
   isDragging.value = false;
-
-  if (Date.now() - mouseDownTime.value > 200) {
-    load();
-  }
 }
 
 function onTouchStart(event: TouchEvent): void {
@@ -145,8 +119,8 @@ function onTouchMove(event: TouchEvent): void {
     return;
   }
 
-  offsetX.value += event.touches[0].clientX - lastTouch.value.x;
-  offsetY.value += event.touches[0].clientY - lastTouch.value.y;
+  mapStore.offsetX += event.touches[0].clientX - lastTouch.value.x;
+  mapStore.offsetY += event.touches[0].clientY - lastTouch.value.y;
 
   lastTouch.value.x = event.touches[0].clientX;
   lastTouch.value.y = event.touches[0].clientY;
@@ -154,10 +128,6 @@ function onTouchMove(event: TouchEvent): void {
 
 function onToucheEnd(): void {
   isDragging.value = false;
-
-  if (Date.now() - touchDownTime.value > 200) {
-    load();
-  }
 }
 
 // endregion

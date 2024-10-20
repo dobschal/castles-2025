@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted } from "vue";
-import { CLICKED_MAP_TILE, DIALOG, LOADED_MAP_TILES } from "@/events.ts";
+import { onBeforeUnmount, onMounted, watch } from "vue";
+import { DIALOG, MAP_TILE_CLICKED } from "@/events.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { MapTileType } from "@/types/enum/MapTileType.ts";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
@@ -20,14 +20,14 @@ const emit = defineEmits(["close-action"]);
 
 onMounted(() => {
   setMapTilesStates();
-  LOADED_MAP_TILES.on(setMapTilesStates);
-  CLICKED_MAP_TILE.on(onMapTileClicked);
+  MAP_TILE_CLICKED.on(onMapTileClicked);
 });
 
 onBeforeUnmount(() => {
-  LOADED_MAP_TILES.off(setMapTilesStates);
-  CLICKED_MAP_TILE.off(onMapTileClicked);
+  MAP_TILE_CLICKED.off(onMapTileClicked);
 });
+
+watch(() => mapStore.mapTiles, setMapTilesStates);
 
 function setMapTilesStates(): void {
   mapStore.mapTiles.forEach((tile) => {
