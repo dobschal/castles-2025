@@ -8,6 +8,8 @@
     :class="[mapTile.state]"
   >
     <div class="image-wrapper">
+      <!-- TODO:Adjust sizing of new forst tile  -->
+
       <img
         v-if="mapTile.type === MapTileType.FOREST"
         :src="forestTile"
@@ -93,8 +95,6 @@ function onMouseLeave(): void {
 <style lang="scss" scoped>
 .map-tile {
   position: absolute;
-  width: 100px;
-  height: 100px;
   user-select: none;
 
   &.FORBIDDEN {
@@ -104,10 +104,6 @@ function onMouseLeave(): void {
   .image-wrapper {
     position: absolute;
     z-index: 0;
-
-    &:hover {
-      border: red solid 1px;
-    }
 
     img {
       display: block;
@@ -120,9 +116,9 @@ function onMouseLeave(): void {
       }
 
       &.forest {
-        width: 160%;
+        width: 150%;
         margin-left: -25%;
-        margin-top: -35%;
+        margin-top: -25%;
       }
 
       &.plain {

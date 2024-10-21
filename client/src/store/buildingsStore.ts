@@ -13,6 +13,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const buildings = ref<Array<BuildingEntity>>([]);
   const startVillage = ref<Optional<BuildingEntity>>();
   const isLoadingBuildings = ref(false);
+  const activeBuilding = ref<Optional<BuildingEntity>>();
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -47,5 +48,6 @@ export const useBuildingsStore = defineStore("buildings", () => {
     loadStartVillage,
     buildings,
     startVillage,
+    activeBuilding,
   };
 });

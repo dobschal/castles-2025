@@ -22,6 +22,7 @@ class MapTileRepository @Inject constructor(
         return find("x >= ?1 and x < ?2 and y >= ?3 and y < ?4", x1, x2, y1, y2).list()
     }
 
+    // We are using a native query to insert the values because it is faster than using Panache
     fun saveMapTiles(mapTiles: Set<MapTile>) {
         val query = mapTiles.map {
             "INSERT INTO map_tile (x, y, type) VALUES (${it.x}, ${it.y}, '${it.type}')"

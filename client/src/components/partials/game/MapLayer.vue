@@ -7,7 +7,6 @@
       :map-tile="mapTile"
     />
   </div>
-  <div class="center"></div>
 </template>
 
 <script lang="ts" setup>
@@ -22,6 +21,8 @@ interface MapTileStyle {
   left: string;
   top: string;
   zIndex: number;
+  width: string;
+  height: string;
 }
 
 // region variables
@@ -74,6 +75,8 @@ function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
   const y = mapTile.y * mapStore.mapTileSize - mapStore.mapTileSize / 2;
 
   return {
+    width: mapStore.mapTileSize + "px",
+    height: mapStore.mapTileSize + "px",
     left: x + "px",
     top: y + "px",
     zIndex: 9999 - mapTile.x + mapTile.y * 10,
@@ -86,6 +89,10 @@ function onWindowResize(): void {
 }
 
 function onMapMouseDown(): void {
+  if (mapStore.mapControlsDisabled) {
+    return;
+  }
+
   isDragging.value = true;
   mouseDownTime.value = Date.now();
 }
@@ -104,6 +111,10 @@ function onMapMouseUp(): void {
 }
 
 function onTouchStart(event: TouchEvent): void {
+  if (mapStore.mapControlsDisabled) {
+    return;
+  }
+
   isDragging.value = true;
   touchDownTime.value = Date.now();
   lastTouch.value.x = event.touches[0].clientX;
@@ -136,17 +147,5 @@ function onToucheEnd(): void {
   height: 100vh;
   transform: rotate(-45deg);
   transform-origin: top left;
-}
-
-.center {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 99999;
 }
 </style>

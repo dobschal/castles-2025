@@ -34,6 +34,12 @@ async function loadServerVersion(): Promise<void> {
   src: url("@/assets/fonts/MedievalSharp-Regular.ttf") format("truetype");
 }
 
+// Disable pull to refresh
+html {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   font-size: 16px;
   line-height: 1.5;
