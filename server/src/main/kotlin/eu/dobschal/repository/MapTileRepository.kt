@@ -3,11 +3,16 @@ package eu.dobschal.repository
 import eu.dobschal.model.entity.MapTile
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.inject.Inject
+import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
+
 
 @Transactional
 @ApplicationScoped
-class MapTileRepository : PanacheRepository<MapTile> {
+class MapTileRepository @Inject constructor(
+    private val entityManager: EntityManager
+) : PanacheRepository<MapTile> {
 
     fun findByXAndY(x: Int, y: Int): MapTile? {
         return find("x = ?1 and y = ?2", x, y).firstResult()
@@ -18,7 +23,10 @@ class MapTileRepository : PanacheRepository<MapTile> {
     }
 
     fun saveMapTiles(mapTiles: Set<MapTile>) {
-        persist(mapTiles)
+        val query = mapTiles.map {
+            "INSERT INTO map_tile (x, y, type) VALUES (${it.x}, ${it.y}, '${it.type}')"
+        }.joinToString(separator = ";")
+        entityManager.createNativeQuery(query).executeUpdate()
     }
 
 }

@@ -82,16 +82,17 @@ class MapTileResourceTest {
     fun `Fetching a tones of new map tiles is fast`() {
         val jwt = getJwt()
         val t1 = System.currentTimeMillis()
-        given()
+        val response = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt")
             .`when`()
-            .get("$endpoint?x1=0&x2=20&y1=0&y2=20")
+            .get("$endpoint?x1=0&x2=33&y1=0&y2=33")
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(List::class.java)
         val t2 = System.currentTimeMillis()
-        logger.info { "Fetching 1000 map tiles took ${t2 - t1}ms" }
+        assert(response.size == 1089)
+        logger.info { "Fetching 1089 map tiles took ${t2 - t1}ms" }
         assert(t2 - t1 < 1000)
     }
 

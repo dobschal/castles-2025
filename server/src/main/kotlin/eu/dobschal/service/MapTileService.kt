@@ -6,14 +6,11 @@ import eu.dobschal.repository.MapTileRepository
 import eu.dobschal.utils.MAP_MAX
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
-import mu.KotlinLogging
 import kotlin.math.max
 import kotlin.math.min
 
 @ApplicationScoped
 class MapTileService @Inject constructor(private val mapTileRepository: MapTileRepository) {
-
-    private val logger = KotlinLogging.logger {}
 
     fun getMapTiles(x1Param: Int, x2Param: Int, y1Param: Int, y2Param: Int): List<MapTile> {
         val x1 = min(MAP_MAX, max(-MAP_MAX, x1Param))
@@ -38,16 +35,9 @@ class MapTileService @Inject constructor(private val mapTileRepository: MapTileR
                     }
                 }
             }
-            val t2 = System.currentTimeMillis()
-            logger.info { "Creating new map tiles took ${t2 - t1}ms" }
             if (newMapTiles.isNotEmpty()) {
-
-                // TODO: This is very slow... >7sec for 10_000 tiles ... already indexed
-
                 mapTileRepository.saveMapTiles(newMapTiles)
             }
-            val t3 = System.currentTimeMillis()
-            logger.info { "Saving new map tiles took ${t3 - t2}ms" }
         }
         return mapTiles
     }
