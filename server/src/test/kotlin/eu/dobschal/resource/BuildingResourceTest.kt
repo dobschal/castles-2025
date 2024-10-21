@@ -168,7 +168,7 @@ class BuildingResourceTest {
             y = 1
             type = MapTileType.WATER
         }
-        mapTileRepository.saveMapTiles(listOf(mapTile))
+        mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = SaveStartVillageRequestDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -188,7 +188,7 @@ class BuildingResourceTest {
             y = 1
             type = MapTileType.PLAIN
         }
-        mapTileRepository.saveMapTiles(listOf(mapTile))
+        mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = SaveStartVillageRequestDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -216,7 +216,7 @@ class BuildingResourceTest {
             y = 1
             type = MapTileType.PLAIN
         }
-        mapTileRepository.saveMapTiles(listOf(mapTile))
+        mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = SaveStartVillageRequestDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -236,7 +236,7 @@ class BuildingResourceTest {
             y = 1
             type = MapTileType.PLAIN
         }
-        mapTileRepository.saveMapTiles(listOf(mapTile))
+        mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = SaveStartVillageRequestDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -265,7 +265,7 @@ class BuildingResourceTest {
             y = 1
             type = MapTileType.PLAIN
         }
-        mapTileRepository.saveMapTiles(listOf(mapTile))
+        mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = SaveStartVillageRequestDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)

@@ -70,17 +70,17 @@ export const useMapStore = defineStore(
       offsetX: number;
       offsetY: number;
     } {
-      const screenX = x * mapTileSize.value;
-      const screenY = y * mapTileSize.value;
+      // Convert grid coordinates (x, y) back to screen coordinates
+      const rotatedScreenX = x * mapTileSize.value;
+      const rotatedScreenY = y * mapTileSize.value;
 
-      const rotatedScreenX = screenX * cos + screenY * sin;
-      const rotatedScreenY = -screenX * sin + screenY * cos;
+      // Reverse the rotation matrix
+      const screenX = rotatedScreenX * cos + rotatedScreenY * sin;
+      const screenY = -rotatedScreenX * sin + rotatedScreenY * cos;
 
-      // const centerX = (windowWidth - rotatedScreenX * 2) / 2;
-      // const centerY = (windowHeight - 64 - rotatedScreenY * 2) / 2; // 64px is the height of the top bar
-
-      const offsetX = (windowWidth / 2 - rotatedScreenX) / 2;
-      const offsetY = (windowHeight / 2 - 64 - rotatedScreenY) / 2;
+      // Calculate offsetX and offsetY
+      const offsetX = (windowWidth - screenX * 2) / 2;
+      const offsetY = (windowHeight - 64 - screenY * 2) / 2;
 
       return {
         offsetX: Math.round(offsetX),

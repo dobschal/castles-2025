@@ -17,7 +17,7 @@ class MapTileRepository : PanacheRepository<MapTile> {
         return find("x >= ?1 and x < ?2 and y >= ?3 and y < ?4", x1, x2, y1, y2).list()
     }
 
-    fun saveMapTiles(mapTiles: List<MapTile>) {
+    fun saveMapTiles(mapTiles: Set<MapTile>) {
         persist(mapTiles)
     }
 

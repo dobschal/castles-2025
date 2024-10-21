@@ -2,34 +2,40 @@
   <div
     class="map-tile"
     @mousedown="onMouseDown"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
     @mouseup="onMouseUp"
     :class="[mapTile.state]"
   >
-    <img
-      v-if="mapTile.type === MapTileType.FOREST"
-      :src="forestTile"
-      class="forest"
-      alt="Forest"
-    />
-    <img
-      v-else-if="mapTile.type === MapTileType.PLAIN"
-      :src="plainTile"
-      class="plain"
-      alt="Plain"
-    />
-    <img
-      v-else-if="mapTile.type === MapTileType.WATER"
-      :src="waterTile"
-      class="water"
-      alt="Water"
-    />
-    <img
-      v-else-if="mapTile.type === MapTileType.MOUNTAIN"
-      :src="mountainTile"
-      class="mountain"
-      alt="Mountain"
-    />
-    <!--    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>-->
+    <div class="image-wrapper">
+      <img
+        v-if="mapTile.type === MapTileType.FOREST"
+        :src="forestTile"
+        class="forest"
+        alt="Forest"
+      />
+      <img
+        v-else-if="mapTile.type === MapTileType.PLAIN"
+        :src="plainTile"
+        class="plain"
+        alt="Plain"
+      />
+      <img
+        v-else-if="mapTile.type === MapTileType.WATER"
+        :src="waterTile"
+        class="water"
+        alt="Water"
+      />
+      <img
+        v-else-if="mapTile.type === MapTileType.MOUNTAIN"
+        :src="mountainTile"
+        class="mountain"
+        alt="Mountain"
+      />
+    </div>
+    <div v-if="isMouseOver" class="position-text">
+      {{ mapTile.x }} / {{ mapTile.y }}
+    </div>
     <BuildingTile v-if="building" :building="building"></BuildingTile>
   </div>
 </template>
@@ -43,7 +49,7 @@ import plainTile from "@/assets/tiles/plain.png";
 import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import BuildingTile from "@/components/partials/game/BuildingTile.vue";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
@@ -53,6 +59,7 @@ const props = defineProps<{
   mapTile: MapTileDto;
 }>();
 let mouseDownTimestamp = 0;
+const isMouseOver = ref(false);
 
 const building = computed<Optional<BuildingEntity>>(() => {
   return buildingsStore.buildings.find((building) => {
@@ -73,6 +80,14 @@ function onMouseUp(): void {
 
   MAP_TILE_CLICKED.dispatch(props.mapTile);
 }
+
+function onMouseEnter(): void {
+  isMouseOver.value = true;
+}
+
+function onMouseLeave(): void {
+  isMouseOver.value = false;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -86,38 +101,41 @@ function onMouseUp(): void {
     opacity: 0.5;
   }
 
-  &:hover {
-    background-color: yellow;
-  }
-
-  img {
+  .image-wrapper {
     position: absolute;
     z-index: 0;
-    display: block;
-    pointer-events: none;
 
-    &.water {
-      margin-left: -30%;
-      margin-top: -30%;
-      width: 160%;
+    &:hover {
+      border: red solid 1px;
     }
 
-    &.forest {
-      width: 160%;
-      margin-left: -25%;
-      margin-top: -35%;
-    }
+    img {
+      display: block;
+      pointer-events: none;
 
-    &.plain {
-      width: 150%;
-      margin-left: -30%;
-      margin-top: -25%;
-    }
+      &.water {
+        margin-left: -30%;
+        margin-top: -30%;
+        width: 160%;
+      }
 
-    &.mountain {
-      margin-left: -25%;
-      margin-top: -30%;
-      width: 150%;
+      &.forest {
+        width: 160%;
+        margin-left: -25%;
+        margin-top: -35%;
+      }
+
+      &.plain {
+        width: 150%;
+        margin-left: -30%;
+        margin-top: -25%;
+      }
+
+      &.mountain {
+        margin-left: -25%;
+        margin-top: -30%;
+        width: 150%;
+      }
     }
   }
 
