@@ -16,6 +16,8 @@ const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 
 onMounted(async () => {
+  // We need to make a first map load e.g. if no start village is given...
+  await mapStore.loadMap();
   // As we are changing the map position, we need don't need to
   // explicit load the map and buildings. The watchers will take
   // care of that

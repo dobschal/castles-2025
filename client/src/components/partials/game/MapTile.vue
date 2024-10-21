@@ -29,7 +29,8 @@
       class="mountain"
       alt="Mountain"
     />
-    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>
+    <!--    <div class="position-text">{{ mapTile.x }} / {{ mapTile.y }}</div>-->
+    <BuildingTile v-if="building" :building="building"></BuildingTile>
   </div>
 </template>
 
@@ -41,11 +42,23 @@ import forestTile from "@/assets/tiles/forest.png";
 import plainTile from "@/assets/tiles/plain.png";
 import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
+import BuildingTile from "@/components/partials/game/BuildingTile.vue";
+import { computed } from "vue";
+import { useBuildingsStore } from "@/store/buildingsStore.ts";
+import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
+import { Optional } from "@/types/core/Optional.ts";
 
+const buildingsStore = useBuildingsStore();
 const props = defineProps<{
   mapTile: MapTileDto;
 }>();
 let mouseDownTimestamp = 0;
+
+const building = computed<Optional<BuildingEntity>>(() => {
+  return buildingsStore.buildings.find((building) => {
+    return building.x === props.mapTile.x && building.y === props.mapTile.y;
+  });
+});
 
 // TODO: Need touch support too
 
@@ -78,6 +91,8 @@ function onMouseUp(): void {
   }
 
   img {
+    position: absolute;
+    z-index: 0;
     display: block;
     pointer-events: none;
 

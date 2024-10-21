@@ -74,10 +74,6 @@ function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
   const y = mapTile.y * mapStore.mapTileSize - mapStore.mapTileSize / 2;
 
   return {
-    ...(mapTile.x === mapStore.centerPosition.x &&
-    mapTile.y === mapStore.centerPosition.y
-      ? { border: "10px solid red" }
-      : {}),
     left: x + "px",
     top: y + "px",
     zIndex: 9999 - mapTile.x + mapTile.y * 10,
