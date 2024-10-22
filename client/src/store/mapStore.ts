@@ -5,7 +5,6 @@ import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
 import { MapGateway } from "@/gateways/MapGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
-import { Optional } from "@/types/core/Optional.ts";
 
 export const useMapStore = defineStore("map", () => {
   const mapTiles = ref<Array<MapTileDto>>([]);
@@ -16,7 +15,6 @@ export const useMapStore = defineStore("map", () => {
   const offsetY = ref(0);
   const isLoadingMap = ref(false);
   const mapControlsDisabled = ref(false);
-  let zoomInStart: Optional<number>;
 
   // Used to calculate the rotation of the map
   const radians = 45 * (Math.PI / 180);
