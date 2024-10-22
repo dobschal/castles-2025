@@ -98,7 +98,11 @@ function onMouseLeave(): void {
   user-select: none;
 
   &.FORBIDDEN {
-    opacity: 0.5;
+    .image-wrapper {
+      img {
+        filter: sepia(0.9);
+      }
+    }
   }
 
   .image-wrapper {

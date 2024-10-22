@@ -61,4 +61,8 @@ hr {
   margin: 0 0 1rem 0;
   box-shadow: 2px 2px 0 rgb(224, 154, 74);
 }
+
+p {
+  margin: 0 0 1rem 0;
+}
 </style>

@@ -33,22 +33,24 @@ function close(): void {
 <style lang="scss" scoped>
 .overlay-wrapper {
   position: absolute;
-  bottom: 2rem;
-  left: 0;
-  width: 100%;
+  bottom: 1rem;
+  left: 1rem;
+  width: calc(100% - 2rem);
   z-index: 100;
 
   .overlay {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
-    background: #703304;
-    color: white;
-    text-align: center;
-    padding: 1rem;
+    background: antiquewhite;
+    color: black;
+    padding: 1rem 1rem 0 1rem;
     font-size: 1.2rem;
     box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
-    border: solid 3px white;
+    border: solid 3px rgb(117, 59, 22);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 </style>

@@ -6,6 +6,7 @@
 
 <style lang="scss" scoped>
 button {
+  display: block;
   color: white;
   background: rgb(117, 59, 22);
   box-shadow: 4px 4px 0 rgb(224, 154, 74);
@@ -25,6 +26,11 @@ button {
     background: grey;
     box-shadow: 4px 4px 0 darkgrey;
     cursor: not-allowed;
+  }
+
+  &.small {
+    padding: 0.5rem 2rem;
+    font-size: 1rem;
   }
 }
 </style>

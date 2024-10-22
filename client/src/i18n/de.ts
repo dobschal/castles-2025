@@ -6,6 +6,9 @@ export const de = {
       "Server konnte nicht erreicht werden. Bitte versuche es später erneut.",
     no: "Nein",
     yes: "Ja",
+    close: "Schließen",
+    logout: "Abmelden",
+    back: "Zurück",
   },
   registration: {
     title: "Registrierung",

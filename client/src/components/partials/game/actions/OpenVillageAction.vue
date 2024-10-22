@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <p>Village of {{ buildingsStore.activeBuilding?.user.username }}</p>
-    <CButton @click="close">Close</CButton>
-  </div>
+  <p>Village of {{ buildingsStore.activeBuilding?.user.username }}</p>
+  <CButton class="small" @click="close">
+    {{ t("general.close") }}
+  </CButton>
 </template>
 
 <script lang="ts" setup>
@@ -11,10 +11,12 @@ import { useMapStore } from "@/store/mapStore.ts";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { handleFatalError } from "@/core/util.ts";
 import CButton from "@/components/partials/general/CButton.vue";
+import { useI18n } from "vue-i18n";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const emit = defineEmits(["close-action"]);
+const { t } = useI18n();
 
 onMounted(() => {
   if (!buildingsStore.activeBuilding) {
@@ -46,3 +48,5 @@ function close(): void {
   emit("close-action");
 }
 </script>
+
+<style lang="scss" scoped></style>

@@ -5,6 +5,9 @@ export const en = {
     serverError: "Server could not be reached. Please try again later.",
     no: "No",
     yes: "Yes",
+    close: "Close",
+    logout: "Logout",
+    back: "Back",
   },
   registration: {
     title: "Registration",
