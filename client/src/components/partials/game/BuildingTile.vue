@@ -52,6 +52,19 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   width: 100%;
   height: 100%;
   z-index: 1;
+  user-select: none;
+
+  &.FORBIDDEN {
+    img {
+      filter: sepia(0.75) brightness(0.75);
+    }
+  }
+
+  &.ACCEPTABLE {
+    img {
+      filter: brightness(1.2);
+    }
+  }
 
   .banner {
     position: absolute;
@@ -68,10 +81,11 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
   }
 
-  .building {
+  img.building {
     width: 150%;
     margin-left: -25%;
     margin-top: -25%;
+    pointer-events: none;
   }
 }
 </style>

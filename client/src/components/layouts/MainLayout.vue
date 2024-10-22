@@ -69,6 +69,12 @@ function logout(): void {
 </script>
 
 <style lang="scss" scoped>
+@keyframes drive-in {
+  0% {
+    transform: translateX(100%);
+  }
+}
+
 nav {
   background: rgb(117, 59, 22);
   color: white;
@@ -113,6 +119,7 @@ nav {
   flex-direction: column;
   justify-content: space-between;
   padding: 4rem;
+  animation: drive-in 0.5s ease-in-out;
 
   ul {
     list-style-type: none;

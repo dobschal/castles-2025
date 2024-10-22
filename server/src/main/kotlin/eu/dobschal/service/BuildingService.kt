@@ -44,7 +44,7 @@ class BuildingService @Inject constructor(
         if (mapTile.type != MapTileType.PLAIN) {
             throw BadRequestException("Building placement is not on a plain map tile")
         }
-        val buildingsAround = buildingRepository.findBuildingsBetween(x - 2, x + 2, y - 2, y + 2)
+        val buildingsAround = buildingRepository.findBuildingsBetween(x - 2, x + 3, y - 2, y + 3)
         if (buildingsAround.isNotEmpty()) {
             throw BadRequestException("Building placement is too close to other buildings")
         }

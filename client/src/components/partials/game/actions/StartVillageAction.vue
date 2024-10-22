@@ -1,5 +1,5 @@
 <template>
-  <div>👉 {{ t("startVillageAction.text") }}</div>
+  <p>👉 {{ t("startVillageAction.text") }}</p>
 </template>
 
 <script lang="ts" setup>
@@ -11,8 +11,10 @@ import { MapTileState } from "@/types/enum/MapTileState.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { useI18n } from "vue-i18n";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
-import { handleFatalError, TODO } from "@/core/util.ts";
+import { handleFatalError } from "@/core/util.ts";
+import { useBuildingsStore } from "@/store/buildingsStore.ts";
 
+const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const { t } = useI18n();
 
@@ -27,11 +29,21 @@ onBeforeUnmount(() => {
   MAP_TILE_CLICKED.off(onMapTileClicked);
 });
 
-watch(() => mapStore.mapTiles, setMapTilesStates);
+watch(() => [mapStore.mapTiles, buildingsStore.buildings], setMapTilesStates);
 
 function setMapTilesStates(): void {
   mapStore.mapTiles.forEach((tile) => {
-    if (tile.type !== MapTileType.PLAIN) {
+    // Aligned with server-side logic!
+    const conflictingBuilding = buildingsStore.buildings.find((building) => {
+      return (
+        building.x >= tile.x - 2 &&
+        building.x < tile.x + 3 &&
+        building.y >= tile.y - 2 &&
+        building.y < tile.y + 3
+      );
+    });
+
+    if (conflictingBuilding || tile.type !== MapTileType.PLAIN) {
       tile.state = MapTileState.FORBIDDEN;
     } else {
       tile.state = MapTileState.ACCEPTABLE;
@@ -41,8 +53,6 @@ function setMapTilesStates(): void {
 
 function onMapTileClicked(mapTile: MapTileDto): void {
   if (mapTile.state === MapTileState.ACCEPTABLE) {
-    ensureNoBuildingsAreCloseBy(mapTile);
-    ensureNoUnitIsOnTile(mapTile);
     DIALOG.dispatch({
       questionKey: "startVillageAction.dialog",
       yesButtonKey: "general.yes",
@@ -52,14 +62,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       },
     });
   }
-}
-
-function ensureNoBuildingsAreCloseBy(mapTile: MapTileDto): void {
-  TODO("check that no buildings are close by", mapTile);
-}
-
-function ensureNoUnitIsOnTile(mapTile: MapTileDto): void {
-  TODO("check that no unit is on field", mapTile);
 }
 
 async function startVillage(mapTile: MapTileDto): Promise<void> {

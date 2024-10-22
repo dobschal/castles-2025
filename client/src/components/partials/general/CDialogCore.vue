@@ -57,15 +57,24 @@ onMounted(() => {
   align-items: center;
 
   .dialog {
-    background-color: rgb(220, 220, 220);
-    color: black;
-    padding: 1rem;
+    background: antiquewhite;
     box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
+    border: solid 3px rgb(117, 59, 22);
+    color: black;
+    padding: 1rem 1rem 0 1rem;
+    width: calc(100% - 2rem);
+    max-width: 400px;
 
     .button-group {
       display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
       justify-content: center;
       gap: 1rem;
+
+      :deep(button) {
+        width: 100%;
+      }
     }
   }
 }

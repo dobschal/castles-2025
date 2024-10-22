@@ -38,7 +38,11 @@
     <div v-if="isMouseOver" class="position-text">
       {{ mapTile.x }} / {{ mapTile.y }}
     </div>
-    <BuildingTile v-if="building" :building="building"></BuildingTile>
+    <BuildingTile
+      v-if="building"
+      :building="building"
+      :class="[mapTile.state]"
+    ></BuildingTile>
   </div>
 </template>
 
@@ -97,10 +101,30 @@ function onMouseLeave(): void {
   position: absolute;
   user-select: none;
 
+  // TODO: The image filter are CPU intensive, --> use pre generated images instead
+
   &.FORBIDDEN {
     .image-wrapper {
       img {
-        filter: sepia(0.9);
+        filter: sepia(0.75) brightness(0.75);
+      }
+    }
+  }
+
+  &.ACCEPTABLE {
+    cursor: pointer;
+
+    &:hover {
+      .image-wrapper {
+        img {
+          filter: brightness(1.4);
+        }
+      }
+    }
+
+    .image-wrapper {
+      img {
+        filter: brightness(1.1);
       }
     }
   }

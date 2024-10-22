@@ -12,6 +12,7 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { handleFatalError } from "@/core/util.ts";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useI18n } from "vue-i18n";
+import { MAP_TILE_CLICKED } from "@/events.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -22,6 +23,9 @@ onMounted(() => {
   if (!buildingsStore.activeBuilding) {
     return handleFatalError(new Error("No active building set"));
   }
+
+  // When clicking on the map, close the action overlay
+  MAP_TILE_CLICKED.on(close);
 
   mapStore.mapControlsDisabled = true;
   mapStore.mapTileSize = 200;
@@ -34,6 +38,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   mapStore.mapControlsDisabled = false;
   mapStore.mapTileSize = 100;
+
+  MAP_TILE_CLICKED.off(close);
 
   if (buildingsStore.activeBuilding) {
     mapStore.goToPosition({

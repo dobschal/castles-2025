@@ -16,6 +16,11 @@ let promise: Promise<void> | undefined;
 let resolve: (() => void) | undefined;
 
 ACTION.on((c: Component) => {
+  if (component.value) {
+    // avoid multiple actions at the same time
+    return;
+  }
+
   component.value = c;
   promise = new Promise((r) => {
     resolve = r;
@@ -31,6 +36,15 @@ function close(): void {
 </script>
 
 <style lang="scss" scoped>
+@keyframes drive-in {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .overlay-wrapper {
   position: absolute;
   bottom: 1rem;
@@ -40,17 +54,18 @@ function close(): void {
 
   .overlay {
     width: 100%;
-    max-width: 400px;
+    max-width: 520px;
     margin: 0 auto;
-    background: antiquewhite;
     color: black;
     padding: 1rem 1rem 0 1rem;
     font-size: 1.2rem;
+    background: antiquewhite;
     box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
     border: solid 3px rgb(117, 59, 22);
     display: flex;
     flex-direction: column;
     align-items: center;
+    animation: drive-in 0.5s cubic-bezier(0.33, 0.96, 0.52, 1.13);
   }
 }
 </style>

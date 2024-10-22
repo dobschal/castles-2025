@@ -109,23 +109,7 @@ export const useMapStore = defineStore("map", () => {
     }
   }
 
-  function zoomIn(durationInMillis: number, stepSize: number): void {
-    if (zoomInStart === undefined) {
-      zoomInStart = Date.now();
-    }
-
-    const progress = Date.now() - zoomInStart;
-    mapTileSize.value += stepSize;
-
-    if (progress < durationInMillis) {
-      requestAnimationFrame(() => zoomIn(durationInMillis, stepSize));
-    } else {
-      zoomInStart = undefined;
-    }
-  }
-
   return {
-    zoomIn,
     mapControlsDisabled,
     loadMap,
     goToPosition,
