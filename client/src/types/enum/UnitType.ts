@@ -1,0 +1,6 @@
+export enum UnitType {
+  WORKER = "WORKER",
+  SPEARMAN = "SPEARMAN",
+  SWORDSMAN = "SWORDSMAN",
+  HORSEMAN = "HORSEMAN",
+}

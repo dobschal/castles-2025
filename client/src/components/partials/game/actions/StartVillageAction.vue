@@ -43,6 +43,8 @@ function setMapTilesStates(): void {
       );
     });
 
+    // TODO: Check for units too
+
     if (conflictingBuilding || tile.type !== MapTileType.PLAIN) {
       tile.state = MapTileState.FORBIDDEN;
     } else {
@@ -58,18 +60,19 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       yesButtonKey: "general.yes",
       noButtonKey: "general.no",
       onYes: () => {
-        startVillage(mapTile);
+        createStartVillage(mapTile);
       },
     });
   }
 }
 
-async function startVillage(mapTile: MapTileDto): Promise<void> {
+async function createStartVillage(mapTile: MapTileDto): Promise<void> {
   try {
     await BuildingGateway.instance.saveStartVillage(mapTile);
     mapStore.mapTiles.forEach((tile) => {
       tile.state = MapTileState.DEFAULT;
     });
+    await buildingsStore.loadBuildings();
     emit("close-action");
   } catch (error) {
     handleFatalError(error);

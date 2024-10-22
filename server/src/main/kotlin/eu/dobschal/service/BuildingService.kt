@@ -35,6 +35,7 @@ class BuildingService @Inject constructor(
             this.user = currentUser
         }
         buildingRepository.save(startVillage)
+        // TODO: add event for new building
         return startVillage
     }
 
@@ -48,6 +49,7 @@ class BuildingService @Inject constructor(
         if (buildingsAround.isNotEmpty()) {
             throw BadRequestException("Building placement is too close to other buildings")
         }
+        // TODO: Check for units too
     }
 
     fun getBuildings(x1: Int, x2: Int, y1: Int, y2: Int) = buildingRepository.findBuildingsBetween(x1, x2, y1, y2)

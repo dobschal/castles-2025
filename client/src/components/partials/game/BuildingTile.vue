@@ -1,5 +1,5 @@
 <template>
-  <div class="building-tile">
+  <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
     <p class="banner">
       {{ building.user.username }}
     </p>
@@ -14,17 +14,23 @@
 
 // TODO: Mark own village with a different color
 
-import { onBeforeUnmount, onMounted } from "vue";
+import { computed, onBeforeUnmount, onMounted } from "vue";
 import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import OpenVillageAction from "@/components/partials/game/actions/OpenVillageAction.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
+import { useAuthStore } from "@/store/authStore.ts";
 
 const props = defineProps<{
   building: BuildingEntity;
 }>();
 const buildingsStore = useBuildingsStore();
+const authStore = useAuthStore();
+
+const isOwnBuilding = computed(() => {
+  return props.building.user.id === authStore.user?.id;
+});
 
 onMounted(() => {
   MAP_TILE_CLICKED.on(onMapTileClicked);
@@ -63,6 +69,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   &.ACCEPTABLE {
     img {
       filter: brightness(1.2);
+    }
+  }
+
+  &.is-own-building {
+    .banner {
+      background: rgb(119 47 0 / 68%);
     }
   }
 

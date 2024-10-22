@@ -26,4 +26,7 @@ export const en = {
     text: "Please choose a location for your first village.",
     dialog: "Do you want to start here?",
   },
+  openVillageAction: {
+    createWorker: "Create worker",
+  },
 };

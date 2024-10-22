@@ -20,7 +20,7 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     @RolesAllowed(USER_ROLE)
     @POST
     @Path("/start-village")
-    fun register(request: SaveStartVillageRequestDto) = buildingService.saveStartVillage(request.x, request.y)
+    fun createStartVillage(request: SaveStartVillageRequestDto) = buildingService.saveStartVillage(request.x, request.y)
 
     @RolesAllowed(USER_ROLE)
     @GET

@@ -1,10 +1,18 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { UserEntity } from "@/types/model/UserEntity.ts";
+import { Optional } from "@/types/core/Optional.ts";
+
+let UserGateway;
+import("@/gateways/UserGateway.ts").then((module) => {
+  UserGateway = module.UserGateway;
+});
 
 export const useAuthStore = defineStore(
   "auth",
   () => {
     const token = ref("");
+    const user = ref<Optional<UserEntity>>();
 
     const hasToken = computed(() => token.value !== "");
 
@@ -38,11 +46,17 @@ export const useAuthStore = defineStore(
       return parsed.groups;
     });
 
+    async function loadUser(): Promise<void> {
+      user.value = await UserGateway.instance.getUser();
+    }
+
     return {
       token,
       hasToken,
       roles,
       isTokenExpired,
+      user,
+      loadUser,
     };
   },
 

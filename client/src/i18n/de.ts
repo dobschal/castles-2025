@@ -28,4 +28,7 @@ export const de = {
     text: "Bitte wähle einen Standort für dein erstes Dorf.",
     dialog: "Möchtest du hier starten?",
   },
+  openVillageAction: {
+    createWorker: "Arbeiter erstellen",
+  },
 };

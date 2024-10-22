@@ -42,7 +42,7 @@ export const RegistrationPageRoute: RouteRecordRaw = {
 
 export const MainPageRoute: RouteRecordRaw = {
   path: "/",
-  name: "MainPage",
+  name: "GamePage",
   component: () => import("@/components/pages/Game.vue"),
   meta: { title, layout: MainLayout, roles: ["user"] },
 };

@@ -8,8 +8,6 @@
     :class="[mapTile.state]"
   >
     <div class="image-wrapper">
-      <!-- TODO:Adjust sizing of new forst tile  -->
-
       <img
         v-if="mapTile.type === MapTileType.FOREST"
         :src="forestTile"
@@ -42,7 +40,8 @@
       v-if="building"
       :building="building"
       :class="[mapTile.state]"
-    ></BuildingTile>
+    />
+    <UnitTile v-if="unit" :unit="unit" :class="[mapTile.state]" />
   </div>
 </template>
 
@@ -59,8 +58,11 @@ import { computed, ref } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
+import { useUnitsStore } from "@/store/unitsStore.ts";
+import UnitTile from "@/components/partials/game/UnitTile.vue";
 
 const buildingsStore = useBuildingsStore();
+const unitsStore = useUnitsStore();
 const props = defineProps<{
   mapTile: MapTileDto;
 }>();
@@ -70,6 +72,12 @@ const isMouseOver = ref(false);
 const building = computed<Optional<BuildingEntity>>(() => {
   return buildingsStore.buildings.find((building) => {
     return building.x === props.mapTile.x && building.y === props.mapTile.y;
+  });
+});
+
+const unit = computed(() => {
+  return unitsStore.units.find((unit) => {
+    return unit.x === props.mapTile.x && unit.y === props.mapTile.y;
   });
 });
 

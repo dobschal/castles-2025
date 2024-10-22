@@ -11,15 +11,21 @@ import ActionOverlay from "@/components/partials/game/ActionOverlay.vue";
 import { onMounted, watch } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useMapStore } from "@/store/mapStore.ts";
+import { useAuthStore } from "@/store/authStore.ts";
+import { useUnitsStore } from "@/store/unitsStore.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
+const authStore = useAuthStore();
+const unitsStore = useUnitsStore();
 
 onMounted(async () => {
+  await authStore.loadUser();
   // We need to make a first map load e.g. if no start village is
   // given...
   await mapStore.loadMap();
   await buildingsStore.loadBuildings();
+  await unitsStore.loadUnits();
   // As we are changing the map position, we need don't need to
   // explicit load the map and buildings afterward. The watchers
   // will take care of that.
@@ -32,6 +38,7 @@ watch(
   async () => {
     await mapStore.loadMap();
     await buildingsStore.loadBuildings();
+    await unitsStore.loadUnits();
   },
 );
 </script>
