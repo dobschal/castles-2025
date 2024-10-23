@@ -10,10 +10,12 @@
 import { ACTION } from "@/events.ts";
 import { type Component, shallowRef, ShallowRef } from "vue";
 import { Optional } from "@/types/core/Optional.ts";
+import { useActionStore } from "@/store/actionStore.ts";
 
 const component: ShallowRef<Optional<Component>> = shallowRef();
 let promise: Promise<void> | undefined;
 let resolve: (() => void) | undefined;
+const actionStore = useActionStore();
 
 ACTION.on((c: Component) => {
   if (component.value) {
@@ -21,6 +23,7 @@ ACTION.on((c: Component) => {
     return;
   }
 
+  actionStore.isActionActive = true;
   component.value = c;
   promise = new Promise((r) => {
     resolve = r;
@@ -30,6 +33,7 @@ ACTION.on((c: Component) => {
 });
 
 function close(): void {
+  actionStore.isActionActive = false;
   component.value = undefined;
   resolve?.();
 }

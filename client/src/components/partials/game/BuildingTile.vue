@@ -74,8 +74,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
   .banner {
     position: absolute;
-    top: -28%;
-    left: 48%;
+    top: -0%;
+    left: 0%;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
@@ -83,7 +83,7 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     padding: 5px;
     z-index: 2;
     font-size: 0.75rem;
-    transform: rotate(45deg);
+    transform: rotate(45deg) translateX(23%) translateY(-200%);
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
   }
 

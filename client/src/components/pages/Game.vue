@@ -2,7 +2,7 @@
   <div class="map-wrapper">
     <MapLayer></MapLayer>
   </div>
-  <EventsOverlay />
+  <EventsOverlay v-if="!actionStore.isActionActive" />
   <ActionOverlay />
 </template>
 
@@ -16,12 +16,14 @@ import { useAuthStore } from "@/store/authStore.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import EventsOverlay from "@/components/partials/game/EventsOverlay.vue";
+import { useActionStore } from "@/store/actionStore.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const authStore = useAuthStore();
 const unitsStore = useUnitsStore();
 const eventsStore = useEventsStore();
+const actionStore = useActionStore();
 let isMounted = false;
 
 onMounted(async () => {
