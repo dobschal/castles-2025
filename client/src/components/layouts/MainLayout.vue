@@ -19,11 +19,13 @@
     <div v-if="authStore.hasToken">
       <h2>Menu</h2>
       <ul>
-        <!--        <li>-->
-        <!--          <router-link to="/about">About</router-link>-->
-        <!--        </li>-->
         <li>
           <span class="link" @click="logout">{{ t("general.logout") }}</span>
+        </li>
+        <li>
+          <span class="link" @click="toggleLanguage">
+            {{ i18n.global.locale.value === "en" ? "Deutsch" : "English" }}
+          </span>
         </li>
       </ul>
     </div>
@@ -47,6 +49,7 @@ import CButton from "@/components/partials/general/CButton.vue";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/store/authStore.ts";
 import router from "@/core/router.ts";
+import { i18n, setLocale } from "@/core/i18n.ts";
 
 const versionStore = useVersionStore();
 const dropdownMenuVisible = ref(false);
@@ -65,6 +68,10 @@ function logout(): void {
   authStore.token = "";
   closeDropdownMenu();
   router.push("/login");
+}
+
+function toggleLanguage(): void {
+  setLocale(i18n.global.locale.value === "en" ? "de" : "en");
 }
 </script>
 
@@ -118,8 +125,9 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4rem;
+  padding: 2rem 4rem;
   animation: drive-in 0.5s ease-in-out;
+  overflow-y: auto;
 
   ul {
     list-style-type: none;
@@ -156,6 +164,7 @@ nav {
 section {
   display: flex;
   width: 100%;
-  min-height: calc(100vh - 4rem);
+  height: calc(100vh - 4rem);
+  overflow-y: auto;
 }
 </style>
