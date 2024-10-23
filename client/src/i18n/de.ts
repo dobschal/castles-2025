@@ -9,6 +9,7 @@ export const de = {
     close: "Schließen",
     logout: "Abmelden",
     back: "Zurück",
+    cancel: "Abbrechen",
   },
   registration: {
     title: "Registrierung",
@@ -30,5 +31,9 @@ export const de = {
   },
   openVillageAction: {
     createWorker: "Arbeiter erstellen",
+    moveUnit: "Einheit bewegen",
+  },
+  unitAction: {
+    moveText: "Wohin soll die Einheit bewegt werden?",
   },
 };

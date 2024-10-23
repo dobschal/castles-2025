@@ -1,5 +1,12 @@
 <template>
   <p>Village of {{ buildingsStore.activeBuilding?.user.username }}</p>
+  <CButton
+    v-if="isOwnBuilding && unit"
+    class="small"
+    @click="openUnitActionOverlay"
+  >
+    {{ t("openVillageAction.moveUnit") }}
+  </CButton>
   <CButton v-if="isOwnBuilding" class="small" @click="createWorker">
     {{ t("openVillageAction.createWorker") }}
   </CButton>
@@ -15,11 +22,14 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { handleFatalError } from "@/core/util.ts";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useI18n } from "vue-i18n";
-import { MAP_TILE_CLICKED } from "@/events.ts";
+import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
+import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
+import { Optional } from "@/types/core/Optional.ts";
+import { UnitEntity } from "@/types/model/UnitEntity.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -31,6 +41,15 @@ const { t } = useI18n();
 const isOwnBuilding = computed(() => {
   // Ignore case when both are undefined
   return buildingsStore.activeBuilding?.user.id === authStore.user?.id;
+});
+
+const unit = computed<Optional<UnitEntity>>(() => {
+  return unitsStore.units.find((unit) => {
+    return (
+      unit.x === buildingsStore.activeBuilding!.x &&
+      unit.y === buildingsStore.activeBuilding!.y
+    );
+  });
 });
 
 onMounted(() => {
@@ -80,6 +99,12 @@ async function createWorker(): Promise<void> {
   } catch (error) {
     handleFatalError(error);
   }
+}
+
+function openUnitActionOverlay(): void {
+  close();
+  unitsStore.activeUnit = unit.value!;
+  ACTION.dispatch(UnitAction);
 }
 </script>
 

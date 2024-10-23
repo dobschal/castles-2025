@@ -1,6 +1,7 @@
 package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.CreateUnitRequestDto
+import eu.dobschal.model.dto.request.MoveUnitRequestDto
 import eu.dobschal.service.UnitService
 import eu.dobschal.utils.USER_ROLE
 import jakarta.annotation.security.RolesAllowed
@@ -25,4 +26,9 @@ class UnitResource @Inject constructor(private val unitService: UnitService) {
     @POST
     @Path("/")
     fun createUnit(request: CreateUnitRequestDto) = unitService.createUnit(request.x, request.y, request.type)
+
+    @RolesAllowed(USER_ROLE)
+    @POST
+    @Path("/move")
+    fun moveUnit(request: MoveUnitRequestDto) = unitService.moveUnit(request.x, request.y, request.unitId)
 }

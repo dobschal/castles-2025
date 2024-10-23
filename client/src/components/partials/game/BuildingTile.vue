@@ -12,7 +12,7 @@ import { computed, onBeforeUnmount, onMounted } from "vue";
 import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
-import OpenVillageAction from "@/components/partials/game/actions/OpenVillageAction.vue";
+import VillageAction from "@/components/partials/game/actions/VillageAction.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 
@@ -40,7 +40,7 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   }
 
   buildingsStore.activeBuilding = props.building;
-  ACTION.dispatch(OpenVillageAction);
+  ACTION.dispatch(VillageAction);
 }
 </script>
 

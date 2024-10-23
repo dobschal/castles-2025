@@ -17,4 +17,8 @@ export class UnitGateway extends Gateway {
   async createUnit(data: Omit<UnitEntity, "id" | "user">): Promise<void> {
     return this.request<void>("POST", "/v1/units", data);
   }
+
+  async moveUnit(x: number, y: number, unitId: number): Promise<UnitEntity> {
+    return this.request<UnitEntity>("POST", `/v1/units/move`, { x, y, unitId });
+  }
 }

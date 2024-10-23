@@ -29,9 +29,15 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   MAP_TILE_CLICKED.off(onMapTileClicked);
+  mapStore.mapTiles.forEach((tile) => {
+    tile.state = MapTileState.DEFAULT;
+  });
 });
 
-watch(() => [mapStore.mapTiles, buildingsStore.buildings], setMapTilesStates);
+watch(
+  () => [mapStore.mapTiles, buildingsStore.buildings, unitsStore.units],
+  setMapTilesStates,
+);
 
 function setMapTilesStates(): void {
   mapStore.mapTiles.forEach((tile) => {
@@ -77,9 +83,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 async function createStartVillage(mapTile: MapTileDto): Promise<void> {
   try {
     await BuildingGateway.instance.saveStartVillage(mapTile);
-    mapStore.mapTiles.forEach((tile) => {
-      tile.state = MapTileState.DEFAULT;
-    });
     await buildingsStore.loadBuildings();
     emit("close-action");
   } catch (error) {

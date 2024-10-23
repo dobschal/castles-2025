@@ -20,4 +20,12 @@ class UnitRepository : PanacheRepository<Unit> {
     fun findUnitByXAndY(x: Int, y: Int): Unit? {
         return find("x = ?1 and y = ?2", x, y).firstResult()
     }
+
+    fun findById(id: Int): Unit? {
+        return find("id", id).firstResult()
+    }
+
+    fun updatePosition(id: Int, x: Int, y: Int) {
+        update("x = ?1, y = ?2 where id = ?3", x, y, id)
+    }
 }
