@@ -9,6 +9,8 @@ export const en = {
     logout: "Logout",
     back: "Back",
     cancel: "Cancel",
+    lessThanMinute: "Just now",
+    ago: "{0} ago",
   },
   registration: {
     title: "Registration",
@@ -33,5 +35,16 @@ export const en = {
   },
   unitAction: {
     moveText: "Where should the unit be moved?",
+  },
+  events: {
+    openOverlay: "Show events",
+    other: {
+      UNIT_MOVED: "You moved a unit to {x}, {y}.",
+      UNIT_CREATED: "You created a unit at {x}, {y}.",
+    },
+    own: {
+      UNIT_MOVED: "{playerName} moved a unit to {x}, {y}.",
+      UNIT_CREATED: "{playerName} created a unit at {x}, {y}.",
+    },
   },
 };

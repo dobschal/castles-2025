@@ -10,6 +10,8 @@ export const de = {
     logout: "Abmelden",
     back: "Zurück",
     cancel: "Abbrechen",
+    lessThanMinute: "Gerade eben",
+    ago: "vor {0}",
   },
   registration: {
     title: "Registrierung",
@@ -35,5 +37,16 @@ export const de = {
   },
   unitAction: {
     moveText: "Wohin soll die Einheit bewegt werden?",
+  },
+  events: {
+    openOverlay: "Events anzeigen",
+    other: {
+      UNIT_MOVED: "Du hast eine Einheit nach {x}, {y} bewegt.",
+      UNIT_CREATED: "Du hast eine Einheit erstellt.",
+    },
+    own: {
+      UNIT_MOVED: "{playerName} hat eine Einheit nach {x}, {y} bewegt.",
+      UNIT_CREATED: "{playerName} hat eine Einheit erstellt.",
+    },
   },
 };
