@@ -1,4 +1,4 @@
-import { Gateway } from "@/gateways/Gateway.ts";
+import { Gateway } from "@/core/Gateway.ts";
 
 export class VersionGateway extends Gateway {
   static get instance(): VersionGateway {

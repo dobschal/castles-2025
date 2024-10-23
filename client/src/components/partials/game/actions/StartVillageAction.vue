@@ -83,7 +83,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 async function createStartVillage(mapTile: MapTileDto): Promise<void> {
   try {
     await BuildingGateway.instance.saveStartVillage(mapTile);
-    await buildingsStore.loadBuildings();
     emit("close-action");
   } catch (error) {
     handleFatalError(error);

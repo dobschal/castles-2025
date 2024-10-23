@@ -1,10 +1,13 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.BuildingRepository
+import eu.dobschal.repository.EventRepository
 import eu.dobschal.repository.MapTileRepository
 import eu.dobschal.repository.UnitRepository
 import jakarta.enterprise.context.ApplicationScoped
@@ -17,7 +20,8 @@ class UnitService @Inject constructor(
     private val mapTileRepository: MapTileRepository,
     private val buildingRepository: BuildingRepository,
     private val unitRepository: UnitRepository,
-    private val userService: UserService
+    private val userService: UserService,
+    private val eventRepository: EventRepository
 ) {
 
     val buildingUnitMapping: Map<UnitType, BuildingType> = mapOf(
@@ -41,8 +45,7 @@ class UnitService @Inject constructor(
                 throw BadRequestException("serverError.wrongBuildingOwner")
             }
         } ?: throw BadRequestException("serverError.noBuilding")
-
-
+        
         unitRepository.findUnitByXAndY(x, y)?.let {
             throw BadRequestException("serverError.conflictingUnit")
         }
@@ -54,6 +57,13 @@ class UnitService @Inject constructor(
             this.user = user
         }
         unitRepository.save(unit)
+        eventRepository.save(Event().apply {
+            this.user1 = user
+            this.type = EventType.UNIT_CREATED
+            this.unit = unit
+            this.x = x
+            this.y = y
+        })
         return unit
     }
 
@@ -79,6 +89,13 @@ class UnitService @Inject constructor(
         unit.x = x
         unit.y = y
         unitRepository.updatePosition(unit.id!!, x, y)
+        eventRepository.save(Event().apply {
+            this.user1 = user
+            this.type = EventType.UNIT_MOVED
+            this.unit = unit
+            this.x = x
+            this.y = y
+        })
         return unit
     }
 }

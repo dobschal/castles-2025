@@ -1,4 +1,4 @@
-import { Gateway } from "@/gateways/Gateway.ts";
+import { Gateway } from "@/core/Gateway.ts";
 import { LoginResponse } from "@/types/response/LoginResponse.ts";
 import { UserEntity } from "@/types/model/UserEntity.ts";
 

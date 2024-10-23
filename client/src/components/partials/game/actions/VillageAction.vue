@@ -94,7 +94,6 @@ async function createWorker(): Promise<void> {
       y: buildingsStore.activeBuilding!.y,
       type: UnitType.WORKER,
     });
-    await unitsStore.loadUnits();
     close();
   } catch (error) {
     handleFatalError(error);

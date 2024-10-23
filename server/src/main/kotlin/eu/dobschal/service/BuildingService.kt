@@ -1,9 +1,12 @@
 package eu.dobschal.service
 
 import eu.dobschal.model.entity.Building
+import eu.dobschal.model.entity.Event
 import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.repository.BuildingRepository
+import eu.dobschal.repository.EventRepository
 import eu.dobschal.repository.MapTileRepository
 import eu.dobschal.repository.UnitRepository
 import jakarta.enterprise.context.ApplicationScoped
@@ -16,7 +19,8 @@ class BuildingService @Inject constructor(
     private val buildingRepository: BuildingRepository,
     private val mapTileRepository: MapTileRepository,
     private val unitRepository: UnitRepository,
-    private val userService: UserService
+    private val userService: UserService,
+    private val eventRepository: EventRepository
 ) {
     fun getStartVillage(): Building {
         val currentUserId = userService.getCurrentUser().id!!
@@ -37,6 +41,13 @@ class BuildingService @Inject constructor(
             this.user = currentUser
         }
         buildingRepository.save(startVillage)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.BUILDING_CREATED
+            this.building = startVillage
+            this.x = x
+            this.y = y
+        })
         return startVillage
     }
 

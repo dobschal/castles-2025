@@ -83,8 +83,6 @@ function close(): void {
 }
 
 async function onMapTileClicked(mapTile: MapTileDto): Promise<void> {
-  console.info("Move unit to: ", mapTile);
-
   if (mapTile.state !== MapTileState.ACCEPTABLE) return;
 
   try {
@@ -93,7 +91,6 @@ async function onMapTileClicked(mapTile: MapTileDto): Promise<void> {
       mapTile.y,
       activeUnit.value!.id,
     );
-    await unitsStore.loadUnits();
     close();
   } catch (e) {
     handleFatalError(e);

@@ -1,4 +1,4 @@
-import { Gateway } from "@/gateways/Gateway.ts";
+import { Gateway } from "@/core/Gateway.ts";
 import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
 import { MapTileEntity } from "@/types/model/MapTileEntity.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";

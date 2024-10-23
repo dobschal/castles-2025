@@ -11,7 +11,7 @@ export class Gateway {
   ): Promise<ResponseType> {
     const authStore = useAuthStore();
 
-    console.info("Request: ", method, this.baseUrl, urlPath);
+    const t1 = Date.now();
 
     const options: RequestInit = {
       method,
@@ -26,6 +26,8 @@ export class Gateway {
     };
 
     const rawResponse = await fetch(this.baseUrl + urlPath, options);
+
+    console.info("Request: ", method, Date.now() - t1 + "ms", urlPath);
 
     if (rawResponse.status >= 400) {
       throw rawResponse;
