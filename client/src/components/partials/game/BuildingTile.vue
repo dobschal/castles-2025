@@ -8,12 +8,6 @@
 </template>
 
 <script lang="ts" setup>
-// TODO: Need to check if it is own village
-
-// TODO: Need to check the building type
-
-// TODO: Mark own village with a different color
-
 import { computed, onBeforeUnmount, onMounted } from "vue";
 import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";

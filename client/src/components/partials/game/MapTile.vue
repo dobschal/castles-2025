@@ -81,8 +81,6 @@ const unit = computed(() => {
   });
 });
 
-// TODO: Need touch support too
-
 function onMouseDown(): void {
   mouseDownTimestamp = Date.now();
 }
@@ -108,8 +106,6 @@ function onMouseLeave(): void {
 .map-tile {
   position: absolute;
   user-select: none;
-
-  // TODO: The image filter are CPU intensive, --> use pre generated images instead
 
   &.FORBIDDEN {
     .image-wrapper {

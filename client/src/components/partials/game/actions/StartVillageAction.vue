@@ -13,7 +13,9 @@ import { useI18n } from "vue-i18n";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
+import { useUnitsStore } from "@/store/unitsStore.ts";
 
+const unitsStore = useUnitsStore();
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const { t } = useI18n();
@@ -43,9 +45,15 @@ function setMapTilesStates(): void {
       );
     });
 
-    // TODO: Check for units too
+    const conflictingUnit = unitsStore.units.find((unit) => {
+      return unit.x === tile.x && unit.y === tile.y;
+    });
 
-    if (conflictingBuilding || tile.type !== MapTileType.PLAIN) {
+    if (
+      conflictingUnit ||
+      conflictingBuilding ||
+      tile.type !== MapTileType.PLAIN
+    ) {
       tile.state = MapTileState.FORBIDDEN;
     } else {
       tile.state = MapTileState.ACCEPTABLE;

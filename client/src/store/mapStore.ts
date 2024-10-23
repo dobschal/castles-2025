@@ -57,8 +57,6 @@ export const useMapStore = defineStore("map", () => {
     };
   });
 
-  // TODO: Have functions in a service layer
-
   function getOffset(
     windowWidth: number,
     windowHeight: number,

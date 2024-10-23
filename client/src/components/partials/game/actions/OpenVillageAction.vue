@@ -78,7 +78,6 @@ async function createWorker(): Promise<void> {
     await unitsStore.loadUnits();
     close();
   } catch (error) {
-    // TODO: Show error message correctly based on server feedback
     handleFatalError(error);
   }
 }

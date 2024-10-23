@@ -20,4 +20,8 @@ class BuildingRepository : PanacheRepository<Building> {
     fun findBuildingsBetween(x1: Int, x2: Int, y1: Int, y2: Int): List<Building> {
         return find("x >= ?1 and x < ?2 and y >= ?3 and y < ?4", x1, x2, y1, y2).list()
     }
+
+    fun findBuildingByXAndY(x: Int, y: Int): Building? {
+        return find("x = ?1 and y = ?2", x, y).firstResult()
+    }
 }

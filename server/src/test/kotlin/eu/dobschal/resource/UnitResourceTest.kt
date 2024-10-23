@@ -1,9 +1,13 @@
 package eu.dobschal.resource
 
 import eu.dobschal.model.dto.UserCredentialsDto
+import eu.dobschal.model.dto.request.CreateUnitRequestDto
+import eu.dobschal.model.dto.response.ErrorResponseDto
 import eu.dobschal.model.dto.response.JwtResponseDto
+import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.entity.User
+import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.BuildingRepository
 import eu.dobschal.repository.MapTileRepository
@@ -103,36 +107,135 @@ class UnitResourceTest {
 
     @Test
     fun `Get units from x1, y1, x2,y2 without units in that area is returning an empty list`() {
-        TODO()
+        val unit = Unit().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        assert(unitRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=2&x2=4&y1=2&y2=4")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(List::class.java)
+        assert(response.size == 0)
     }
 
     @Test
     fun `Create unit on wrong building fails`() {
-        TODO()
-    }
-
-    @Test
-    fun `Create unit without enough resources (beer) fails`() {
-        TODO()
-    }
-
-    @Test
-    fun `Create unit adds correct unit to database`() {
-        TODO()
+        val castle = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().`as`(ErrorResponseDto::class.java)
+        assert(response.message == "serverError.wrongBuildingType")
     }
 
     @Test
     fun `Create unit adds correct unit to database and is return by get units`() {
-        TODO()
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Unit::class.java)
+        assert(response.type == UnitType.WORKER)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.WORKER)
+        val response2 = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Unit>::class.java)
+        assert(response2.size == 1)
+        assert(response2.first().type == UnitType.WORKER)
+
     }
 
     @Test
     fun `Create unit on field with existing unit fails`() {
-        TODO()
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val unit = Unit().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        assert(unitRepository.listAll().size == 1)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().`as`(ErrorResponseDto::class.java)
+        logger.info { "Response: $response" }
+        assert(response.message == "serverError.conflictingUnit")
+        assert(unitRepository.listAll().size == 1)
     }
 
     @Test
     fun `Create worker on village of opponent fails`() {
-        TODO()
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user2
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        assert(unitRepository.listAll().size == 0)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().`as`(ErrorResponseDto::class.java)
+        assert(response.message == "serverError.wrongBuildingOwner")
+        assert(unitRepository.listAll().size == 0)
     }
 }
