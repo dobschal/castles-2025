@@ -17,6 +17,10 @@ let promise: Promise<void> | undefined;
 let resolve: (() => void) | undefined;
 const actionStore = useActionStore();
 
+// Actually we could have this managed via store only, but an event
+// is more flexible and can be used from anywhere. Also it handles
+// promises. E.g. on the StartVillageAction we wait to be finished
+// before we can do anything else.
 ACTION.on((c: Component) => {
   if (component.value) {
     // avoid multiple actions at the same time
