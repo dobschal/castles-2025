@@ -1,5 +1,8 @@
 <template>
-  <img class="unit-tile" src="@/assets/tiles/worker.png" alt="Unit" />
+  <div class="unit-tile">
+    <div v-if="!buildingOnPosition" class="ownership-indicator"></div>
+    <img src="@/assets/tiles/worker.png" alt="Unit" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -51,13 +54,40 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 </script>
 
 <style lang="scss" scoped>
+@keyframes pulsate {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+
 .unit-tile {
   position: absolute;
-  width: 125%;
-  height: 125%;
-  margin-left: -21%;
-  margin-top: -10%;
   pointer-events: none;
   z-index: 3;
+
+  .ownership-indicator {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+    box-shadow: 0 0 6px 6px white;
+    animation: pulsate 2s infinite;
+    margin-left: 70%;
+    margin-top: -25%;
+  }
+
+  img {
+    width: 125%;
+    height: 125%;
+    margin-left: -21%;
+    margin-top: -10%;
+  }
 }
 </style>

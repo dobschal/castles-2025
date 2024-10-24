@@ -115,7 +115,6 @@ function onMouseLeave(): void {
 .map-tile {
   position: absolute;
   user-select: none;
-  border: solid red 1px;
 
   &.FORBIDDEN {
     .image-wrapper {

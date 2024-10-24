@@ -1,8 +1,6 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
-    <p class="banner" :style="bannerStyle">
-      {{ building.user.username }}
-    </p>
+    <p class="banner" :style="bannerStyle">{{ building.user.username }}</p>
     <img
       src="@/assets/tiles/village.png"
       class="building village"
@@ -82,16 +80,16 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     }
   }
 
-  &.is-own-building {
+  &:not(.is-own-building) {
     .banner {
-      background: rgb(119 47 0 / 68%);
+      color: lightgray;
     }
   }
 
   .banner {
     position: absolute;
-    top: -0%;
-    left: 0%;
+    top: 0;
+    left: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
@@ -99,7 +97,7 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     padding: 5px;
     z-index: 2;
     font-size: 0.75rem;
-    transform: rotate(45deg) translateX(23%) translateY(-200%);
+    transform: rotate(45deg) translateX(23%) translateY(-160%);
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
   }
 
