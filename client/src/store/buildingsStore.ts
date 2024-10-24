@@ -14,6 +14,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const startVillage = ref<Optional<BuildingEntity>>();
   const isLoadingBuildings = ref(false);
   const activeBuilding = ref<Optional<BuildingEntity>>();
+  let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -30,17 +31,23 @@ export const useBuildingsStore = defineStore("buildings", () => {
   }
 
   async function loadBuildings(): Promise<void> {
-    if (isLoadingBuildings.value) return;
-    try {
-      isLoadingBuildings.value = true;
-      buildings.value = await BuildingGateway.instance.getBuildings(
-        mapStore.currentMapRange,
-      );
-    } catch (e) {
-      handleFatalError(e);
-    } finally {
-      isLoadingBuildings.value = false;
+    if (loadTimeout) {
+      clearTimeout(loadTimeout);
     }
+
+    loadTimeout = setTimeout(async () => {
+      if (isLoadingBuildings.value) return;
+      try {
+        isLoadingBuildings.value = true;
+        buildings.value = await BuildingGateway.instance.getBuildings(
+          mapStore.currentMapRange,
+        );
+      } catch (e) {
+        handleFatalError(e);
+      } finally {
+        isLoadingBuildings.value = false;
+      }
+    }, 40);
   }
 
   return {

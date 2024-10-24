@@ -1,5 +1,11 @@
 <template>
-  <p>Village of {{ buildingsStore.activeBuilding?.user.username }}</p>
+  <p>
+    {{
+      t("openVillageAction.villageOf", {
+        playerName: buildingsStore.activeBuilding?.user.username,
+      })
+    }}
+  </p>
   <CButton
     v-if="isOwnBuilding && unit"
     class="small"

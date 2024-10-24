@@ -8,7 +8,21 @@ export const useEventsStore = defineStore("event", () => {
   const mapStore = useMapStore();
   const events = ref<Array<EventEntity>>([]);
 
+  function removeEventsNotOnCurrentMap(): void {
+    for (let i = events.value.length - 1; i >= 0; i--) {
+      if (
+        !mapStore.isOnCurrentMap({
+          x: events.value[i].x,
+          y: events.value[i].y,
+        })
+      ) {
+        events.value.splice(i, 1);
+      }
+    }
+  }
+
   async function loadEvents(): Promise<void> {
+    removeEventsNotOnCurrentMap();
     const response = await EventGateway.instance.getEvents(
       mapStore.currentMapRange,
       events.value[0]?.id ?? -1,
@@ -20,9 +34,10 @@ export const useEventsStore = defineStore("event", () => {
 
       if (!eventExists) {
         events.value.unshift(eventEntity);
-        console.info("Event happened: ", eventEntity);
       }
     }
+
+    events.value.sort((a, b) => b.id - a.id);
   }
 
   return {

@@ -1,6 +1,6 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
-    <p class="banner">
+    <p class="banner" :style="bannerStyle">
       {{ building.user.username }}
     </p>
     <img src="@/assets/tiles/village.png" class="building" alt="Building" />
@@ -15,15 +15,23 @@ import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import VillageAction from "@/components/partials/game/actions/VillageAction.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
+import { useMapStore } from "@/store/mapStore.ts";
 
 const props = defineProps<{
   building: BuildingEntity;
 }>();
 const buildingsStore = useBuildingsStore();
 const authStore = useAuthStore();
+const mapStore = useMapStore();
 
 const isOwnBuilding = computed(() => {
   return props.building.user.id === authStore.user?.id;
+});
+
+const bannerStyle = computed(() => {
+  return {
+    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
+  };
 });
 
 onMounted(() => {

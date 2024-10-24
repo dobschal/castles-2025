@@ -11,6 +11,7 @@ export const en = {
     cancel: "Cancel",
     lessThanMinute: "Just now",
     ago: "{0} ago",
+    changeLanguage: "Change language: {0}",
   },
   registration: {
     title: "Registration",
@@ -32,11 +33,13 @@ export const en = {
   openVillageAction: {
     createWorker: "Create worker",
     moveUnit: "Move unit",
+    villageOf: "Village of {playerName}",
   },
   unitAction: {
     moveText: "Where should the unit be moved?",
   },
   events: {
+    noEvents: "No events available...",
     openOverlay: "Show events",
     other: {
       UNIT_MOVED: "You moved a unit to {x}, {y}.",

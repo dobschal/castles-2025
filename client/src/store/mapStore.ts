@@ -5,6 +5,7 @@ import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
 import { MapGateway } from "@/gateways/MapGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
+import { Optional } from "@/types/core/Optional.ts";
 
 export const useMapStore = defineStore("map", () => {
   const mapTiles = ref<Array<MapTileDto>>([]);
@@ -15,6 +16,7 @@ export const useMapStore = defineStore("map", () => {
   const offsetY = ref(0);
   const isLoadingMap = ref(false);
   const mapControlsDisabled = ref(false);
+  let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 
   // Used to calculate the rotation of the map
   const radians = 45 * (Math.PI / 180);
@@ -92,17 +94,32 @@ export const useMapStore = defineStore("map", () => {
   }
 
   async function loadMap(): Promise<void> {
-    if (isLoadingMap.value) return;
-    try {
-      isLoadingMap.value = true;
-      mapTiles.value = await MapGateway.instance.getMapTiles(
-        currentMapRange.value,
-      );
-    } catch (e) {
-      handleFatalError(e);
-    } finally {
-      isLoadingMap.value = false;
+    if (loadTimeout) {
+      clearTimeout(loadTimeout);
     }
+
+    loadTimeout = setTimeout(async () => {
+      if (isLoadingMap.value) return;
+      try {
+        isLoadingMap.value = true;
+        mapTiles.value = await MapGateway.instance.getMapTiles(
+          currentMapRange.value,
+        );
+      } catch (e) {
+        handleFatalError(e);
+      } finally {
+        isLoadingMap.value = false;
+      }
+    }, 40);
+  }
+
+  function isOnCurrentMap({ x, y }: PointDto): boolean {
+    return (
+      x >= currentMapRange.value.x1 &&
+      x <= currentMapRange.value.x2 &&
+      y >= currentMapRange.value.y1 &&
+      y <= currentMapRange.value.y2
+    );
   }
 
   return {
@@ -117,5 +134,6 @@ export const useMapStore = defineStore("map", () => {
     offsetX,
     offsetY,
     mapTileSize,
+    isOnCurrentMap,
   };
 });

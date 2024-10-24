@@ -12,6 +12,7 @@ export const de = {
     cancel: "Abbrechen",
     lessThanMinute: "Gerade eben",
     ago: "vor {0}",
+    changeLanguage: "Sprache ändern: {0}",
   },
   registration: {
     title: "Registrierung",
@@ -34,11 +35,13 @@ export const de = {
   openVillageAction: {
     createWorker: "Arbeiter erstellen",
     moveUnit: "Einheit bewegen",
+    villageOf: "Dorf von {playerName}",
   },
   unitAction: {
     moveText: "Wohin soll die Einheit bewegt werden?",
   },
   events: {
+    noEvents: "Keine Events vorhanden...",
     openOverlay: "Events anzeigen",
     other: {
       UNIT_MOVED: "Du hast eine Einheit nach {x}, {y} bewegt.",

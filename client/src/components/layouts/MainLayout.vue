@@ -24,7 +24,11 @@
         </li>
         <li>
           <span class="link" @click="toggleLanguage">
-            {{ i18n.global.locale.value === "en" ? "Deutsch" : "English" }}
+            {{
+              t("general.changeLanguage", [
+                i18n.global.locale.value === "en" ? "Deutsch" : "English",
+              ])
+            }}
           </span>
         </li>
       </ul>

@@ -11,19 +11,26 @@ export const useUnitsStore = defineStore("units", () => {
   const isLoadingUnits = ref(false);
   const mapStore = useMapStore();
   const activeUnit = ref<Optional<UnitEntity>>();
+  let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 
   async function loadUnits(): Promise<void> {
-    if (isLoadingUnits.value) return;
-    try {
-      isLoadingUnits.value = true;
-      units.value = await UnitGateway.instance.getUnits(
-        mapStore.currentMapRange,
-      );
-    } catch (e) {
-      handleFatalError(e);
-    } finally {
-      isLoadingUnits.value = false;
+    if (loadTimeout) {
+      clearTimeout(loadTimeout);
     }
+
+    loadTimeout = setTimeout(async () => {
+      if (isLoadingUnits.value) return;
+      try {
+        isLoadingUnits.value = true;
+        units.value = await UnitGateway.instance.getUnits(
+          mapStore.currentMapRange,
+        );
+      } catch (e) {
+        handleFatalError(e);
+      } finally {
+        isLoadingUnits.value = false;
+      }
+    }, 40);
   }
 
   return {

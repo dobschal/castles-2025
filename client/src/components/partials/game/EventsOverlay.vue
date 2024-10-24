@@ -9,6 +9,9 @@
       <small>{{ event.duration }}: </small><br />
       <span>{{ t(event.translationKey, event.params) }}</span>
     </div>
+    <div v-if="events.length === 0 || !events">
+      <span>{{ t("events.noEvents") }}</span>
+    </div>
   </div>
   <CButton @click="toggle" class="small toggle-button">
     {{ isOpen ? t("general.close") : t("events.openOverlay") }}
@@ -27,7 +30,7 @@ const authStore = useAuthStore();
 const eventsStore = useEventsStore();
 const mapStore = useMapStore();
 const { t } = useI18n();
-const isOpen = ref(true);
+const isOpen = ref(false);
 
 interface CustomEvent {
   id: number;
