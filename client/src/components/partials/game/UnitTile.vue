@@ -53,10 +53,10 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 <style lang="scss" scoped>
 .unit-tile {
   position: absolute;
-  width: 140%;
-  height: 140%;
-  margin-left: -35%;
-  margin-top: -20%;
+  width: 125%;
+  height: 125%;
+  margin-left: -21%;
+  margin-top: -10%;
   pointer-events: none;
   z-index: 3;
 }

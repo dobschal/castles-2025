@@ -3,7 +3,16 @@
     <p class="banner" :style="bannerStyle">
       {{ building.user.username }}
     </p>
-    <img src="@/assets/tiles/village.png" class="building" alt="Building" />
+    <img
+      src="@/assets/tiles/village.png"
+      class="building village"
+      alt="Building"
+    />
+    <img
+      src="@/assets/tiles/village-top-layer.png"
+      class="building-top-layer village"
+      alt="Building"
+    />
   </div>
 </template>
 
@@ -59,7 +68,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
   user-select: none;
 
   &.FORBIDDEN {
@@ -96,10 +104,31 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   }
 
   img.building {
-    width: 150%;
-    margin-left: -25%;
-    margin-top: -25%;
+    position: absolute;
+    top: 0;
+    left: 0;
     pointer-events: none;
+    z-index: 1;
+
+    &.village {
+      width: 150%;
+      margin-left: -15%;
+      margin-top: -25%;
+    }
+  }
+
+  img.building-top-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 4;
+
+    &.village {
+      width: 150%;
+      margin-left: -13%;
+      margin-top: -25%;
+    }
   }
 }
 </style>

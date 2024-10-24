@@ -42,6 +42,14 @@
       :class="[mapTile.state]"
     />
     <UnitTile v-if="unit" :unit="unit" :class="[mapTile.state]" />
+    <div class="image-top-layer-wrapper">
+      <img
+        v-if="mapTile.type === MapTileType.FOREST"
+        :src="forestTileTopLayer"
+        class="forest-top-layer"
+        alt="Forest"
+      />
+    </div>
   </div>
 </template>
 
@@ -50,6 +58,7 @@ import { MapTileType } from "@/types/enum/MapTileType.ts";
 import mountainTile from "@/assets/tiles/mountain.png";
 import waterTile from "@/assets/tiles/water.png";
 import forestTile from "@/assets/tiles/forest.png";
+import forestTileTopLayer from "@/assets/tiles/forest-top-layer.png";
 import plainTile from "@/assets/tiles/plain.png";
 import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
@@ -106,6 +115,7 @@ function onMouseLeave(): void {
 .map-tile {
   position: absolute;
   user-select: none;
+  border: solid red 1px;
 
   &.FORBIDDEN {
     .image-wrapper {
@@ -163,6 +173,22 @@ function onMouseLeave(): void {
         margin-left: -25%;
         margin-top: -30%;
         width: 150%;
+      }
+    }
+  }
+
+  .image-top-layer-wrapper {
+    position: absolute;
+    z-index: 4;
+
+    img {
+      display: block;
+      pointer-events: none;
+
+      &.forest-top-layer {
+        width: 150%;
+        margin-left: -25%;
+        margin-top: -25%;
       }
     }
   }
