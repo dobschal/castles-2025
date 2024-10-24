@@ -7,14 +7,14 @@ import { ACTION } from "@/events.ts";
 import StartVillageAction from "@/components/partials/game/actions/StartVillageAction.vue";
 import { handleFatalError } from "@/core/util.ts";
 import { useMapStore } from "@/store/mapStore.ts";
+import { Queue } from "@/core/Queue.ts";
 
 export const useBuildingsStore = defineStore("buildings", () => {
   const mapStore = useMapStore();
   const buildings = ref<Array<BuildingEntity>>([]);
   const startVillage = ref<Optional<BuildingEntity>>();
-  const isLoadingBuildings = ref(false);
   const activeBuilding = ref<Optional<BuildingEntity>>();
-  let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
+  const loadBuildingsQueue = new Queue(300, 3);
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -31,23 +31,15 @@ export const useBuildingsStore = defineStore("buildings", () => {
   }
 
   async function loadBuildings(): Promise<void> {
-    if (loadTimeout) {
-      clearTimeout(loadTimeout);
-    }
-
-    loadTimeout = setTimeout(async () => {
-      if (isLoadingBuildings.value) return;
+    await loadBuildingsQueue.add(async () => {
       try {
-        isLoadingBuildings.value = true;
         buildings.value = await BuildingGateway.instance.getBuildings(
           mapStore.currentMapRange,
         );
       } catch (e) {
         handleFatalError(e);
-      } finally {
-        isLoadingBuildings.value = false;
       }
-    }, 40);
+    });
   }
 
   return {

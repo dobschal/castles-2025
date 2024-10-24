@@ -1,6 +1,9 @@
 <template>
   <div class="unit-tile">
-    <div v-if="!buildingOnPosition" class="ownership-indicator"></div>
+    <div
+      v-if="!buildingOnPosition && isOwnUnit"
+      class="ownership-indicator"
+    ></div>
     <img src="@/assets/tiles/worker.png" alt="Unit" />
   </div>
 </template>

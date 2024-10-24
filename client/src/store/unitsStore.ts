@@ -5,32 +5,24 @@ import { ref } from "vue";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Optional } from "@/types/core/Optional.ts";
+import { Queue } from "@/core/Queue.ts";
 
 export const useUnitsStore = defineStore("units", () => {
   const units = ref<Array<UnitEntity>>([]);
-  const isLoadingUnits = ref(false);
   const mapStore = useMapStore();
   const activeUnit = ref<Optional<UnitEntity>>();
-  let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
+  const loadUnitsQueue = new Queue(300, 3);
 
   async function loadUnits(): Promise<void> {
-    if (loadTimeout) {
-      clearTimeout(loadTimeout);
-    }
-
-    loadTimeout = setTimeout(async () => {
-      if (isLoadingUnits.value) return;
+    await loadUnitsQueue.add(async () => {
       try {
-        isLoadingUnits.value = true;
         units.value = await UnitGateway.instance.getUnits(
           mapStore.currentMapRange,
         );
       } catch (e) {
         handleFatalError(e);
-      } finally {
-        isLoadingUnits.value = false;
       }
-    }, 40);
+    });
   }
 
   return {

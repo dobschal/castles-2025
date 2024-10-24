@@ -1,6 +1,8 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
-    <p class="banner" :style="bannerStyle">{{ building.user.username }}</p>
+    <p class="banner" :style="bannerStyle">
+      {{ building.user.username }}
+    </p>
     <img
       src="@/assets/tiles/village.png"
       class="building village"
