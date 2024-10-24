@@ -17,6 +17,9 @@ class User {
     @Column(name = "password", nullable = false)
     lateinit var password: String
 
+    @Column(name = "beer", nullable = false)
+    var beer: Int? = null
+
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: LocalDateTime = LocalDateTime.now()
 

@@ -6,14 +6,12 @@ import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
-import eu.dobschal.repository.BuildingRepository
-import eu.dobschal.repository.EventRepository
-import eu.dobschal.repository.MapTileRepository
-import eu.dobschal.repository.UnitRepository
+import eu.dobschal.repository.*
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.NotFoundException
+import kotlin.math.abs
 
 @ApplicationScoped
 class UnitService @Inject constructor(
@@ -21,7 +19,9 @@ class UnitService @Inject constructor(
     private val buildingRepository: BuildingRepository,
     private val unitRepository: UnitRepository,
     private val userService: UserService,
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val priceService: PriceService,
+    private val userRepository: UserRepository
 ) {
 
     val buildingUnitMapping: Map<UnitType, BuildingType> = mapOf(
@@ -45,9 +45,14 @@ class UnitService @Inject constructor(
                 throw BadRequestException("serverError.wrongBuildingOwner")
             }
         } ?: throw BadRequestException("serverError.noBuilding")
-        
+
         unitRepository.findUnitByXAndY(x, y)?.let {
             throw BadRequestException("serverError.conflictingUnit")
+        }
+
+        val price = priceService.getPriceForUnitCreation(user, type)
+        if (user.beer!! < price) {
+            throw BadRequestException("serverError.notEnoughBeer")
         }
 
         val unit = Unit().apply {
@@ -57,6 +62,7 @@ class UnitService @Inject constructor(
             this.user = user
         }
         unitRepository.save(unit)
+        userRepository.deductBeerFromUser(user.id!!, price)
         eventRepository.save(Event().apply {
             this.user1 = user
             this.type = EventType.UNIT_CREATED
@@ -78,7 +84,7 @@ class UnitService @Inject constructor(
                 throw BadRequestException("serverError.conflictingUnit")
             }
         }
-        val isDistanceWrong = Math.abs(unit.x!! - x) > 1 || Math.abs(unit.y!! - y) > 1 || (unit.y == y && unit.x == x)
+        val isDistanceWrong = abs(unit.x!! - x) > 1 || abs(unit.y!! - y) > 1 || (unit.y == y && unit.x == x)
         if (isDistanceWrong) {
             throw BadRequestException("serverError.wrongDistance")
         }
@@ -86,9 +92,14 @@ class UnitService @Inject constructor(
         if (isMapTileWater) {
             throw BadRequestException("serverError.cannotMoveOnWaterTile")
         }
+        val price = priceService.getPriceForUnitMove(unit.type)
+        if (user.beer!! < price) {
+            throw BadRequestException("serverError.notEnoughBeer")
+        }
         unit.x = x
         unit.y = y
         unitRepository.updatePosition(unit.id!!, x, y)
+        userRepository.deductBeerFromUser(user.id!!, price)
         eventRepository.save(Event().apply {
             this.user1 = user
             this.type = EventType.UNIT_MOVED

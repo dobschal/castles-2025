@@ -4,6 +4,7 @@
   </div>
   <EventsOverlay v-if="!actionStore.isActionActive" />
   <ActionOverlay />
+  <StatsOverlay />
 </template>
 
 <script setup lang="ts">
@@ -17,6 +18,7 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import EventsOverlay from "@/components/partials/game/EventsOverlay.vue";
 import { useActionStore } from "@/store/actionStore.ts";
+import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
@@ -58,6 +60,7 @@ watch(
 watch(
   () => eventsStore.events,
   async () => {
+    await authStore.loadUser();
     await buildingsStore.loadBuildings();
     await unitsStore.loadUnits();
   },

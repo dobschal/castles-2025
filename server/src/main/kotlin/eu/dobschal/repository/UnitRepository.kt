@@ -28,4 +28,9 @@ class UnitRepository : PanacheRepository<Unit> {
     fun updatePosition(id: Int, x: Int, y: Int) {
         update("x = ?1, y = ?2 where id = ?3", x, y, id)
     }
+
+    fun findAllByUser(id: Int): List<Unit> {
+        return find("user.id", id).list()
+
+    }
 }

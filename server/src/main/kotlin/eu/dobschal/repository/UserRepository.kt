@@ -9,6 +9,10 @@ import jakarta.transaction.Transactional
 @ApplicationScoped
 class UserRepository : PanacheRepository<User> {
 
+    fun findById(id: Int): User? {
+        return find("id", id).firstResult()
+    }
+
     fun findByUsername(username: String): User? {
         return find("username", username).firstResult()
     }
@@ -24,6 +28,12 @@ class UserRepository : PanacheRepository<User> {
         }
         persist(user)
         return user
+    }
+
+    fun deductBeerFromUser(userId: Int, amount: Int) {
+        val user = findById(userId) ?: return
+        user.beer = user.beer?.minus(amount)
+        persist(user)
     }
 
 }

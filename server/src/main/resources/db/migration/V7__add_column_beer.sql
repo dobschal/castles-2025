@@ -1,0 +1,2 @@
+ALTER TABLE castles_user
+    ADD COLUMN beer INTEGER DEFAULT 500;
