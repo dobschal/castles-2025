@@ -8,6 +8,7 @@ import StartVillageAction from "@/components/partials/game/actions/StartVillageA
 import { handleFatalError } from "@/core/util.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Queue } from "@/core/Queue.ts";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
 
 export const useBuildingsStore = defineStore("buildings", () => {
   const mapStore = useMapStore();
@@ -42,11 +43,27 @@ export const useBuildingsStore = defineStore("buildings", () => {
     });
   }
 
+  function findFarmNextTo(
+    x: number,
+    y: number,
+    userId: number,
+  ): Optional<BuildingEntity> {
+    return buildings.value.find((building) => {
+      return (
+        building.type === BuildingType.FARM &&
+        Math.abs(building.x - x) <= 1 &&
+        Math.abs(building.y - y) <= 1 &&
+        building.user.id === userId
+      );
+    });
+  }
+
   return {
     loadBuildings,
     loadStartVillage,
     buildings,
     startVillage,
     activeBuilding,
+    findFarmNextTo,
   };
 });

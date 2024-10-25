@@ -24,4 +24,8 @@ class BuildingRepository : PanacheRepository<Building> {
     fun findBuildingByXAndY(x: Int, y: Int): Building? {
         return find("x = ?1 and y = ?2", x, y).firstResult()
     }
+
+    fun findByUser(userId: Int): List<Building> {
+        return find("user.id = ?1", userId).list()
+    }
 }

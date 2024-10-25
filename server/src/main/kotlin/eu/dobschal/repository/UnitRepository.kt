@@ -31,6 +31,9 @@ class UnitRepository : PanacheRepository<Unit> {
 
     fun findAllByUser(id: Int): List<Unit> {
         return find("user.id", id).list()
+    }
 
+    fun deleteById(id: Int) {
+        delete("id", id)
     }
 }

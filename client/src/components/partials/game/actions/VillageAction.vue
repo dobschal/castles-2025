@@ -7,7 +7,7 @@
     }}
   </p>
   <CButton
-    v-if="isOwnBuilding && unit"
+    v-if="isOwnBuilding && unitAtPosition"
     class="small"
     @click="openUnitActionOverlay"
   >
@@ -40,8 +40,6 @@ import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
-import { Optional } from "@/types/core/Optional.ts";
-import { UnitEntity } from "@/types/model/UnitEntity.ts";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 
@@ -65,15 +63,6 @@ const unitAtPosition = computed(() => {
 const isOwnBuilding = computed(() => {
   // Ignore case when both are undefined
   return buildingsStore.activeBuilding?.user.id === authStore.user?.id;
-});
-
-const unit = computed<Optional<UnitEntity>>(() => {
-  return unitsStore.units.find((unit) => {
-    return (
-      unit.x === buildingsStore.activeBuilding!.x &&
-      unit.y === buildingsStore.activeBuilding!.y
-    );
-  });
 });
 
 const isBuildingWorkerAvailable = computed(() => {
@@ -133,7 +122,7 @@ async function createWorker(): Promise<void> {
 
 function openUnitActionOverlay(): void {
   close();
-  unitsStore.activeUnit = unit.value!;
+  unitsStore.activeUnit = unitAtPosition.value!;
   ACTION.dispatch(UnitAction);
 }
 </script>

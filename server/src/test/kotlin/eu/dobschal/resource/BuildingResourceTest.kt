@@ -226,5 +226,45 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(response.size == 0)
     }
 
+    @Test
+    fun `Create building should work`() {
+        TODO()
+    }
+
+    @Test
+    fun `Create building not on PLAIN should fail`() {
+        TODO()
+    }
+
+    @Test
+    fun `Create building without enough beer should fail`() {
+        TODO()
+    }
+
+    @Test
+    fun `Create building on other building should fail`() {
+        TODO()
+    }
+
+    @Test
+    fun `Create brewery without farm next to it should fail`() {
+        TODO()
+    }
+
+    @Test
+    fun `Create building without worker on field should fail`() {
+        TODO()
+    }
+
+    @Test
+    fun `Create building should deduct beer from user`() {
+        TODO()
+    }
+
+    @Test
+    fun `Worker dies after creating a building`() {
+        TODO()
+    }
+
 
 }

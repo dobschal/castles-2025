@@ -6,6 +6,7 @@ import { Queue } from "@/core/Queue.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { PriceGateway } from "@/gateways/PriceGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
 
 export const usePricesStore = defineStore("prices", () => {
   const prices = ref<Optional<PricesEntity>>();
@@ -41,10 +42,21 @@ export const usePricesStore = defineStore("prices", () => {
     return price;
   }
 
+  function getBuildPrice(buildingType: BuildingType): number {
+    const price = prices.value?.buildingPrices[buildingType];
+
+    if (!price) {
+      throw new Error(`No price found for building type ${buildingType}`);
+    }
+
+    return price;
+  }
+
   return {
     prices,
     loadPrices,
     getCreationPrice,
     getMovePrice,
+    getBuildPrice,
   };
 });

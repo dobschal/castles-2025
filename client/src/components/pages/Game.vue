@@ -85,7 +85,7 @@ async function keepLoadingEvents(): Promise<void> {
     if (isMounted) {
       keepLoadingEvents();
     }
-  }, 1000);
+  }, 500);
 }
 </script>
 

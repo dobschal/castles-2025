@@ -2,6 +2,7 @@ import { Gateway } from "@/core/Gateway.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
 import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
 
 export class BuildingGateway extends Gateway {
   static get instance(): BuildingGateway {
@@ -21,5 +22,15 @@ export class BuildingGateway extends Gateway {
       "GET",
       "/v1/buildings?" + this.objectToQueryString(data),
     );
+  }
+
+  async createBuilding(
+    data: PointDto,
+    type: BuildingType,
+  ): Promise<BuildingEntity> {
+    return this.request<BuildingEntity>("POST", "/v1/buildings", {
+      ...data,
+      type,
+    });
   }
 }

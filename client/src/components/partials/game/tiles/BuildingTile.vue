@@ -1,7 +1,15 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
-    <div v-if="isOwnBuilding" class="ownership-indicator"></div>
-    <p class="banner" :style="bannerStyle">
+    <div
+      v-if="isOwnBuilding"
+      class="ownership-indicator"
+      :class="building.type"
+    ></div>
+    <p
+      v-if="building.type === BuildingType.VILLAGE"
+      class="banner"
+      :style="bannerStyle"
+    >
       {{ building.user.username }}
     </p>
     <template v-if="building.type === BuildingType.VILLAGE">
@@ -181,6 +189,16 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     margin-left: 70%;
     margin-top: -50%;
     z-index: 3;
+
+    &.FARM {
+      margin-left: 50%;
+      margin-top: -10%;
+    }
+
+    &.BREWERY {
+      margin-left: 50%;
+      margin-top: -15%;
+    }
   }
 
   .banner {
@@ -245,8 +263,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
     &.brewery {
       width: 150%;
-      margin-left: -20%;
-      margin-top: -25%;
+      margin-left: -25%;
+      margin-top: -26%;
     }
   }
 }

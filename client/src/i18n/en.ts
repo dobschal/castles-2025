@@ -47,6 +47,8 @@ export const en = {
   unitAction: {
     chooseAction: "Choose an action for the unit:",
     moveText: "Where should the unit be moved?",
+    buildFarm: "Build farm",
+    buildBrewery: "Build brewery",
   },
   events: {
     noEvents: "No events available...",

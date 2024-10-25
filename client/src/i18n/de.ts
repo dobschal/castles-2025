@@ -49,6 +49,8 @@ export const de = {
   unitAction: {
     chooseAction: "Wähle eine Aktion für die Einheit:",
     moveText: "Wohin soll die Einheit bewegt werden?",
+    buildFarm: "Farm bauen",
+    buildBrewery: "Brauerei bauen",
   },
   events: {
     noEvents: "Keine Events vorhanden...",
