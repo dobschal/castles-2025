@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useMapStore } from "@/store/mapStore.ts";
-import MapTile from "@/components/partials/game/MapTile.vue";
+import MapTile from "@/components/partials/game/tiles/MapTile.vue";
 import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";

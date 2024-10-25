@@ -1,6 +1,7 @@
 package eu.dobschal.repository
 
 import eu.dobschal.model.entity.User
+import eu.dobschal.utils.START_BEER
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
@@ -25,6 +26,7 @@ class UserRepository : PanacheRepository<User> {
         val user = User().apply {
             this.username = username
             this.password = password
+            this.beer = START_BEER
         }
         persist(user)
         return user

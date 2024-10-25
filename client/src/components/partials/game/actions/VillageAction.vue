@@ -2,7 +2,7 @@
   <p>
     {{
       t("villageAction.villageOf", {
-        playerName: buildingsStore.activeBuilding?.user.username
+        playerName: buildingsStore.activeBuilding?.user.username,
       })
     }}
   </p>
@@ -20,6 +20,7 @@
     :disabled="!isBuildingWorkerAvailable"
   >
     {{ t("villageAction.createWorker") }}
+    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
   </CButton>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
@@ -41,11 +42,14 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
 import { Optional } from "@/types/core/Optional.ts";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
+import { usePricesStore } from "@/store/pricesStore.ts";
+import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const authStore = useAuthStore();
 const unitsStore = useUnitsStore();
+const pricesStore = usePricesStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 
@@ -73,9 +77,10 @@ const unit = computed<Optional<UnitEntity>>(() => {
 });
 
 const isBuildingWorkerAvailable = computed(() => {
-  // TODO: Check price...
+  const price = pricesStore.getCreationPrice(UnitType.WORKER);
+  const beer = authStore.user?.beer ?? 0;
 
-  return !unitAtPosition.value;
+  return !unitAtPosition.value && beer >= price;
 });
 
 onMounted(() => {
@@ -90,7 +95,7 @@ onMounted(() => {
   mapStore.mapTileSize = 200;
   mapStore.goToPosition({
     x: buildingsStore.activeBuilding.x,
-    y: buildingsStore.activeBuilding.y
+    y: buildingsStore.activeBuilding.y,
   });
 });
 
@@ -103,7 +108,7 @@ onBeforeUnmount(() => {
   if (buildingsStore.activeBuilding) {
     mapStore.goToPosition({
       x: buildingsStore.activeBuilding.x,
-      y: buildingsStore.activeBuilding.y
+      y: buildingsStore.activeBuilding.y,
     });
     buildingsStore.activeBuilding = undefined;
   }
@@ -118,7 +123,7 @@ async function createWorker(): Promise<void> {
     await UnitGateway.instance.createUnit({
       x: buildingsStore.activeBuilding!.x,
       y: buildingsStore.activeBuilding!.y,
-      type: UnitType.WORKER
+      type: UnitType.WORKER,
     });
     close();
   } catch (error) {

@@ -12,50 +12,54 @@ export const de = {
     cancel: "Abbrechen",
     lessThanMinute: "Gerade eben",
     ago: "vor {0}",
-    changeLanguage: "Sprache ändern: {0}"
+    changeLanguage: "Sprache ändern: {0}",
+  },
+  serverError: {
+    notEnoughBeer: "Nicht genug Bier vorhanden.",
   },
   registration: {
     title: "Registrierung",
     error:
       "Fehler bei der Registrierung aufgetreten. Ggf. ist der Nutzername schon vergeben.",
     action: "Account erstellen",
-    toLogin: "Zum Login"
+    toLogin: "Zum Login",
   },
   login: {
     title: "Login",
     error:
       "Fehler bei der Anmeldung aufgetreten. Bitte überprüfe deine Eingaben.",
     action: "Anmelden",
-    toRegistration: "Zur Registrierung"
+    toRegistration: "Zur Registrierung",
   },
   startVillageAction: {
     text: "Bitte wähle einen Standort für dein erstes Dorf.",
-    dialog: "Möchtest du hier starten?"
+    dialog: "Möchtest du hier starten?",
   },
   villageAction: {
     createWorker: "Arbeiter erstellen",
     moveUnit: "Einheit bewegen",
-    villageOf: "Dorf von {playerName}"
+    villageOf: "Dorf von {playerName}",
   },
   farmAction: {
-    farmOf: "Farm von {playerName}"
+    farmOf: "Farm von {playerName}",
   },
   breweryAction: {
-    breweryOf: "Brauerei von {playerName}"
+    breweryOf: "Brauerei von {playerName}",
   },
   unitAction: {
-    moveText: "Wohin soll die Einheit bewegt werden?"
+    chooseAction: "Wähle eine Aktion für die Einheit:",
+    moveText: "Wohin soll die Einheit bewegt werden?",
   },
   events: {
     noEvents: "Keine Events vorhanden...",
     openOverlay: "Events anzeigen",
     other: {
       UNIT_MOVED: "Du hast eine Einheit nach {x}, {y} bewegt.",
-      UNIT_CREATED: "Du hast eine Einheit erstellt."
+      UNIT_CREATED: "Du hast eine Einheit erstellt.",
     },
     own: {
       UNIT_MOVED: "{playerName} hat eine Einheit nach {x}, {y} bewegt.",
-      UNIT_CREATED: "{playerName} hat eine Einheit erstellt."
-    }
-  }
+      UNIT_CREATED: "{playerName} hat eine Einheit erstellt.",
+    },
+  },
 };

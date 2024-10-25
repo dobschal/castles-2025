@@ -11,7 +11,8 @@ export const useUnitsStore = defineStore("units", () => {
   const units = ref<Array<UnitEntity>>([]);
   const mapStore = useMapStore();
   const activeUnit = ref<Optional<UnitEntity>>();
-  const loadUnitsQueue = new Queue(300, 3);
+  const activeMoveUnit = ref<Optional<UnitEntity>>();
+  const loadUnitsQueue = new Queue(500, 3);
 
   async function loadUnits(): Promise<void> {
     await loadUnitsQueue.add(async () => {
@@ -29,5 +30,6 @@ export const useUnitsStore = defineStore("units", () => {
     loadUnits,
     units,
     activeUnit,
+    activeMoveUnit,
   };
 });

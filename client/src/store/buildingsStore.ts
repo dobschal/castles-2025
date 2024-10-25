@@ -14,7 +14,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const buildings = ref<Array<BuildingEntity>>([]);
   const startVillage = ref<Optional<BuildingEntity>>();
   const activeBuilding = ref<Optional<BuildingEntity>>();
-  const loadBuildingsQueue = new Queue(300, 3);
+  const loadBuildingsQueue = new Queue(500, 3);
 
   async function loadStartVillage(): Promise<void> {
     try {

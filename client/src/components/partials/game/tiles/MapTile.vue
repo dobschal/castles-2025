@@ -7,7 +7,7 @@
     @mouseup="onMouseUp"
     :class="[mapTile.state]"
   >
-    <div class="image-wrapper">
+    <div v-if="mapTile.state !== MapTileState.FORBIDDEN" class="image-wrapper">
       <img
         v-if="mapTile.type === MapTileType.FOREST"
         :src="forestTile"
@@ -33,19 +33,52 @@
         alt="Mountain"
       />
     </div>
+    <div v-else class="image-wrapper">
+      <img
+        v-if="mapTile.type === MapTileType.FOREST"
+        src="@/assets/tiles/forest-disabled.png"
+        class="forest"
+        alt="Forest"
+      />
+      <img
+        v-else-if="mapTile.type === MapTileType.PLAIN"
+        src="@/assets/tiles/plain-disabled.png"
+        class="plain"
+        alt="Plain"
+      />
+      <img
+        v-else-if="mapTile.type === MapTileType.WATER"
+        src="@/assets/tiles/water-disabled.png"
+        class="water"
+        alt="Water"
+      />
+      <img
+        v-else-if="mapTile.type === MapTileType.MOUNTAIN"
+        src="@/assets/tiles/mountain-disabled.png"
+        class="mountain"
+        alt="Mountain"
+      />
+    </div>
     <div v-if="isMouseOver" class="position-text">
       {{ mapTile.x }} / {{ mapTile.y }}
     </div>
-    <BuildingTile
-      v-if="building"
-      :building="building"
-      :class="[mapTile.state]"
-    />
+    <BuildingTile v-if="building" :building="building" :map-tile="mapTile" />
     <UnitTile v-if="unit" :unit="unit" :class="[mapTile.state]" />
-    <div class="image-top-layer-wrapper">
+    <div
+      v-if="mapTile.state !== MapTileState.FORBIDDEN"
+      class="image-top-layer-wrapper"
+    >
       <img
         v-if="mapTile.type === MapTileType.FOREST"
         :src="forestTileTopLayer"
+        class="forest-top-layer"
+        alt="Forest"
+      />
+    </div>
+    <div v-else class="image-top-layer-wrapper">
+      <img
+        v-if="mapTile.type === MapTileType.FOREST"
+        src="@/assets/tiles/forest-top-layer-disabled.png"
         class="forest-top-layer"
         alt="Forest"
       />
@@ -62,13 +95,14 @@ import forestTileTopLayer from "@/assets/tiles/forest-top-layer.png";
 import plainTile from "@/assets/tiles/plain.png";
 import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
-import BuildingTile from "@/components/partials/game/BuildingTile.vue";
+import BuildingTile from "@/components/partials/game/tiles/BuildingTile.vue";
 import { computed, ref } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
-import UnitTile from "@/components/partials/game/UnitTile.vue";
+import UnitTile from "@/components/partials/game/tiles/UnitTile.vue";
+import { MapTileState } from "@/types/enum/MapTileState.ts";
 
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
@@ -116,14 +150,6 @@ function onMouseLeave(): void {
   position: absolute;
   user-select: none;
 
-  &.FORBIDDEN {
-    .image-wrapper {
-      img {
-        filter: sepia(0.75) brightness(0.75);
-      }
-    }
-  }
-
   &.ACCEPTABLE {
     cursor: pointer;
 
@@ -132,12 +158,6 @@ function onMouseLeave(): void {
         img {
           filter: brightness(1.4);
         }
-      }
-    }
-
-    .image-wrapper {
-      img {
-        filter: brightness(1.1);
       }
     }
   }
@@ -198,6 +218,7 @@ function onMouseLeave(): void {
     right: 0;
     background-color: rgba(255, 255, 255, 0.5);
     padding: 0.5rem;
+    z-index: 10;
   }
 }
 </style>

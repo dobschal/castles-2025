@@ -93,7 +93,7 @@ function onMouseMove(toast: ToastModel): void {
 <style lang="scss" scoped>
 .toast-container {
   position: fixed;
-  top: 0;
+  top: 4rem;
   right: 0;
   max-width: 320px;
   width: 100%;
@@ -101,13 +101,10 @@ function onMouseMove(toast: ToastModel): void {
   z-index: 999;
 
   .toast {
-    box-shadow:
-      1px 1px 3px rgba(0, 0, 0, 0.2),
-      3px 3px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
     position: relative;
     font-size: 0.875rem; /* text-sm */
-    border-radius: 1rem; /* rounded-2xl */
-    padding: 0.5rem; /* p-2 */
+    padding: 0.5rem 1rem;
     color: #ffffff; /* text-white */
     margin-bottom: 0.5rem; /* mb-2 */
     display: flex; /* flex */

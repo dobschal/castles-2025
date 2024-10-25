@@ -15,7 +15,7 @@ export const useMapStore = defineStore("map", () => {
   const offsetX = ref(0);
   const offsetY = ref(0);
   const mapControlsDisabled = ref(false);
-  const loadMapQueue = new Queue(300, 3);
+  const loadMapQueue = new Queue(500, 3);
 
   // Used to calculate the rotation of the map
   const radians = 45 * (Math.PI / 180);

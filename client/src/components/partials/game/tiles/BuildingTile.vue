@@ -6,32 +6,78 @@
     </p>
     <template v-if="building.type === BuildingType.VILLAGE">
       <img
-        src="@/assets/tiles/village.png"
+        v-if="!isDisabled"
+        src="../../../../assets/tiles/village.png"
         class="building village"
         alt="Building"
       />
       <img
-        src="@/assets/tiles/village-top-layer.png"
+        v-else
+        src="../../../../assets/tiles/village-disabled.png"
+        class="building village"
+        alt="Building"
+      />
+      <img
+        v-if="!isDisabled"
+        src="../../../../assets/tiles/village-top-layer.png"
+        class="building-top-layer village"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/village-top-layer-disabled.png"
         class="building-top-layer village"
         alt="Building"
       />
     </template>
     <template v-if="building.type === BuildingType.FARM">
-      <img src="@/assets/tiles/farm.png" class="building farm" alt="Building" />
       <img
-        src="@/assets/tiles/farm-top-layer.png"
+        v-if="!isDisabled"
+        src="../../../../assets/tiles/farm.png"
+        class="building farm"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/farm-disabled.png"
+        class="building farm"
+        alt="Building"
+      />
+      <img
+        v-if="!isDisabled"
+        src="../../../../assets/tiles/farm-top-layer.png"
+        class="building-top-layer farm"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/farm-top-layer-disabled.png"
         class="building-top-layer farm"
         alt="Building"
       />
     </template>
     <template v-if="building.type === BuildingType.BREWERY">
       <img
-        src="@/assets/tiles/brewery.png"
+        v-if="!isDisabled"
+        src="../../../../assets/tiles/brewery.png"
         class="building brewery"
         alt="Building"
       />
       <img
-        src="@/assets/tiles/brewery-top-layer.png"
+        v-else
+        src="../../../../assets/tiles/brewery-disabled.png"
+        class="building brewery"
+        alt="Building"
+      />
+      <img
+        v-if="!isDisabled"
+        src="../../../../assets/tiles/brewery-top-layer.png"
+        class="building-top-layer brewery"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/brewery-top-layer-disabled.png"
         class="building-top-layer brewery"
         alt="Building"
       />
@@ -51,13 +97,19 @@ import { useMapStore } from "@/store/mapStore.ts";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
 import FarmAction from "@/components/partials/game/actions/FarmAction.vue";
 import BreweryAction from "@/components/partials/game/actions/BreweryAction.vue";
+import { MapTileState } from "@/types/enum/MapTileState.ts";
 
 const props = defineProps<{
   building: BuildingEntity;
+  mapTile: MapTileDto;
 }>();
 const buildingsStore = useBuildingsStore();
 const authStore = useAuthStore();
 const mapStore = useMapStore();
+
+const isDisabled = computed(() => {
+  return props.mapTile.state === MapTileState.FORBIDDEN;
+});
 
 const isOwnBuilding = computed(() => {
   return props.building.user.id === authStore.user?.id;
@@ -65,7 +117,7 @@ const isOwnBuilding = computed(() => {
 
 const bannerStyle = computed(() => {
   return {
-    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px"
+    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
   };
 });
 
@@ -117,18 +169,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   width: 100%;
   height: 100%;
   user-select: none;
-
-  &.FORBIDDEN {
-    img {
-      filter: sepia(0.75) brightness(0.75);
-    }
-  }
-
-  &.ACCEPTABLE {
-    img {
-      filter: brightness(1.2);
-    }
-  }
 
   .ownership-indicator {
     position: absolute;

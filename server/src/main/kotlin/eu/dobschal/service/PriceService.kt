@@ -4,6 +4,7 @@ import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.UnitRepository
+import eu.dobschal.utils.*
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import kotlin.math.pow
@@ -16,11 +17,10 @@ class PriceService @Inject constructor(
 
     fun getPriceForUnitCreation(user: User, type: UnitType): Int {
         val price = when (type) {
-            UnitType.WORKER -> 100
-            UnitType.SPEARMAN -> 200
-            UnitType.SWORDSMAN -> 300
-            UnitType.HORSEMAN -> 400
-            else -> throw IllegalArgumentException("Unknown unit type")
+            UnitType.WORKER -> WORKER_BASE_PRICE
+            UnitType.SPEARMAN -> SPEARMAN_BASE_PRICE
+            UnitType.SWORDSMAN -> SWORDSMAN_BASE_PRICE
+            UnitType.HORSEMAN -> HORSEMAN_BASE_PRICE
         }
         val units = unitRepository.findAllByUser(user.id!!)
         return (price * 2.0.pow(units.size.toDouble())).toInt()
@@ -28,18 +28,17 @@ class PriceService @Inject constructor(
 
     fun getPriceForUnitMove(type: UnitType): Int {
         return when (type) {
-            UnitType.WORKER -> 10
-            UnitType.SPEARMAN -> 20
-            UnitType.SWORDSMAN -> 30
-            UnitType.HORSEMAN -> 40
-            else -> throw IllegalArgumentException("Unknown unit type")
+            UnitType.WORKER -> WORKER_MOVE_PRICE
+            UnitType.SPEARMAN -> SPEARMAN_MOVE_PRICE
+            UnitType.SWORDSMAN -> SWORDSMAN_MOVE_PRICE
+            UnitType.HORSEMAN -> HORSEMAN_MOVE_PRICE
         }
     }
 
     fun getAllPrices(): PricesResponseDto {
         val user = userService.getCurrentUser()
-        val unitCreationPrices = UnitType.entries.map { it to getPriceForUnitCreation(user, it) }.toMap()
-        val unitMovePrices = UnitType.entries.map { it to getPriceForUnitMove(it) }.toMap()
+        val unitCreationPrices = UnitType.entries.associateWith { getPriceForUnitCreation(user, it) }
+        val unitMovePrices = UnitType.entries.associateWith { getPriceForUnitMove(it) }
         return PricesResponseDto(
             unitCreationPrices,
             unitMovePrices

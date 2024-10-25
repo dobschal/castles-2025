@@ -1,11 +1,12 @@
 <template>
   <div class="stats-overlay">
-    {{ authStore.user?.beer }} <img src="@/assets/beer.png" alt="Beer" />
+    <BeerDisplay size="lg" :beer="authStore.user?.beer ?? 0" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useAuthStore } from "@/store/authStore.ts";
+import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 
 const authStore = useAuthStore();
 </script>
@@ -22,11 +23,5 @@ const authStore = useAuthStore();
   box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
   border: solid 3px rgb(117, 59, 22);
   z-index: 90;
-
-  img {
-    width: 24px;
-    margin-left: 4px;
-    margin-bottom: -4px;
-  }
 }
 </style>

@@ -4,7 +4,7 @@
       v-if="!buildingOnPosition && isOwnUnit"
       class="ownership-indicator"
     ></div>
-    <img src="@/assets/tiles/worker.png" alt="Unit" />
+    <img src="../../../../assets/tiles/worker.png" alt="Unit" />
   </div>
 </template>
 

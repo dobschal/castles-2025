@@ -14,8 +14,6 @@ import jakarta.ws.rs.core.MediaType
 @Produces(MediaType.APPLICATION_JSON)
 class PriceResource @Inject constructor(private val priceService: PriceService) {
 
-    // TODO: Write tests for this
-
     @RolesAllowed(USER_ROLE)
     @GET
     fun getPrices() = priceService.getAllPrices()
