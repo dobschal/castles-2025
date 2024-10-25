@@ -1,8 +1,8 @@
 <template>
   <p>
     {{
-      t("openVillageAction.villageOf", {
-        playerName: buildingsStore.activeBuilding?.user.username,
+      t("villageAction.villageOf", {
+        playerName: buildingsStore.activeBuilding?.user.username
       })
     }}
   </p>
@@ -11,10 +11,15 @@
     class="small"
     @click="openUnitActionOverlay"
   >
-    {{ t("openVillageAction.moveUnit") }}
+    {{ t("villageAction.moveUnit") }}
   </CButton>
-  <CButton v-if="isOwnBuilding" class="small" @click="createWorker">
-    {{ t("openVillageAction.createWorker") }}
+  <CButton
+    v-if="isOwnBuilding"
+    class="small"
+    @click="createWorker"
+    :disabled="!isBuildingWorkerAvailable"
+  >
+    {{ t("villageAction.createWorker") }}
   </CButton>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
@@ -44,6 +49,15 @@ const unitsStore = useUnitsStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 
+const unitAtPosition = computed(() => {
+  return unitsStore.units.find((unit) => {
+    return (
+      unit.x === buildingsStore.activeBuilding!.x &&
+      unit.y === buildingsStore.activeBuilding!.y
+    );
+  });
+});
+
 const isOwnBuilding = computed(() => {
   // Ignore case when both are undefined
   return buildingsStore.activeBuilding?.user.id === authStore.user?.id;
@@ -58,6 +72,12 @@ const unit = computed<Optional<UnitEntity>>(() => {
   });
 });
 
+const isBuildingWorkerAvailable = computed(() => {
+  // TODO: Check price...
+
+  return !unitAtPosition.value;
+});
+
 onMounted(() => {
   if (!buildingsStore.activeBuilding) {
     return handleFatalError(new Error("No active building set"));
@@ -70,7 +90,7 @@ onMounted(() => {
   mapStore.mapTileSize = 200;
   mapStore.goToPosition({
     x: buildingsStore.activeBuilding.x,
-    y: buildingsStore.activeBuilding.y,
+    y: buildingsStore.activeBuilding.y
   });
 });
 
@@ -83,7 +103,7 @@ onBeforeUnmount(() => {
   if (buildingsStore.activeBuilding) {
     mapStore.goToPosition({
       x: buildingsStore.activeBuilding.x,
-      y: buildingsStore.activeBuilding.y,
+      y: buildingsStore.activeBuilding.y
     });
     buildingsStore.activeBuilding = undefined;
   }
@@ -98,7 +118,7 @@ async function createWorker(): Promise<void> {
     await UnitGateway.instance.createUnit({
       x: buildingsStore.activeBuilding!.x,
       y: buildingsStore.activeBuilding!.y,
-      type: UnitType.WORKER,
+      type: UnitType.WORKER
     });
     close();
   } catch (error) {

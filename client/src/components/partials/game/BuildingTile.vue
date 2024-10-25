@@ -1,18 +1,41 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
+    <div v-if="isOwnBuilding" class="ownership-indicator"></div>
     <p class="banner" :style="bannerStyle">
       {{ building.user.username }}
     </p>
-    <img
-      src="@/assets/tiles/village.png"
-      class="building village"
-      alt="Building"
-    />
-    <img
-      src="@/assets/tiles/village-top-layer.png"
-      class="building-top-layer village"
-      alt="Building"
-    />
+    <template v-if="building.type === BuildingType.VILLAGE">
+      <img
+        src="@/assets/tiles/village.png"
+        class="building village"
+        alt="Building"
+      />
+      <img
+        src="@/assets/tiles/village-top-layer.png"
+        class="building-top-layer village"
+        alt="Building"
+      />
+    </template>
+    <template v-if="building.type === BuildingType.FARM">
+      <img src="@/assets/tiles/farm.png" class="building farm" alt="Building" />
+      <img
+        src="@/assets/tiles/farm-top-layer.png"
+        class="building-top-layer farm"
+        alt="Building"
+      />
+    </template>
+    <template v-if="building.type === BuildingType.BREWERY">
+      <img
+        src="@/assets/tiles/brewery.png"
+        class="building brewery"
+        alt="Building"
+      />
+      <img
+        src="@/assets/tiles/brewery-top-layer.png"
+        class="building-top-layer brewery"
+        alt="Building"
+      />
+    </template>
   </div>
 </template>
 
@@ -25,6 +48,9 @@ import VillageAction from "@/components/partials/game/actions/VillageAction.vue"
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { useMapStore } from "@/store/mapStore.ts";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
+import FarmAction from "@/components/partials/game/actions/FarmAction.vue";
+import BreweryAction from "@/components/partials/game/actions/BreweryAction.vue";
 
 const props = defineProps<{
   building: BuildingEntity;
@@ -39,7 +65,7 @@ const isOwnBuilding = computed(() => {
 
 const bannerStyle = computed(() => {
   return {
-    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
+    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px"
   };
 });
 
@@ -57,11 +83,33 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   }
 
   buildingsStore.activeBuilding = props.building;
-  ACTION.dispatch(VillageAction);
+  switch (props.building.type) {
+    case BuildingType.VILLAGE:
+      ACTION.dispatch(VillageAction);
+      break;
+    case BuildingType.FARM:
+      ACTION.dispatch(FarmAction);
+      break;
+    case BuildingType.BREWERY:
+      ACTION.dispatch(BreweryAction);
+      break;
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+@keyframes pulsate {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+
 .building-tile {
   position: absolute;
   top: 0;
@@ -82,10 +130,17 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     }
   }
 
-  &:not(.is-own-building) {
-    .banner {
-      color: lightgray;
-    }
+  .ownership-indicator {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+    box-shadow: 0 0 6px 6px white;
+    animation: pulsate 2s infinite;
+    margin-left: 70%;
+    margin-top: -50%;
+    z-index: 3;
   }
 
   .banner {
@@ -112,7 +167,19 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
     &.village {
       width: 150%;
-      margin-left: -15%;
+      margin-left: -18%;
+      margin-top: -23%;
+    }
+
+    &.farm {
+      width: 150%;
+      margin-left: -25%;
+      margin-top: -19%;
+    }
+
+    &.brewery {
+      width: 150%;
+      margin-left: -25%;
       margin-top: -25%;
     }
   }
@@ -126,7 +193,19 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
     &.village {
       width: 150%;
-      margin-left: -13%;
+      margin-left: -15%;
+      margin-top: -24%;
+    }
+
+    &.farm {
+      width: 150%;
+      margin-left: -22%;
+      margin-top: -19%;
+    }
+
+    &.brewery {
+      width: 150%;
+      margin-left: -20%;
       margin-top: -25%;
     }
   }

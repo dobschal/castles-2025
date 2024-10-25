@@ -1,5 +1,6 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.UnitRepository
@@ -8,7 +9,10 @@ import jakarta.inject.Inject
 import kotlin.math.pow
 
 @ApplicationScoped
-class PriceService @Inject constructor(private val unitRepository: UnitRepository) {
+class PriceService @Inject constructor(
+    private val unitRepository: UnitRepository,
+    private val userService: UserService
+) {
 
     fun getPriceForUnitCreation(user: User, type: UnitType): Int {
         val price = when (type) {
@@ -30,5 +34,15 @@ class PriceService @Inject constructor(private val unitRepository: UnitRepositor
             UnitType.HORSEMAN -> 40
             else -> throw IllegalArgumentException("Unknown unit type")
         }
+    }
+
+    fun getAllPrices(): PricesResponseDto {
+        val user = userService.getCurrentUser()
+        val unitCreationPrices = UnitType.entries.map { it to getPriceForUnitCreation(user, it) }.toMap()
+        val unitMovePrices = UnitType.entries.map { it to getPriceForUnitMove(it) }.toMap()
+        return PricesResponseDto(
+            unitCreationPrices,
+            unitMovePrices
+        )
     }
 }
