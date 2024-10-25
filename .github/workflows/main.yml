@@ -4,6 +4,7 @@ jobs:
   deploy:
     name: "Deploy to Hetzner Server"
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Configure SSH
@@ -17,6 +18,7 @@ jobs:
             User root
             IdentityFile ~/.ssh/hetzner.key
             StrictHostKeyChecking no
+            ServerAliveInterval 600
           END
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
