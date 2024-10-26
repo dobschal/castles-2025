@@ -56,10 +56,12 @@ export const en = {
     other: {
       UNIT_MOVED: "You moved a unit to {x}, {y}.",
       UNIT_CREATED: "You created a unit at {x}, {y}.",
+      BUILDING_CREATED: "You created a building at {x}, {y}.",
     },
     own: {
       UNIT_MOVED: "{playerName} moved a unit to {x}, {y}.",
       UNIT_CREATED: "{playerName} created a unit at {x}, {y}.",
+      BUILDING_CREATED: "{playerName} created a building at {x}, {y}.",
     },
   },
 };

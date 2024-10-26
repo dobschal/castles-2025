@@ -58,10 +58,12 @@ export const de = {
     other: {
       UNIT_MOVED: "Du hast eine Einheit nach {x}, {y} bewegt.",
       UNIT_CREATED: "Du hast eine Einheit erstellt.",
+      BUILDING_CREATED: "Du hast ein Gebäude erstellt.",
     },
     own: {
       UNIT_MOVED: "{playerName} hat eine Einheit nach {x}, {y} bewegt.",
       UNIT_CREATED: "{playerName} hat eine Einheit erstellt.",
+      BUILDING_CREATED: "{playerName} hat ein Gebäude erstellt.",
     },
   },
 };

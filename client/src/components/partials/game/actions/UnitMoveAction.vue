@@ -19,6 +19,7 @@ import { useAuthStore } from "@/store/authStore.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
+import { UnitType } from "@/types/enum/UnitType.ts";
 
 const unitsStore = useUnitsStore();
 const buildingsStore = useBuildingsStore();
@@ -61,12 +62,22 @@ function setMapTilesStates(): void {
       return (
         unit.x === tile.x &&
         unit.y === tile.y &&
-        unit.user.id === authStore.user?.id &&
-        unit.id
+        (unit.user.id === authStore.user?.id ||
+          activeMoveUnit.value?.type === UnitType.WORKER) &&
+        unit.id !== activeMoveUnit.value!.id
+      );
+    });
+
+    const conflictingBuilding = buildingsStore.buildings.find((building) => {
+      return (
+        building.x === tile.x &&
+        building.y === tile.y &&
+        activeMoveUnit.value?.type === UnitType.WORKER
       );
     });
 
     if (
+      conflictingBuilding ||
       tileIsOutOfRange ||
       conflictingUnit ||
       tile.type === MapTileType.WATER

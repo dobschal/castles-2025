@@ -396,4 +396,14 @@ class UnitResourceTest : BaseResourceTest() {
     fun `Move unit should deduct beer from user`() {
         TODO()
     }
+
+    @Test
+    fun `Move worker unit to opponent building should fail`() {
+        TODO()
+    }
+
+    @Test
+    fun `Move worker unit to field with opponent unit should fail`() {
+        TODO()
+    }
 }

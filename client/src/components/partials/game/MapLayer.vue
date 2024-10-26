@@ -147,5 +147,6 @@ function onToucheEnd(): void {
   height: 100vh;
   transform: rotate(-45deg);
   transform-origin: top left;
+  will-change: transform;
 }
 </style>

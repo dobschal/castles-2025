@@ -9,7 +9,7 @@
   <CButton
     v-if="isOwnBuilding && unitAtPosition"
     class="small"
-    @click="openUnitActionOverlay"
+    @click="openMoveUnitActionOverlay"
   >
     {{ t("villageAction.moveUnit") }}
   </CButton>
@@ -28,7 +28,7 @@ import { useI18n } from "vue-i18n";
 import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
-import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
+import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -86,10 +86,10 @@ function close(): void {
   emit("close-action");
 }
 
-function openUnitActionOverlay(): void {
+function openMoveUnitActionOverlay(): void {
   close();
-  unitsStore.activeUnit = unitAtPosition.value!;
-  ACTION.dispatch(UnitAction);
+  unitsStore.activeMoveUnit = unitAtPosition.value!;
+  ACTION.dispatch(UnitMoveAction);
 }
 </script>
 

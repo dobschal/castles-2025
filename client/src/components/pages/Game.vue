@@ -20,6 +20,7 @@ import EventsOverlay from "@/components/partials/game/EventsOverlay.vue";
 import { useActionStore } from "@/store/actionStore.ts";
 import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
+import { Optional } from "@/types/core/Optional.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
@@ -29,6 +30,7 @@ const eventsStore = useEventsStore();
 const actionStore = useActionStore();
 const pricesStore = usePricesStore();
 let isMounted = false;
+let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 
 onMounted(async () => {
   isMounted = true;
@@ -54,13 +56,17 @@ onBeforeUnmount(() => {
 watch(
   () => mapStore.centerPosition,
   () => {
-    setTimeout(async () => {
+    if (loadTimeout) {
+      clearTimeout(loadTimeout);
+    }
+
+    loadTimeout = setTimeout(async () => {
       await Promise.all([
         mapStore.loadMap(),
         buildingsStore.loadBuildings(),
         unitsStore.loadUnits(),
       ]);
-    });
+    }, 200);
   },
 );
 
