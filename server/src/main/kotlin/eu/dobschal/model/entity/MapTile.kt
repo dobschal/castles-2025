@@ -6,6 +6,16 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "map_tile", uniqueConstraints = [UniqueConstraint(columnNames = ["x", "y"])])
+@NamedQueries(
+    NamedQuery(
+        name = "MapTile.findByXAndY",
+        query = "select id, x, y, type, createdAt from MapTile where x = ?1 and y = ?2"
+    ),
+    NamedQuery(
+        name = "MapTile.findMapTilesBetween",
+        query = "select id, x, y, type, createdAt from MapTile where x >= ?1 and x < ?2 and y >= ?3 and y < ?4"
+    )
+)
 class MapTile {
 
     @Id
