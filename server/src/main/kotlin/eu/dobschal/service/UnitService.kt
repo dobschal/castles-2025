@@ -79,8 +79,14 @@ class UnitService @Inject constructor(
         if (unit.user?.id != user.id) {
             throw BadRequestException("serverError.wrongUnitOwner")
         }
+        if (unit.type == UnitType.WORKER) {
+            val building = buildingRepository.findBuildingByXAndY(x, y)
+            if (building != null && building.user?.id != user.id) {
+                throw BadRequestException("serverError.wrongBuildingOwner")
+            }
+        }
         unitRepository.findUnitByXAndY(x, y)?.let {
-            if (it.user?.id == user.id) {
+            if (it.user?.id == user.id || unit.type == UnitType.WORKER) {
                 throw BadRequestException("serverError.conflictingUnit")
             }
         }

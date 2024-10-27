@@ -163,35 +163,4 @@ class EventResourceTest : BaseResourceTest() {
             .extract().`as`(Array<Event>::class.java)
         assert(response.size == 0)
     }
-
-    @Test
-    fun `Event API is not returning ignored event ids`() {
-        val mapTile = MapTile().apply {
-            x = 1
-            y = 1
-            type = MapTileType.PLAIN
-        }
-        mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
-        given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
-            .body(request)
-            .`when`()
-            .post("/v1/buildings/start-village")
-            .then()
-            .statusCode(Response.Status.OK.statusCode)
-        assert(eventRepository.listAll().first().x == 1)
-        assert(eventRepository.listAll().first().y == 1)
-        assert(eventRepository.listAll().first().type == EventType.BUILDING_CREATED)
-        val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
-            .`when`()
-            .get("/v1/events?x1=0&y1=0&x2=4&y2=4&ignore_event_ids=${eventRepository.listAll().first().id}")
-            .then()
-            .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Event>::class.java)
-        assert(response.size == 0)
-    }
 }

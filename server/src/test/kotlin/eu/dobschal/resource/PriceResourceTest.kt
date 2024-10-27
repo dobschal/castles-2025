@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 @QuarkusTest
 class PriceResourceTest : BaseResourceTest() {
     @Test
-    fun `Prices are corret with 1 unit`() {
+    fun `Prices are correct with 1 unit`() {
         val unit = Unit().apply {
             x = 1
             y = 1

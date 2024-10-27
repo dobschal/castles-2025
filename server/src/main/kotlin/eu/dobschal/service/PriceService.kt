@@ -71,7 +71,10 @@ class PriceService @Inject constructor(
     }
 
     fun getPriceForBuildingCreation(user: User, type: BuildingType): Int {
+
+        // TODO: Move this out of the function
         val buildings = buildingRepository.findByUser(user.id!!)
+
         return when (type) {
             BuildingType.VILLAGE -> buildingCreationPrices[type]!![buildings.count { it.type == BuildingType.VILLAGE }]
             BuildingType.CASTLE -> buildingCreationPrices[type]!![buildings.count { it.type == BuildingType.CASTLE }]
@@ -90,5 +93,6 @@ class PriceService @Inject constructor(
             unitMovePrices,
             buildingsPrices
         )
+
     }
 }
