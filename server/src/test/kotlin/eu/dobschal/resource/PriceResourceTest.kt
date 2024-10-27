@@ -3,6 +3,8 @@ package eu.dobschal.resource
 import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.UnitType
+import eu.dobschal.utils.SWORDSMAN_BASE_PRICE
+import eu.dobschal.utils.WORKER_BASE_PRICE
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
@@ -29,8 +31,8 @@ class PriceResourceTest : BaseResourceTest() {
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(PricesResponseDto::class.java)
-        assert(response.unitCreationPrices.get(UnitType.WORKER) == 200)
-        assert(response.unitCreationPrices.get(UnitType.SWORDSMAN) == 600)
+        assert(response.unitCreationPrices.get(UnitType.WORKER) == WORKER_BASE_PRICE * 2)
+        assert(response.unitCreationPrices.get(UnitType.SWORDSMAN) == SWORDSMAN_BASE_PRICE * 2)
     }
 
     @Test
@@ -66,7 +68,7 @@ class PriceResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(PricesResponseDto::class.java)
         logger.info { response }
-        assert(response.unitCreationPrices.get(UnitType.WORKER) == 800)
-        assert(response.unitCreationPrices.get(UnitType.SWORDSMAN) == 2400)
+        assert(response.unitCreationPrices.get(UnitType.WORKER) == WORKER_BASE_PRICE * 2 * 2 * 2)
+        assert(response.unitCreationPrices.get(UnitType.SWORDSMAN) == SWORDSMAN_BASE_PRICE * 2 * 2 * 2)
     }
 }

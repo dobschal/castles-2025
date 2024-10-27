@@ -14,9 +14,9 @@ class EventRepository : PanacheRepository<Event> {
         persist(event)
     }
 
-    fun getEventsBetween(x1: Int, x2: Int, y1: Int, y2: Int, ignoreEventIds: String): List<Event> {
+    fun getEventsBetween(x1: Int, x2: Int, y1: Int, y2: Int): List<Event> {
         return find(
-            "x >= ?1 and x < ?2 and y >= ?3 and y < ?4 and id not in ($ignoreEventIds) ORDER BY id DESC",
+            "x >= ?1 and x < ?2 and y >= ?3 and y < ?4 ORDER BY id DESC",
             x1,
             x2,
             y1,

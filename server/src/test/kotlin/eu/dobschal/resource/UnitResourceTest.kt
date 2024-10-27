@@ -9,6 +9,8 @@ import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
+import eu.dobschal.utils.START_BEER
+import eu.dobschal.utils.WORKER_MOVE_PRICE
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
@@ -379,7 +381,33 @@ class UnitResourceTest : BaseResourceTest() {
 
     @Test
     fun `Move unit without enough beer should fail`() {
-        TODO()
+        userRepository.deductBeerFromUser(user1!!.id!!, START_BEER - WORKER_MOVE_PRICE - 1)
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.MOUNTAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().first().x == 2)
+        assert(unitRepository.listAll().first().y == 2)
     }
 
     @Test

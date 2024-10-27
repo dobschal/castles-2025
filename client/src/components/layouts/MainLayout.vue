@@ -129,7 +129,7 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 2rem 4rem;
+  padding: 2rem 3rem calc(2rem + env(safe-area-inset-bottom)) 3rem;
   animation: drive-in 0.5s ease-in-out;
   overflow-y: auto;
 

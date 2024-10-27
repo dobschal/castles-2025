@@ -146,9 +146,20 @@ function onMouseLeave(): void {
 </script>
 
 <style lang="scss" scoped>
+@keyframes fade-in {
+  from {
+    opacity: 0.5;
+    transform: scale(0.95) translateY(+1rem) translateX(-1rem);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .map-tile {
   position: absolute;
   user-select: none;
+  animation: fade-in 0.5s;
 
   &.ACCEPTABLE {
     cursor: pointer;

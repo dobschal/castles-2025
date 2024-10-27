@@ -21,7 +21,6 @@ class EventResource @Inject constructor(private val eventService: EventService) 
         @QueryParam("x1") x1: Int,
         @QueryParam("x2") x2: Int,
         @QueryParam("y1") y1: Int,
-        @QueryParam("y2") y2: Int,
-        @QueryParam("ignore_event_ids") ignoreEventIds: String = "-1"
-    ) = eventService.getEventsBetween(x1, x2, y1, y2, ignoreEventIds)
+        @QueryParam("y2") y2: Int
+    ) = eventService.getEventsBetween(x1, x2, y1, y2)
 }

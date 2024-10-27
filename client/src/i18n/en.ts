@@ -54,12 +54,12 @@ export const en = {
   events: {
     noEvents: "No events available...",
     openOverlay: "Show events",
-    other: {
+    own: {
       UNIT_MOVED: "You moved a unit to {x}, {y}.",
       UNIT_CREATED: "You created a unit at {x}, {y}.",
       BUILDING_CREATED: "You created a building at {x}, {y}.",
     },
-    own: {
+    other: {
       UNIT_MOVED: "{playerName} moved a unit to {x}, {y}.",
       UNIT_CREATED: "{playerName} created a unit at {x}, {y}.",
       BUILDING_CREATED: "{playerName} created a building at {x}, {y}.",

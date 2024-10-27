@@ -67,6 +67,14 @@ class BuildingService @Inject constructor(
         if (currentUser.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
         }
+        if (buildingRepository.findBuildingByXAndY(x, y) != null) {
+            throw BadRequestException("serverError.conflictingBuilding")
+        }
+        if (type == BuildingType.BREWERY) {
+            val buildingsAround = buildingRepository.findBuildingsBetween(x - 1, x + 2, y - 1, y + 2)
+            buildingsAround.find { it.type == BuildingType.FARM && it.user?.id == currentUser.id }
+                ?: throw BadRequestException("serverError.noFarm")
+        }
 
         // TODO: Ensure Farm next to Brewery
 

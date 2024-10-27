@@ -94,9 +94,30 @@ export const useMapStore = defineStore("map", () => {
   async function loadMap(): Promise<void> {
     await loadMapQueue.add(async () => {
       try {
-        mapTiles.value = await MapGateway.instance.getMapTiles(
+        const response = await MapGateway.instance.getMapTiles(
           currentMapRange.value,
         );
+        // Add all map tiles that are in response and not in the current map
+        // Filter the ones that are in the current map and not in the response
+        mapTiles.value = [
+          ...response.filter((newTile) => {
+            return !mapTiles.value.find((tile) => {
+              return (
+                newTile.x === tile.x &&
+                newTile.y === tile.y &&
+                newTile.type === tile.type
+              );
+            });
+          }),
+          ...mapTiles.value.filter((tile) => {
+            return response.find(
+              (newTile) =>
+                newTile.x === tile.x &&
+                newTile.y === tile.y &&
+                newTile.type === tile.type,
+            );
+          }),
+        ];
       } catch (e) {
         handleFatalError(e);
       }

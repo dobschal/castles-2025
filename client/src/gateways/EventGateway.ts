@@ -7,16 +7,10 @@ export class EventGateway extends Gateway {
     return new EventGateway();
   }
 
-  async getEvents(
-    data: TwoPointDto,
-    ignoreEventIds: string,
-  ): Promise<Array<EventEntity>> {
+  async getEvents(data: TwoPointDto): Promise<Array<EventEntity>> {
     return this.request<Array<EventEntity>>(
       "GET",
-      "/v1/events?" +
-        this.objectToQueryString(data) +
-        "&ignore_event_ids=" +
-        ignoreEventIds,
+      "/v1/events?" + this.objectToQueryString(data),
     );
   }
 }

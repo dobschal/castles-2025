@@ -1,10 +1,15 @@
 package eu.dobschal.resource
 
+import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.MapTile
+import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.MapTileType
+import eu.dobschal.model.enum.UnitType
+import eu.dobschal.utils.BREWERY_BASE_PRICE
+import eu.dobschal.utils.START_BEER
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
@@ -228,42 +233,408 @@ class BuildingResourceTest : BaseResourceTest() {
 
     @Test
     fun `Create building should work`() {
-        TODO()
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.FARM)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 1)
+    }
+
+    @Test
+    fun `Create building should kill the worker`() {
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.FARM)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        assert(unitRepository.listAll().isEmpty())
     }
 
     @Test
     fun `Create building not on PLAIN should fail`() {
-        TODO()
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.WATER
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.FARM)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 0)
+        assert(unitRepository.listAll().size == 1)
     }
 
     @Test
     fun `Create building without enough beer should fail`() {
-        TODO()
+        userRepository.deductBeerFromUser(user1!!.id!!, 451)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.FARM)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 0)
+        assert(unitRepository.listAll().size == 1)
     }
 
     @Test
     fun `Create building on other building should fail`() {
-        TODO()
+        val village1 = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village1)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.FARM)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 1)
     }
 
     @Test
     fun `Create brewery without farm next to it should fail`() {
-        TODO()
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        assert(buildingRepository.listAll().size == 0)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 0)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 0)
+    }
+
+    @Test
+    fun `Create brewery with opponents farm next to it should fail`() {
+        val farm1 = Building().apply {
+            x = 12
+            y = 12
+            user = user2
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm1)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 1)
+    }
+
+    @Test
+    fun `Create brewery next to farm next should work`() {
+        val farm1 = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm1)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 2)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 2)
     }
 
     @Test
     fun `Create building without worker on field should fail`() {
-        TODO()
+        val farm1 = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm1)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 1)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<Building>::class.java)
+        assert(response.size == 1)
     }
 
     @Test
     fun `Create building should deduct beer from user`() {
-        TODO()
+        val farm1 = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm1)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER - BREWERY_BASE_PRICE)
     }
 
     @Test
     fun `Worker dies after creating a building`() {
-        TODO()
+        val farm1 = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm1)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 2)
+        assert(unitRepository.listAll().isEmpty())
     }
 
 
