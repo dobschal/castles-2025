@@ -4,6 +4,8 @@
       class="entry"
       v-for="event in events"
       :key="event.id"
+      @mousedown.stop
+      @touchstart.stop
       @click="goToEventPosition(event)"
     >
       <small>{{ event.duration }}: </small><br />

@@ -23,9 +23,15 @@ export const useEventsStore = defineStore("event", () => {
 
   async function loadEvents(): Promise<void> {
     removeEventsNotOnCurrentMap();
+    let ignoreEventIds = events.value.map((event) => event.id).join(",");
+
+    if (!ignoreEventIds) {
+      ignoreEventIds = "-1";
+    }
+
     const response = await EventGateway.instance.getEvents(
       mapStore.currentMapRange,
-      events.value[0]?.id ?? -1,
+      ignoreEventIds,
     );
     for (const eventEntity of response.reverse()) {
       const eventExists = events.value.some(

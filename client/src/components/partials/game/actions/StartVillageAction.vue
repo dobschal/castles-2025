@@ -23,8 +23,8 @@ const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
 
 onMounted(() => {
-  setMapTilesStates();
   MAP_TILE_CLICKED.on(onMapTileClicked);
+  setMapTilesStates();
 });
 
 onBeforeUnmount(() => {
@@ -36,7 +36,7 @@ onBeforeUnmount(() => {
 
 watch(
   () => [mapStore.mapTiles, buildingsStore.buildings, unitsStore.units],
-  setMapTilesStates,
+  () => setMapTilesStates(),
 );
 
 function setMapTilesStates(): void {

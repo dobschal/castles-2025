@@ -13,6 +13,7 @@ export const de = {
     lessThanMinute: "Gerade eben",
     ago: "vor {0}",
     changeLanguage: "Sprache ändern: {0}",
+    loading: "Lädt...",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",

@@ -32,3 +32,9 @@ export function handleFatalError(error: unknown): void {
 export function TODO(...something: unknown[]): void {
   console.warn("TODO: ", ...something);
 }
+
+export function delay(duration: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
+}

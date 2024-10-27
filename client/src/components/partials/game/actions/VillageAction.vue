@@ -39,9 +39,9 @@ import { useAuthStore } from "@/store/authStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
-import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -122,8 +122,8 @@ async function createWorker(): Promise<void> {
 
 function openUnitActionOverlay(): void {
   close();
-  unitsStore.activeUnit = unitAtPosition.value!;
-  ACTION.dispatch(UnitAction);
+  unitsStore.activeMoveUnit = unitAtPosition.value!;
+  ACTION.dispatch(UnitMoveAction);
 }
 </script>
 

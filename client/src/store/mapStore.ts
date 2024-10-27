@@ -89,7 +89,6 @@ export const useMapStore = defineStore("map", () => {
     const offset = getOffset(windowWidth.value, windowHeight.value, x, y);
     offsetX.value = offset.offsetX;
     offsetY.value = offset.offsetY;
-    console.info("Go to position", x, y, offsetX.value, offsetY.value);
   }
 
   async function loadMap(): Promise<void> {

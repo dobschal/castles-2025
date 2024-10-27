@@ -5,7 +5,7 @@ import { Optional } from "@/types/core/Optional.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { ACTION } from "@/events.ts";
 import StartVillageAction from "@/components/partials/game/actions/StartVillageAction.vue";
-import { handleFatalError } from "@/core/util.ts";
+import { delay, handleFatalError } from "@/core/util.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Queue } from "@/core/Queue.ts";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
@@ -23,6 +23,9 @@ export const useBuildingsStore = defineStore("buildings", () => {
       console.info("Start village: ", startVillage.value);
     } catch (error) {
       if (error instanceof Response && error.status === 404) {
+        // Show the original map for two seconds and then
+        // dispatch the start village action that grays out the map
+        await delay(2000);
         await ACTION.dispatch(StartVillageAction);
         await loadStartVillage();
       } else {

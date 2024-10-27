@@ -37,7 +37,7 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import CButton from "@/components/partials/general/CButton.vue";
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { ACTION } from "@/events.ts";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
@@ -103,6 +103,13 @@ const isAllowedToBuildFarm = computed(() => {
   const beer = authStore.user?.beer ?? 0;
 
   return isAllowedToBuild.value && beer >= price;
+});
+
+onMounted(() => {
+  mapStore.goToPosition({
+    x: unitsStore.activeUnit?.x ?? 0,
+    y: unitsStore.activeUnit?.y ?? 0,
+  });
 });
 
 onBeforeUnmount(() => {

@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.junit.jupiter.api.Test
 import kotlin.Array
+import kotlin.TODO
 import kotlin.apply
 import kotlin.assert
 
@@ -123,7 +124,7 @@ class EventResourceTest : BaseResourceTest() {
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
-            .get("/v1/events?x1=0&y1=0&x2=4&y2=4")
+            .get("/v1/events?x1=0&y1=0&x2=4&y2=4&ignore_event_ids=-1")
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(Array<Event>::class.java)
@@ -157,10 +158,15 @@ class EventResourceTest : BaseResourceTest() {
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
-            .get("/v1/events?x1=2&y1=2&x2=4&y2=4")
+            .get("/v1/events?x1=2&y1=2&x2=4&y2=4&ignore_event_ids=-1")
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(Array<Event>::class.java)
         assert(response.size == 0)
+    }
+
+    @Test
+    fun `Event API is not returning ignored event ids`() {
+        TODO()
     }
 }

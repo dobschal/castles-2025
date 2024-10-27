@@ -40,6 +40,10 @@ watch(
 onMounted(() => {
   setMapTilesStates();
   MAP_TILE_CLICKED.on(onMapTileClicked);
+  mapStore.goToPosition({
+    x: unitsStore.activeMoveUnit?.x ?? 0,
+    y: unitsStore.activeMoveUnit?.y ?? 0,
+  });
 });
 
 onBeforeUnmount(() => {
@@ -72,7 +76,8 @@ function setMapTilesStates(): void {
       return (
         building.x === tile.x &&
         building.y === tile.y &&
-        activeMoveUnit.value?.type === UnitType.WORKER
+        activeMoveUnit.value?.type === UnitType.WORKER &&
+        building.user.id !== authStore.user?.id
       );
     });
 

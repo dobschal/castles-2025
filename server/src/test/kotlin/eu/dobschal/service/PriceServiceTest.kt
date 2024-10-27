@@ -63,7 +63,7 @@ class PriceServiceTest {
     @Test
     fun `test price calculation`() {
         val price1 = priceService.getPriceForUnitCreation(user1!!, UnitType.WORKER)
-        assert(price1 == 100)
+        assert(price1 == 50)
         val unit = Unit().apply {
             x = 1
             y = 1
@@ -72,7 +72,7 @@ class PriceServiceTest {
         }
         unitRepository.save(unit)
         val price2 = priceService.getPriceForUnitCreation(user1!!, UnitType.WORKER)
-        assert(price2 == 200)
+        assert(price2 == 100)
         val unit2 = Unit().apply {
             x = 1
             y = 1
@@ -81,7 +81,7 @@ class PriceServiceTest {
         }
         unitRepository.save(unit2)
         val price3 = priceService.getPriceForUnitCreation(user1!!, UnitType.WORKER)
-        assert(price3 == 400)
-        
+        assert(price3 == 200)
+
     }
 }

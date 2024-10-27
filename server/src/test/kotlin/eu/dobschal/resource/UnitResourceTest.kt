@@ -403,7 +403,24 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    fun `Move worker unit to own building should work`() {
+        TODO()
+    }
+
+    @Test
     fun `Move worker unit to field with opponent unit should fail`() {
         TODO()
     }
+
+    @Test
+    fun `Move on mountain is more expansive`() {
+        TODO()
+    }
+
+    @Test
+    fun `A unit has a limited amount of moves per hour`() {
+        TODO()
+    }
+
+
 }
