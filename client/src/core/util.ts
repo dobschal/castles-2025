@@ -50,7 +50,7 @@ setInterval(() => {
 export function parseServerDateString(dateString: Optional<string>): Date {
   if (!dateString) return new Date(0);
   const isDevMode = import.meta.env.VITE_DEV_MODE === "true";
-  const timestamp = Date.parse(dateString + isDevMode ? "" : "Z");
-
+  const timestamp = Date.parse(dateString + (isDevMode ? "" : "Z"));
+  
   return new Date(timestamp);
 }
