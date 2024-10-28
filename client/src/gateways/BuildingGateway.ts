@@ -3,6 +3,7 @@ import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
 import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
+import { BuildingsResponse } from "@/types/response/BuildingsResponse.ts";
 
 export class BuildingGateway extends Gateway {
   static get instance(): BuildingGateway {
@@ -17,8 +18,8 @@ export class BuildingGateway extends Gateway {
     return this.request<void>("POST", "/v1/buildings/start-village", data);
   }
 
-  async getBuildings(data: TwoPointDto): Promise<BuildingEntity[]> {
-    return this.request<BuildingEntity[]>(
+  async getBuildings(data: TwoPointDto): Promise<BuildingsResponse> {
+    return this.request<BuildingsResponse>(
       "GET",
       "/v1/buildings?" + this.objectToQueryString(data),
     );
@@ -32,5 +33,19 @@ export class BuildingGateway extends Gateway {
       ...data,
       type,
     });
+  }
+
+  async collectBeer(
+    buildingId: number,
+    amountOfBeer: number,
+  ): Promise<{ message: string }> {
+    return this.request<{ message: string }>(
+      "POST",
+      `/v1/buildings/collect-beer`,
+      {
+        buildingId,
+        amountOfBeer,
+      },
+    );
   }
 }

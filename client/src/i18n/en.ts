@@ -17,6 +17,9 @@ export const en = {
   serverError: {
     notEnoughBeer: "Not enough beer available.",
   },
+  serverSuccess: {
+    beerCollected: "Beer successfully collected.",
+  },
   registration: {
     title: "Registration",
     error:
@@ -58,11 +61,13 @@ export const en = {
       UNIT_MOVED: "You moved a unit to {x}, {y}.",
       UNIT_CREATED: "You created a unit at {x}, {y}.",
       BUILDING_CREATED: "You created a building at {x}, {y}.",
+      BEER_COLLECTED: "You collected beer at {x}, {y}.",
     },
     other: {
       UNIT_MOVED: "{playerName} moved a unit to {x}, {y}.",
       UNIT_CREATED: "{playerName} created a unit at {x}, {y}.",
       BUILDING_CREATED: "{playerName} created a building at {x}, {y}.",
+      BEER_COLLECTED: "{playerName} collected beer at {x}, {y}.",
     },
   },
 };

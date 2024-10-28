@@ -1,5 +1,7 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.response.BuildingsResponseDto
+import eu.dobschal.model.dto.response.SuccessResponseDto
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.User
@@ -8,10 +10,17 @@ import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
+import eu.dobschal.utils.BREWERY_BEER_PRODUCTION_PER_HOUR
+import eu.dobschal.utils.BREWERY_BEER_STORAGE
+import eu.dobschal.utils.VILLAGE_LEVEL_1_BEER_STORAGE
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.NotFoundException
+import java.time.LocalDateTime
+import java.time.ZoneId
+import kotlin.math.floor
+import kotlin.math.min
 
 @ApplicationScoped
 class BuildingService @Inject constructor(
@@ -50,7 +59,15 @@ class BuildingService @Inject constructor(
         return persistBuilding(x, y, BuildingType.VILLAGE, currentUser)
     }
 
-    fun getBuildings(x1: Int, x2: Int, y1: Int, y2: Int) = buildingRepository.findBuildingsBetween(x1, x2, y1, y2)
+    fun getBuildings(x1: Int, x2: Int, y1: Int, y2: Int): BuildingsResponseDto {
+        val buildings = buildingRepository.findBuildingsBetween(x1, x2, y1, y2)
+        return BuildingsResponseDto(
+            buildings,
+            BREWERY_BEER_PRODUCTION_PER_HOUR,
+            BREWERY_BEER_STORAGE,
+            VILLAGE_LEVEL_1_BEER_STORAGE
+        )
+    }
 
     fun createBuilding(x: Int, y: Int, type: BuildingType): Building {
         val currentUser = userService.getCurrentUser()
@@ -101,6 +118,43 @@ class BuildingService @Inject constructor(
             this.y = y
         })
         return building
+    }
+
+    fun collectBeer(buildingId: Int, amountOfBeer: Int): SuccessResponseDto {
+        val building = buildingRepository.findById(buildingId) ?: throw NotFoundException("serverError.noBuilding")
+        if (building.type != BuildingType.BREWERY) {
+            throw BadRequestException("serverError.notABrewery")
+        }
+        if (amountOfBeer <= 0) {
+            throw BadRequestException("serverError.invalidAmountOfBeer")
+        }
+        val currentUser = userService.getCurrentUser()
+        if (building.user?.id != currentUser.id) {
+            throw BadRequestException("serverError.notYourBuilding")
+        }
+        val event = eventRepository.findEventByXAndYAndType(building.x!!, building.y!!, EventType.BEER_COLLECTED)
+        val lastCollectedAt = event?.createdAt ?: LocalDateTime.of(1970, 1, 1, 0, 0)
+        val timeSinceLastCollection = LocalDateTime.now().atZone(ZoneId.systemDefault())
+            .toEpochSecond() - lastCollectedAt.atZone(ZoneId.systemDefault()).toEpochSecond()
+        var beerProducedSinceLastCollection =
+            min(
+                BREWERY_BEER_STORAGE,
+                floor((timeSinceLastCollection.toDouble() / 3600) * BREWERY_BEER_PRODUCTION_PER_HOUR.toDouble()).toInt()
+            )
+        val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
+        val beerLimit = VILLAGE_LEVEL_1_BEER_STORAGE * amountOfVillages;
+        if (beerProducedSinceLastCollection + currentUser.beer!! > beerLimit) {
+            beerProducedSinceLastCollection = beerLimit - currentUser.beer!!
+        }
+        userRepository.addBeerToUser(currentUser.id!!, beerProducedSinceLastCollection)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.BEER_COLLECTED
+            this.building = building
+            this.x = building.x
+            this.y = building.y
+        })
+        return SuccessResponseDto("serverSuccess.beerCollected")
     }
 
 

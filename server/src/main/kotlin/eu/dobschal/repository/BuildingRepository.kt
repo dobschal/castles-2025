@@ -10,6 +10,11 @@ import jakarta.transaction.Transactional
 @Transactional
 @ApplicationScoped
 class BuildingRepository : PanacheRepository<Building> {
+
+    fun findById(id: Int): Building? {
+        return find("id = ?1", id).firstResult()
+    }
+
     fun findUsersStartVillage(userId: Int): Building? {
         return find("user.id = ?1 AND type = ?2 ORDER BY createdAt ASC", userId, BuildingType.VILLAGE).firstResult()
     }
@@ -32,5 +37,9 @@ class BuildingRepository : PanacheRepository<Building> {
         return find("#Building.findAllByUser", userId)
             .project(BuildingDto::class.java)
             .list()
+    }
+
+    fun countVillagesByUser(userId: Int): Int {
+        return count("user.id = ?1 AND type = ?2", userId, BuildingType.VILLAGE).toInt()
     }
 }

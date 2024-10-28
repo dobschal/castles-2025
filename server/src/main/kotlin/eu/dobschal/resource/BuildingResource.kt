@@ -2,6 +2,7 @@ package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
+import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.service.BuildingService
 import eu.dobschal.utils.USER_ROLE
 import jakarta.annotation.security.RolesAllowed
@@ -38,4 +39,10 @@ class BuildingResource @Inject constructor(private val buildingService: Building
         @QueryParam("y1") y1: Int,
         @QueryParam("y2") y2: Int
     ) = buildingService.getBuildings(x1, x2, y1, y2)
+
+    @RolesAllowed(USER_ROLE)
+    @POST
+    @Path("/collect-beer")
+    fun collectBeer(request: CollectBeerRequestDto) =
+        buildingService.collectBeer(request.buildingId, request.amountOfBeer)
 }

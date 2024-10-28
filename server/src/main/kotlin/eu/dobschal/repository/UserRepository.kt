@@ -45,4 +45,10 @@ class UserRepository : PanacheRepository<User> {
         persist(user)
     }
 
+    fun addBeerToUser(userId: Int, amountOfBeer: Int) {
+        val user = findById(userId) ?: return
+        user.beer = user.beer?.plus(amountOfBeer)
+        persist(user)
+    }
+
 }

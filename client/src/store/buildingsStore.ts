@@ -9,13 +9,21 @@ import { delay, handleFatalError } from "@/core/util.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Queue } from "@/core/Queue.ts";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
+import { useAuthStore } from "@/store/authStore.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
+import { EventType } from "@/types/enum/EventType.ts";
 
 export const useBuildingsStore = defineStore("buildings", () => {
   const mapStore = useMapStore();
+  const authStore = useAuthStore();
+  const eventsStore = useEventsStore();
   const buildings = ref<Array<BuildingEntity>>([]);
   const startVillage = ref<Optional<BuildingEntity>>();
   const activeBuilding = ref<Optional<BuildingEntity>>();
   const loadBuildingsQueue = new Queue(500, 3);
+  const breweryBeerProductionPerHour = ref<number>(-1);
+  const breweryBeerStorage = ref<number>(-1);
+  const villageLevel1BeerStorage = ref<number>(-1);
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -37,9 +45,14 @@ export const useBuildingsStore = defineStore("buildings", () => {
   async function loadBuildings(): Promise<void> {
     await loadBuildingsQueue.add(async () => {
       try {
-        buildings.value = await BuildingGateway.instance.getBuildings(
+        const response = await BuildingGateway.instance.getBuildings(
           mapStore.currentMapRange,
         );
+        buildings.value = response.buildings;
+        breweryBeerProductionPerHour.value =
+          response.breweryBeerProductionPerHour;
+        breweryBeerStorage.value = response.breweryBeerStorage;
+        villageLevel1BeerStorage.value = response.villageLevel1BeerStorage;
       } catch (e) {
         handleFatalError(e);
       }
@@ -61,7 +74,32 @@ export const useBuildingsStore = defineStore("buildings", () => {
     });
   }
 
+  function calculateBeerToCollect(building: BuildingEntity): number {
+    if (
+      building.type !== BuildingType.BREWERY ||
+      building.user.id !== authStore.user?.id
+    ) {
+      return 0;
+    }
+
+    const event = eventsStore.findLatestEventByPositionAndType(
+      building.x,
+      building.y,
+      EventType.BEER_COLLECTED,
+    );
+
+    const beerCollectedAt = event ? Date.parse(event.createdAt) : 0;
+    const timePassed = Date.now() - beerCollectedAt;
+    const hoursPassed = timePassed / 1000 / 60 / 60;
+    const beerToCollect = Math.floor(
+      hoursPassed * breweryBeerProductionPerHour.value,
+    );
+
+    return Math.min(beerToCollect, breweryBeerStorage.value);
+  }
+
   return {
+    calculateBeerToCollect,
     loadBuildings,
     loadStartVillage,
     buildings,

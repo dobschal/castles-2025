@@ -89,6 +89,7 @@
         class="building-top-layer brewery"
         alt="Building"
       />
+      <BeerCollectBubble v-if="beerToCollect > 0" :building="building" />
     </template>
   </div>
 </template>
@@ -106,6 +107,7 @@ import { BuildingType } from "@/types/enum/BuildingType.ts";
 import FarmAction from "@/components/partials/game/actions/FarmAction.vue";
 import BreweryAction from "@/components/partials/game/actions/BreweryAction.vue";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
+import BeerCollectBubble from "@/components/partials/game/BeerCollectBubble.vue";
 
 const props = defineProps<{
   building: BuildingEntity;
@@ -127,6 +129,10 @@ const bannerStyle = computed(() => {
   return {
     fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
   };
+});
+
+const beerToCollect = computed(() => {
+  return buildingsStore.calculateBeerToCollect(props.building);
 });
 
 onMounted(() => {

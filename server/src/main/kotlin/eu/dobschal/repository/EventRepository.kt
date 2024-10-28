@@ -2,6 +2,7 @@ package eu.dobschal.repository
 
 import eu.dobschal.model.dto.EventDto
 import eu.dobschal.model.entity.Event
+import eu.dobschal.model.enum.EventType
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -22,6 +23,10 @@ class EventRepository @Inject constructor(private val entityManager: EntityManag
             .project(EventDto::class.java)
             .list()
         return result
+    }
+
+    fun findEventByXAndYAndType(x: Int, y: Int, type: EventType): Event? {
+        return find("x = ?1 and y = ?2 and type = ?3 ORDER BY id DESC", x, y, type).firstResult()
     }
 }
 

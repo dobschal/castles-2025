@@ -2,14 +2,17 @@ package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
+import eu.dobschal.model.dto.response.BuildingsResponseDto
+import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.model.entity.Building
+import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.MapTile
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
-import eu.dobschal.utils.BREWERY_BASE_PRICE
-import eu.dobschal.utils.START_BEER
+import eu.dobschal.utils.*
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
@@ -198,8 +201,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=0&x2=2&y1=0&y2=2")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 1)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 1)
     }
 
     @Test
@@ -227,8 +230,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=2&x2=10&y1=2&y2=50")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 0)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 0)
     }
 
     @Test
@@ -263,8 +266,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 1)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 1)
     }
 
     @Test
@@ -392,8 +395,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 1)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 1)
     }
 
     @Test
@@ -429,8 +432,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 0)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 0)
     }
 
     @Test
@@ -473,8 +476,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 1)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 1)
     }
 
     @Test
@@ -517,8 +520,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 2)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 2)
     }
 
     @Test
@@ -561,8 +564,8 @@ class BuildingResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Building>::class.java)
-        assert(response.size == 1)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 1)
     }
 
     @Test
@@ -637,5 +640,213 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().isEmpty())
     }
 
+    @Test
+    fun `Collecting beer on a brewery works`() {
+        val village = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val brewery = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+        val request = CollectBeerRequestDto(brewery.id!!, BREWERY_BEER_STORAGE)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/collect-beer")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { response }
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER + BREWERY_BEER_STORAGE)
+    }
+
+    @Test
+    fun `Collecting beer (calculation is corerct) on a brewery works`() {
+        val village = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val brewery = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        eventRepository.save(Event().apply {
+            user1 = user1
+            type = EventType.BEER_COLLECTED
+            building = brewery
+            x = 12
+            y = 12
+            createdAt = LocalDateTime.now().minusMinutes(30)
+        })
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+        val request = CollectBeerRequestDto(brewery.id!!, BREWERY_BEER_PRODUCTION_PER_HOUR / 2)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/collect-beer")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { response }
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER + BREWERY_BEER_PRODUCTION_PER_HOUR / 2)
+    }
+
+    @Test
+    fun `Collecting beer on a farm should fail`() {
+        val village = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val farm = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+        val request = CollectBeerRequestDto(farm.id!!, BREWERY_BEER_STORAGE)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/collect-beer")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().asString()
+        logger.info { response }
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+    }
+
+    @Test
+    fun `Collecting beer on an opponents farm should fail`() {
+        val village = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val brewery = Building().apply {
+            x = 12
+            y = 12
+            user = user2
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+        val request = CollectBeerRequestDto(brewery.id!!, BREWERY_BEER_STORAGE)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/collect-beer")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().asString()
+        logger.info { response }
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+    }
+
+    @Test
+    fun `Collecting beer with village storage full should be limited`() {
+        val village = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val brewery = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        userRepository.addBeerToUser(user1!!.id!!, VILLAGE_LEVEL_1_BEER_STORAGE - user1!!.beer!! - 5)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE - 5)
+        val request = CollectBeerRequestDto(brewery.id!!, 5)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/collect-beer")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { response }
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE)
+    }
+
+    @Test
+    fun `User with more villages can store more beer`() {
+        val village = Building().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val village2 = Building().apply {
+            x = 15
+            y = 15
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village2)
+        val brewery = Building().apply {
+            x = 12
+            y = 12
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        userRepository.addBeerToUser(user1!!.id!!, VILLAGE_LEVEL_1_BEER_STORAGE - user1!!.beer!! - 5)
+        assert(buildingRepository.listAll().size == 3)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE - 5)
+        val request = CollectBeerRequestDto(brewery.id!!, BREWERY_BEER_STORAGE)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/collect-beer")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { response }
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE + BREWERY_BEER_STORAGE - 5)
+    }
 
 }

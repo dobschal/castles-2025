@@ -3,6 +3,8 @@ import { EventEntity } from "@/types/model/EventEntity.ts";
 import { ref } from "vue";
 import { EventGateway } from "@/gateways/EventGateway.ts";
 import { useMapStore } from "@/store/mapStore.ts";
+import { EventType } from "@/types/enum/EventType.ts";
+import { Optional } from "@/types/core/Optional.ts";
 
 export const useEventsStore = defineStore("event", () => {
   const mapStore = useMapStore();
@@ -27,12 +29,9 @@ export const useEventsStore = defineStore("event", () => {
     const response = await EventGateway.instance.getEvents(
       mapStore.currentMapRange,
     );
+    const existingEventIds = new Set(events.value.map((event) => event.id));
     for (const eventEntity of response.reverse()) {
-      const eventExists = events.value.some(
-        (existingEvent) => existingEvent.id === eventEntity.id,
-      );
-
-      if (!eventExists) {
+      if (!existingEventIds.has(eventEntity.id)) {
         events.value.unshift(eventEntity);
       }
     }
@@ -40,8 +39,19 @@ export const useEventsStore = defineStore("event", () => {
     events.value.sort((a, b) => b.id - a.id);
   }
 
+  function findLatestEventByPositionAndType(
+    x: number,
+    y: number,
+    type: EventType,
+  ): Optional<EventEntity> {
+    return events.value.find(
+      (event) => event.x === x && event.y === y && event.type === type,
+    );
+  }
+
   return {
     events,
     loadEvents,
+    findLatestEventByPositionAndType,
   };
 });

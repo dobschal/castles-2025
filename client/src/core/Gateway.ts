@@ -27,7 +27,7 @@ export class Gateway {
 
     const rawResponse = await fetch(this.baseUrl + urlPath, options);
 
-    if (Date.now() - t1 > 100) {
+    if (Date.now() - t1 > 500) {
       console.warn(
         "Request took too long: ",
         method,

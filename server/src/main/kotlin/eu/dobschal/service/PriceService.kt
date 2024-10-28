@@ -90,16 +90,12 @@ class PriceService @Inject constructor(
     }
 
     fun getAllPrices(): PricesResponseDto {
-        val t1 = System.currentTimeMillis()
         val user = userService.getCurrentUserDto()
         val buildings = buildingRepository.findAllByUser(user.id!!)
         val units = unitRepository.findAllByUser(user.id!!)
-        logger.info { "Time to get buildings and units: ${System.currentTimeMillis() - t1}ms" }
-        val t2 = System.currentTimeMillis()
         val unitCreationPrices = UnitType.entries.associateWith { getPriceForUnitCreation(user, it, units) }
         val unitMovePrices = UnitType.entries.associateWith { getPriceForUnitMove(it) }
         val buildingsPrices = BuildingType.entries.associateWith { getPriceForBuildingCreation(user, it, buildings) }
-        logger.info { "Time to calculate prices: ${System.currentTimeMillis() - t2}ms" }
         return PricesResponseDto(
             unitCreationPrices,
             unitMovePrices,
