@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @NamedQueries(
     NamedQuery(
         name = "Event.findEventsBetween",
-        query = "select e.id, e.x, e.y, e.type, user1.id, user1.username, user1.beer, user1.createdAt, user2.id, user2.username, user2.beer, user2.createdAt, building.id, building.x, building.y, building.type, building.createdAt, unit.id, unit.x, unit.y, unit.type, unit.createdAt, e.createdAt from Event e left join User user1 on user1.id = e.user1.id left join User user2 on user2.id = e.user2.id left join Building building on building.id = e.building.id left join Unit unit on unit.id = e.unit.id where e.x >= ?1 and e.x < ?2 and e.y >= ?3 and e.y < ?4"
+        query = "select e.id, e.x, e.y, e.type, user1.id, user1.username, user1.beer, user1.createdAt, user2.id, user2.username, user2.beer, user2.createdAt, building.id, building.x, building.y, building.type, building.level, building.createdAt, unit.id, unit.x, unit.y, unit.type, unit.createdAt, e.createdAt from Event e left join User user1 on user1.id = e.user1.id left join User user2 on user2.id = e.user2.id left join Building building on building.id = e.building.id left join Unit unit on unit.id = e.unit.id where e.x >= ?1 and e.x < ?2 and e.y >= ?3 and e.y < ?4"
     )
 )
 class Event {

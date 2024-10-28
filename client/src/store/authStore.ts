@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { UserEntity } from "@/types/model/UserEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
+import { handleFatalError } from "@/core/util.ts";
 
 let UserGateway;
 import("@/gateways/UserGateway.ts").then((module) => {
@@ -47,7 +48,11 @@ export const useAuthStore = defineStore(
     });
 
     async function loadUser(): Promise<void> {
-      user.value = await UserGateway.instance.getUser();
+      try {
+        user.value = await UserGateway.instance.getUser();
+      } catch (error) {
+        handleFatalError(error);
+      }
     }
 
     return {

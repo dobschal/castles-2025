@@ -2,7 +2,7 @@ export const en = {
   general: {
     username: "Username",
     password: "Password",
-    serverError: "Server could not be reached. Please try again later.",
+    serverError: "An error occurred. Reload page?",
     no: "No",
     yes: "Yes",
     close: "Close",
@@ -10,6 +10,7 @@ export const en = {
     back: "Back",
     cancel: "Cancel",
     lessThanMinute: "Just now",
+    inLessThanMinute: "In less than a minute...",
     ago: "{0} ago",
     changeLanguage: "Change language: {0}",
     loading: "Loading...",
@@ -54,6 +55,10 @@ export const en = {
     moveText: "Where should the unit be moved?",
     buildFarm: "Build farm",
     buildBrewery: "Build brewery",
+    buildCastle: "Build castle",
+  },
+  castleAction: {
+    castleOf: "Castle of {playerName}",
   },
   events: {
     noEvents: "No events available...",

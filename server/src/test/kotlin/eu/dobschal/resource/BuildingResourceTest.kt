@@ -849,4 +849,14 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE + BREWERY_BEER_STORAGE - 5)
     }
 
+    @Test
+    fun `A brewery without farm does not produce beer`() {
+        TODO()
+    }
+
+    @Test
+    fun `A village can only have 3 farms`() {
+        TODO()
+    }
+
 }

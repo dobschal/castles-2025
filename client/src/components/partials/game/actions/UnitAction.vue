@@ -28,6 +28,14 @@
       {{ t("unitAction.buildFarm") }}
       <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.BREWERY)" />
     </CButton>
+    <CButton
+      class="small"
+      @click="saveBuilding(BuildingType.CASTLE)"
+      :disabled="!isAllowedToBuildCastle || isLoading"
+    >
+      {{ t("unitAction.buildCastle") }}
+      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CASTLE)" />
+    </CButton>
   </template>
   <CButton class="small" @click="close" :disabled="isLoading">
     {{ t("general.cancel") }}
@@ -96,6 +104,13 @@ const isAllowedToBuildBrewery = computed(() => {
   );
 
   return isAllowedToBuild.value && farmNearBy && beer >= price;
+});
+
+const isAllowedToBuildCastle = computed(() => {
+  const price = pricesStore.getBuildPrice(BuildingType.CASTLE);
+  const beer = authStore.user?.beer ?? 0;
+
+  return isAllowedToBuild.value && beer >= price;
 });
 
 const isAllowedToBuildFarm = computed(() => {

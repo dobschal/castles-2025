@@ -5,7 +5,12 @@ import { Optional } from "@/types/core/Optional.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { ACTION } from "@/events.ts";
 import StartVillageAction from "@/components/partials/game/actions/StartVillageAction.vue";
-import { delay, handleFatalError, NOW } from "@/core/util.ts";
+import {
+  delay,
+  handleFatalError,
+  NOW,
+  parseServerDateString,
+} from "@/core/util.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Queue } from "@/core/Queue.ts";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
@@ -88,8 +93,8 @@ export const useBuildingsStore = defineStore("buildings", () => {
       EventType.BEER_COLLECTED,
     );
 
-    const beerCollectedAt = event ? Date.parse(event.createdAt + "Z") : 0;
-    const timePassed = NOW.value - beerCollectedAt;
+    const beerCollectedAt = parseServerDateString(event?.createdAt);
+    const timePassed = NOW.value - beerCollectedAt.getTime();
     const hoursPassed = timePassed / 1000 / 60 / 60;
     const beerToCollect = Math.floor(
       hoursPassed * breweryBeerProductionPerHour.value,

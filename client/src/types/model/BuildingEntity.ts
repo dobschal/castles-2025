@@ -6,5 +6,6 @@ export interface BuildingEntity {
   x: number;
   y: number;
   type: BuildingType;
+  level: number;
   user: UserEntity;
 }

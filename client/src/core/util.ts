@@ -1,5 +1,6 @@
 import { TOAST } from "@/events.ts";
 import { ref } from "vue";
+import { Optional } from "@/types/core/Optional.ts";
 
 let componentCounter = 0;
 
@@ -45,3 +46,11 @@ export const NOW = ref(Date.now());
 setInterval(() => {
   NOW.value = Date.now();
 }, 1000);
+
+export function parseServerDateString(dateString: Optional<string>): Date {
+  if (!dateString) return new Date(0);
+  const isDevMode = import.meta.env.VITE_DEV_MODE === "true";
+  const timestamp = Date.parse(dateString + isDevMode ? "" : "Z");
+
+  return new Date(timestamp);
+}

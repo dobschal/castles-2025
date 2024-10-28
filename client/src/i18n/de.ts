@@ -2,8 +2,7 @@ export const de = {
   general: {
     username: "Benutzername",
     password: "Passwort",
-    serverError:
-      "Server konnte nicht erreicht werden. Bitte versuche es später erneut.",
+    serverError: "Ein Fehler ist aufgetreten. Seite neu laden?",
     no: "Nein",
     yes: "Ja",
     close: "Schließen",
@@ -11,6 +10,7 @@ export const de = {
     back: "Zurück",
     cancel: "Abbrechen",
     lessThanMinute: "Gerade eben",
+    inLessThanMinute: "In weniger als einer Minute...",
     ago: "vor {0}",
     changeLanguage: "Sprache ändern: {0}",
     loading: "Lädt...",
@@ -56,6 +56,10 @@ export const de = {
     moveText: "Wohin soll die Einheit bewegt werden?",
     buildFarm: "Farm bauen",
     buildBrewery: "Brauerei bauen",
+    buildCastle: "Burg bauen",
+  },
+  castleAction: {
+    castleOf: "Burg von {playerName}",
   },
   events: {
     noEvents: "Keine Events vorhanden...",

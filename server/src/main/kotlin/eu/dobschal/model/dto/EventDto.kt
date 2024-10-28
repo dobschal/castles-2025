@@ -36,6 +36,7 @@ class EventDto(
         @ProjectedFieldName("building.x") buildingX: Int? = null,
         @ProjectedFieldName("building.y") buildingY: Int? = null,
         @ProjectedFieldName("building.type") buildingType: BuildingType? = null,
+        @ProjectedFieldName("building.level") buildingLevel: Int? = null,
         @ProjectedFieldName("building.createdAt") buildingCreatedAt: LocalDateTime? = null,
         @ProjectedFieldName("unit.id") unitId: Int? = null,
         @ProjectedFieldName("unit.x") unitX: Int? = null,
@@ -46,7 +47,7 @@ class EventDto(
     ) : this(id, x, y, type, null, null, null, null, createdAt) {
         user1 = UserDto(user1Id, user1Username, "", user1Beer, user1CreatedAt)
         user2 = UserDto(user2Id, user2Username, "", user2Beer, user2CreatedAt)
-        building = BuildingDto(buildingId, buildingX, buildingY, buildingType, null, buildingCreatedAt)
+        building = BuildingDto(buildingId, buildingX, buildingY, buildingType, buildingLevel, null, buildingCreatedAt)
         unit = UnitDto(unitId, unitX, unitY, unitType, null, unitCreatedAt)
     }
 }

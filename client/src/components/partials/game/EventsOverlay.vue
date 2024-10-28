@@ -27,6 +27,7 @@ import { computed, ref } from "vue";
 import { useAuthStore } from "@/store/authStore.ts";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useMapStore } from "@/store/mapStore.ts";
+import { parseServerDateString } from "@/core/util.ts";
 
 const authStore = useAuthStore();
 const eventsStore = useEventsStore();
@@ -59,7 +60,7 @@ const events = computed<Array<CustomEvent>>(() => {
       },
       duration: calculateDuration(
         new Date(),
-        new Date(Date.parse(event.createdAt)),
+        parseServerDateString(event.createdAt),
       ),
     };
   });

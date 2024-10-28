@@ -604,15 +604,15 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unit.y == 2)
     }
 
-//    @Test
-//    fun `Move on mountain is more expansive`() {
-//        TODO()
-//    }
-//
-//    @Test
-//    fun `A unit has a limited amount of moves per hour`() {
-//        TODO()
-//    }
+    @Test
+    fun `A unit has a limited amount of moves per hour`() {
+        TODO()
+    }
+
+    @Test
+    fun `Amount of units is limited by amount of castles and their level`() {
+        TODO()
+    }
 
 
 }

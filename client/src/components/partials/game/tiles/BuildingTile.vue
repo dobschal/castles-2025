@@ -91,6 +91,26 @@
       />
       <BeerCollectBubble v-if="beerToCollect > 0" :building="building" />
     </template>
+    <template v-if="building.type === BuildingType.CASTLE">
+      <img
+        v-if="building.level === 1"
+        src="../../../../assets/tiles/castle-level-1.png"
+        class="building castle-level-1"
+        alt="Building"
+      />
+      <img
+        v-if="building.level === 2"
+        src="../../../../assets/tiles/castle-level-2.png"
+        class="building castle-level-2"
+        alt="Building"
+      />
+      <img
+        v-if="building.level === 3"
+        src="../../../../assets/tiles/castle-level-3.png"
+        class="building castle-level-3"
+        alt="Building"
+      />
+    </template>
   </div>
 </template>
 
@@ -108,11 +128,13 @@ import FarmAction from "@/components/partials/game/actions/FarmAction.vue";
 import BreweryAction from "@/components/partials/game/actions/BreweryAction.vue";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
 import BeerCollectBubble from "@/components/partials/game/BeerCollectBubble.vue";
+import CastleAction from "@/components/partials/game/actions/CastleAction.vue";
 
 const props = defineProps<{
   building: BuildingEntity;
   mapTile: MapTileDto;
 }>();
+
 const buildingsStore = useBuildingsStore();
 const authStore = useAuthStore();
 const mapStore = useMapStore();
@@ -158,6 +180,9 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       break;
     case BuildingType.BREWERY:
       ACTION.dispatch(BreweryAction);
+      break;
+    case BuildingType.CASTLE:
+      ACTION.dispatch(CastleAction);
       break;
   }
 }
@@ -245,6 +270,24 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       width: 150%;
       margin-left: -25%;
       margin-top: -25%;
+    }
+
+    &.castle-level-1 {
+      width: 160%;
+      margin-left: -20%;
+      margin-top: -40%;
+    }
+
+    &.castle-level-2 {
+      width: 150%;
+      margin-left: -5%;
+      margin-top: -35%;
+    }
+
+    &.castle-level-3 {
+      width: 130%;
+      margin-left: 0;
+      margin-top: -30%;
     }
   }
 

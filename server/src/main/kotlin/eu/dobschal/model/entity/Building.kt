@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 @NamedQueries(
     NamedQuery(
         name = "Building.findAllByUser",
-        query = "select id, x, y, type, user.id, user.username, user.beer, user.createdAt, createdAt from Building b where b.user.id = ?1"
+        query = "select id, x, y, type, level, user.id, user.username, user.beer, user.createdAt, createdAt from Building b where b.user.id = ?1"
     ),
     NamedQuery(
         name = "Building.findBuildingsBetween",
-        query = "select id, x, y, type, user.id, user.username, user.beer, user.createdAt, createdAt from Building b where b.x >= ?1 and b.x < ?2 and b.y >= ?3 and b.y < ?4"
+        query = "select id, x, y, type, level, user.id, user.username, user.beer, user.createdAt, createdAt from Building b where b.x >= ?1 and b.x < ?2 and b.y >= ?3 and b.y < ?4"
     )
 )
 class Building {
@@ -31,6 +31,9 @@ class Building {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     lateinit var type: BuildingType
+
+    @Column(name = "level", nullable = false)
+    var level: Int? = 1
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)

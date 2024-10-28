@@ -50,7 +50,7 @@ import waterDisabledImage from "@/assets/tiles/water-disabled.png";
 import workerImage from "@/assets/tiles/worker.png";
 import workerDisabledImage from "@/assets/tiles/worker-disabled.png";
 import { useI18n } from "vue-i18n";
-import { TOAST } from "@/events.ts";
+import { DIALOG, TOAST } from "@/events.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
@@ -126,12 +126,21 @@ watch(
 );
 
 async function keepLoadingEvents(): Promise<void> {
-  await eventsStore.loadEvents();
-  setTimeout(() => {
-    if (isMounted) {
-      keepLoadingEvents();
-    }
-  }, 500);
+  try {
+    await eventsStore.loadEvents();
+    setTimeout(() => {
+      if (isMounted) {
+        keepLoadingEvents();
+      }
+    }, 500);
+  } catch (e) {
+    DIALOG.dispatch({
+      questionKey: "general.serverError",
+      onYes: () => {
+        window.location.reload();
+      },
+    });
+  }
 }
 
 async function loadAssets(): Promise<void> {
