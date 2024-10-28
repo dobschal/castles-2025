@@ -1,7 +1,9 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.BuildingDto
+import eu.dobschal.model.dto.UnitDto
+import eu.dobschal.model.dto.UserDto
 import eu.dobschal.model.dto.response.PricesResponseDto
-import eu.dobschal.model.entity.User
 import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.BuildingRepository
@@ -56,9 +58,12 @@ class PriceService @Inject constructor(
         }
     }
 
-    fun getPriceForUnitCreation(user: User, type: UnitType): Int {
-        val units = unitRepository.findAllByUser(user.id!!)
-        return unitCreationPrices[type]!![units.size]
+    fun getPriceForUnitCreation(
+        user: UserDto,
+        type: UnitType,
+        units: List<UnitDto>? = null
+    ): Int {
+        return unitCreationPrices[type]!![(units ?: unitRepository.findAllByUser(user.id!!)).size]
     }
 
     fun getPriceForUnitMove(type: UnitType): Int {
@@ -70,24 +75,31 @@ class PriceService @Inject constructor(
         }
     }
 
-    fun getPriceForBuildingCreation(user: User, type: BuildingType): Int {
-
-        // TODO: Move this out of the function
-        val buildings = buildingRepository.findByUser(user.id!!)
-
+    fun getPriceForBuildingCreation(
+        user: UserDto,
+        type: BuildingType,
+        buildings: List<BuildingDto>? = null
+    ): Int {
+        val b = buildings ?: buildingRepository.findAllByUser(user.id!!)
         return when (type) {
-            BuildingType.VILLAGE -> buildingCreationPrices[type]!![buildings.count { it.type == BuildingType.VILLAGE }]
-            BuildingType.CASTLE -> buildingCreationPrices[type]!![buildings.count { it.type == BuildingType.CASTLE }]
-            BuildingType.BREWERY -> buildingCreationPrices[type]!![buildings.count { it.type == BuildingType.BREWERY }]
-            BuildingType.FARM -> buildingCreationPrices[type]!![buildings.count { it.type == BuildingType.FARM }]
+            BuildingType.VILLAGE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.VILLAGE }]
+            BuildingType.CASTLE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CASTLE }]
+            BuildingType.BREWERY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.BREWERY }]
+            BuildingType.FARM -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.FARM }]
         }
     }
 
     fun getAllPrices(): PricesResponseDto {
-        val user = userService.getCurrentUser()
-        val unitCreationPrices = UnitType.entries.associateWith { getPriceForUnitCreation(user, it) }
+        val t1 = System.currentTimeMillis()
+        val user = userService.getCurrentUserDto()
+        val buildings = buildingRepository.findAllByUser(user.id!!)
+        val units = unitRepository.findAllByUser(user.id!!)
+        logger.info { "Time to get buildings and units: ${System.currentTimeMillis() - t1}ms" }
+        val t2 = System.currentTimeMillis()
+        val unitCreationPrices = UnitType.entries.associateWith { getPriceForUnitCreation(user, it, units) }
         val unitMovePrices = UnitType.entries.associateWith { getPriceForUnitMove(it) }
-        val buildingsPrices = BuildingType.entries.associateWith { getPriceForBuildingCreation(user, it) }
+        val buildingsPrices = BuildingType.entries.associateWith { getPriceForBuildingCreation(user, it, buildings) }
+        logger.info { "Time to calculate prices: ${System.currentTimeMillis() - t2}ms" }
         return PricesResponseDto(
             unitCreationPrices,
             unitMovePrices,

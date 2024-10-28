@@ -24,7 +24,7 @@ class BuildingService @Inject constructor(
     private val userRepository: UserRepository
 ) {
     fun getStartVillage(): Building {
-        val currentUserId = userService.getCurrentUser().id!!
+        val currentUserId = userService.getCurrentUserDto().id!!
         val startVillage = buildingRepository.findUsersStartVillage(currentUserId)
         return startVillage ?: throw NotFoundException("serverError.noStartVillage")
     }
@@ -63,7 +63,7 @@ class BuildingService @Inject constructor(
         if (mapTile.type != MapTileType.PLAIN) {
             throw BadRequestException("serverError.wrongTileType")
         }
-        val price = priceService.getPriceForBuildingCreation(currentUser, type)
+        val price = priceService.getPriceForBuildingCreation(currentUser.toDto(), type)
         if (currentUser.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
         }
@@ -75,9 +75,6 @@ class BuildingService @Inject constructor(
             buildingsAround.find { it.type == BuildingType.FARM && it.user?.id == currentUser.id }
                 ?: throw BadRequestException("serverError.noFarm")
         }
-
-        // TODO: Ensure Farm next to Brewery
-
         unitRepository.deleteById(unit.id!!)
         userRepository.deductBeerFromUser(currentUser.id!!, price)
         return persistBuilding(x, y, type, currentUser)
@@ -87,17 +84,17 @@ class BuildingService @Inject constructor(
         x: Int,
         y: Int,
         type: BuildingType,
-        currentUser: User
+        user: User
     ): Building {
         val building = Building().apply {
             this.x = x
             this.y = y
             this.type = type
-            this.user = currentUser
+            this.user = user
         }
         buildingRepository.save(building)
         eventRepository.save(Event().apply {
-            this.user1 = currentUser
+            this.user1 = user
             this.type = EventType.BUILDING_CREATED
             this.building = building
             this.x = x

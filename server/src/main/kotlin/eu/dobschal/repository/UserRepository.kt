@@ -1,5 +1,6 @@
 package eu.dobschal.repository
 
+import eu.dobschal.model.dto.UserDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.utils.START_BEER
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
@@ -12,6 +13,12 @@ class UserRepository : PanacheRepository<User> {
 
     fun findById(id: Int): User? {
         return find("id", id).firstResult()
+    }
+
+    fun findByUsernameAsDto(username: String): UserDto? {
+        return find("#User.findByUsername", username)
+            .project(UserDto::class.java)
+            .firstResult()
     }
 
     fun findByUsername(username: String): User? {

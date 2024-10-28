@@ -6,6 +6,16 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "building")
+@NamedQueries(
+    NamedQuery(
+        name = "Building.findAllByUser",
+        query = "select id, x, y, type, user.id, user.username, user.beer, user.createdAt, createdAt from Building b where b.user.id = ?1"
+    ),
+    NamedQuery(
+        name = "Building.findBuildingsBetween",
+        query = "select id, x, y, type, user.id, user.username, user.beer, user.createdAt, createdAt from Building b where b.x >= ?1 and b.x < ?2 and b.y >= ?3 and b.y < ?4"
+    )
+)
 class Building {
 
     @Id

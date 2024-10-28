@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import eu.dobschal.model.dto.EventDto
 import eu.dobschal.model.dto.request.CreateUnitRequestDto
 import eu.dobschal.model.dto.request.MoveUnitRequestDto
 import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
@@ -123,10 +124,10 @@ class EventResourceTest : BaseResourceTest() {
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
-            .get("/v1/events?x1=0&y1=0&x2=4&y2=4&ignore_event_ids=-1")
+            .get("/v1/events?x1=0&y1=0&x2=4&y2=4")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Event>::class.java)
+            .extract().`as`(Array<EventDto>::class.java)
         assert(response.size == 1)
         assert(response[0].x == 1)
         assert(response[0].y == 1)

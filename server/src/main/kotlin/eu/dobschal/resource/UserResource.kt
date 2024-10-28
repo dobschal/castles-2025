@@ -29,6 +29,6 @@ class UserResource @Inject constructor(private val userService: UserService) {
     @GET
     @Path("/current")
     @RolesAllowed(USER_ROLE)
-    fun getCurrentUser() = userService.getCurrentUser()
+    fun getCurrentUser() = userService.getCurrentUserDto()
 
 }

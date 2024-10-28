@@ -22,9 +22,7 @@ class MapTileService @Inject constructor(private val mapTileRepository: MapTileR
         val y1 = min(MAP_MAX, max(-MAP_MAX, y1Param))
         val y2 = min(MAP_MAX, max(-MAP_MAX, y2Param))
         val amountOfMapTiles = (x2 - x1) * (y2 - y1);
-        val t1 = System.currentTimeMillis()
         val mapTiles = mapTileRepository.findMapTilesBetween(x1, x2, y1, y2)
-        logger.info { "Time to get map tiles: ${System.currentTimeMillis() - t1}ms" }
         if (mapTiles.size == amountOfMapTiles) {
             return mapTiles
         }

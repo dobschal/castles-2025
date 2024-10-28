@@ -50,7 +50,7 @@ class UnitService @Inject constructor(
             throw BadRequestException("serverError.conflictingUnit")
         }
 
-        val price = priceService.getPriceForUnitCreation(user, type)
+        val price = priceService.getPriceForUnitCreation(user.toDto(), type)
         if (user.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
         }

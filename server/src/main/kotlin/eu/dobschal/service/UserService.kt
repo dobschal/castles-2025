@@ -1,5 +1,6 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.UserDto
 import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.UserRepository
@@ -37,7 +38,7 @@ class UserService @Inject constructor(private val userRepository: UserRepository
         }
 
         val user = userRepository
-            .findByUsername(username)
+            .findByUsernameAsDto(username)
             .takeIf { it?.password == hash(password) }
             ?: throw UnauthorizedException("Invalid credentials")
 
@@ -48,6 +49,13 @@ class UserService @Inject constructor(private val userRepository: UserRepository
                 .groups(setOf(USER_ROLE))
                 .sign()
         )
+    }
+
+    fun getCurrentUserDto(): UserDto {
+        val username = jwt.name;
+        return userRepository.findByUsernameAsDto(username)
+            ?.apply { password = "" }
+            ?: throw UnauthorizedException("User not found")
     }
 
     fun getCurrentUser(): User {
