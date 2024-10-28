@@ -103,19 +103,19 @@ function onMouseMove(toast: ToastModel): void {
   .toast {
     box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
     position: relative;
-    font-size: 0.875rem; /* text-sm */
+    font-size: 0.875rem;
     padding: 0.5rem 1rem;
-    color: #ffffff; /* text-white */
-    margin-bottom: 0.5rem; /* mb-2 */
-    display: flex; /* flex */
-    flex-direction: row; /* flex-row */
-    gap: 0.5rem; /* gap-2 */
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
     cursor: pointer;
 
     svg {
       display: block;
       margin: auto 0;
-      width: 1.75rem; /* equivalent to w-7 */
+      width: 1.75rem;
       flex-shrink: 0;
     }
 
@@ -128,21 +128,20 @@ function onMouseMove(toast: ToastModel): void {
     }
 
     &.info {
-      background-color: #4b5563; /* bg-grey-80 */
+      background-color: #4b5563;
     }
 
     &.danger {
-      background-color: #f87171; /* bg-xdc-red-100 */
+      background-color: #c05151;
     }
 
     &.success {
-      background-color: #bfef63; /* bg-xdc-green-100 */
-      color: #000000; /* text-grey-100 */
+      background-color: #496f2c;
     }
 
     &.warning {
-      background-color: #fbbf24; /* bg-xdc-orange-100 */
-      color: #4b5563; /* text-grey-100 */
+      background-color: #fbbf24;
+      color: #4b5563;
     }
   }
 }

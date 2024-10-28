@@ -85,7 +85,7 @@ onMounted(async () => {
   TOAST.dispatch({
     type: "success",
     messageKey: "general.welcome",
-    messageParams: [authStore.user?.username],
+    messageParams: [authStore.user?.username ?? ""],
   });
 });
 
