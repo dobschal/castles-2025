@@ -88,7 +88,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
       EventType.BEER_COLLECTED,
     );
 
-    const beerCollectedAt = event ? Date.parse(event.createdAt) : 0;
+    const beerCollectedAt = event ? Date.parse(event.createdAt + "Z") : 0;
     const timePassed = NOW.value - beerCollectedAt;
     const hoursPassed = timePassed / 1000 / 60 / 60;
     const beerToCollect = Math.floor(
