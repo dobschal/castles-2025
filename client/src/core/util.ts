@@ -1,4 +1,5 @@
 import { TOAST } from "@/events.ts";
+import { ref } from "vue";
 
 let componentCounter = 0;
 
@@ -38,3 +39,9 @@ export function delay(duration: number): Promise<void> {
     setTimeout(resolve, duration);
   });
 }
+
+export const NOW = ref(Date.now());
+
+setInterval(() => {
+  NOW.value = Date.now();
+}, 1000);

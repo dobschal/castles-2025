@@ -13,6 +13,7 @@ export const en = {
     ago: "{0} ago",
     changeLanguage: "Change language: {0}",
     loading: "Loading...",
+    welcome: "Welcome {0}!",
   },
   serverError: {
     notEnoughBeer: "Not enough beer available.",

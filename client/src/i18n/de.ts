@@ -14,6 +14,7 @@ export const de = {
     ago: "vor {0}",
     changeLanguage: "Sprache ändern: {0}",
     loading: "Lädt...",
+    welcome: "Willkommen {0}!",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",

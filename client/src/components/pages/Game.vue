@@ -50,6 +50,7 @@ import waterDisabledImage from "@/assets/tiles/water-disabled.png";
 import workerImage from "@/assets/tiles/worker.png";
 import workerDisabledImage from "@/assets/tiles/worker-disabled.png";
 import { useI18n } from "vue-i18n";
+import { TOAST } from "@/events.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
@@ -81,6 +82,11 @@ onMounted(async () => {
   // needs to select the start village
   await buildingsStore.loadStartVillage();
   mapStore.goToPosition(buildingsStore.startVillage ?? { x: 0, y: 0 });
+  TOAST.dispatch({
+    type: "success",
+    messageKey: "general.welcome",
+    messageParams: [authStore.user?.username],
+  });
 });
 
 onBeforeUnmount(() => {
