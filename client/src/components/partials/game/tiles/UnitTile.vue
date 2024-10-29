@@ -1,15 +1,82 @@
 <template>
   <div class="unit-tile">
-    <img
-      v-if="unit.type === UnitType.WORKER && isOwnUnit"
-      src="../../../../assets/tiles/worker-red-hat.png"
-      alt="Unit"
-    />
-    <img
-      v-else-if="unit.type === UnitType.WORKER && !isOwnUnit"
-      src="../../../../assets/tiles/worker-beige-hat.png"
-      alt="Unit"
-    />
+    <template v-if="unit.type === UnitType.WORKER">
+      <img
+        v-if="isDisabled"
+        src="../../../../assets/tiles/worker-disabled.png"
+        alt="Unit"
+      />
+      <img
+        v-else-if="isOwnUnit"
+        src="../../../../assets/tiles/worker-red-hat.png"
+        alt="Unit"
+      />
+      <img
+        v-else-if="!isOwnUnit"
+        src="../../../../assets/tiles/worker-beige-hat.png"
+        alt="Unit"
+      />
+    </template>
+    <template v-if="unit.type === UnitType.SWORDSMAN">
+      <img
+        v-if="isDisabled"
+        src="../../../../assets/tiles/swordsman-disabled.png"
+        class="swordsman"
+        alt="Unit"
+      />
+      <img
+        v-else-if="isOwnUnit"
+        src="../../../../assets/tiles/swordsman-red.png"
+        class="swordsman"
+        alt="Unit"
+      />
+      <img
+        v-else-if="!isOwnUnit"
+        src="../../../../assets/tiles/swordsman-beige.png"
+        class="swordsman"
+        alt="Unit"
+      />
+    </template>
+    <template v-if="unit.type === UnitType.HORSEMAN">
+      <img
+        v-if="isDisabled"
+        src="../../../../assets/tiles/hosreman-disabled.png"
+        class="hosreman"
+        alt="Unit"
+      />
+      <img
+        v-else-if="isOwnUnit"
+        src="../../../../assets/tiles/hosreman-red.png"
+        class="hosreman"
+        alt="Unit"
+      />
+      <img
+        v-else-if="!isOwnUnit"
+        src="../../../../assets/tiles/hosreman-beige.png"
+        class="hosreman"
+        alt="Unit"
+      />
+    </template>
+    <template v-if="unit.type === UnitType.SPEARMAN">
+      <img
+        v-if="isDisabled"
+        src="../../../../assets/tiles/spearman-disabled.png"
+        class="spearman"
+        alt="Unit"
+      />
+      <img
+        v-else-if="isOwnUnit"
+        src="../../../../assets/tiles/spearman-red.png"
+        class="spearman"
+        alt="Unit"
+      />
+      <img
+        v-else-if="!isOwnUnit"
+        src="../../../../assets/tiles/spearman-beige.png"
+        class="spearman"
+        alt="Unit"
+      />
+    </template>
   </div>
 </template>
 
@@ -19,22 +86,30 @@ import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
-import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
+import WorkerAction from "@/components/partials/game/actions/WorkerAction.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
+import { MapTileState } from "@/types/enum/MapTileState.ts";
 
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
 const authStore = useAuthStore();
 const props = defineProps<{
   unit: UnitEntity;
+  mapTile: MapTileDto;
 }>();
+
+const isDisabled = computed(() => {
+  return props.mapTile.state === MapTileState.FORBIDDEN;
+});
+
 const buildingOnPosition = computed(() => {
   return buildingsStore.buildings.find((building) => {
     return building.x === props.unit.x && building.y === props.unit.y;
   });
 });
+
 const isOwnUnit = computed(() => {
   return props.unit.user.id === authStore.user?.id;
 });
@@ -58,7 +133,7 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   }
 
   unitsStore.activeUnit = props.unit;
-  ACTION.dispatch(UnitAction);
+  ACTION.dispatch(WorkerAction);
 }
 </script>
 
@@ -73,6 +148,27 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     height: 125%;
     margin-left: -21%;
     margin-top: -10%;
+
+    &.swordsman {
+      width: 150%;
+      height: 150%;
+      margin-left: 0%;
+      margin-top: -25%;
+    }
+
+    &.spearman {
+      width: 130%;
+      height: 130%;
+      margin-left: 0%;
+      margin-top: -25%;
+    }
+
+    &.hosreman {
+      width: 130%;
+      height: 130%;
+      margin-left: -10%;
+      margin-top: -15%;
+    }
   }
 }
 </style>

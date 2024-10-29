@@ -19,6 +19,8 @@ export const de = {
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
+    onlyOnePerVillage:
+      "Du kannst nur eine Brauerei, eine Farm und eine Burg pro Dorf bauen.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -59,9 +61,13 @@ export const de = {
     buildFarm: "Farm bauen",
     buildBrewery: "Brauerei bauen",
     buildCastle: "Burg bauen",
+    buildVillage: "Dorf bauen",
   },
   castleAction: {
     castleOf: "Burg von {playerName}",
+    createSwordsman: "Schwertkämpfer erstellen",
+    createSpearman: "Speerkämpfer erstellen",
+    createHorseman: "Reiter erstellen",
   },
   events: {
     noEvents: "Keine Events vorhanden...",

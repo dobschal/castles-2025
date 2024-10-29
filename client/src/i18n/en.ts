@@ -19,6 +19,8 @@ export const en = {
   },
   serverError: {
     notEnoughBeer: "Not enough beer available.",
+    onlyOnePerVillage:
+      "You can only build one brewery, one farm and one castle per village.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -58,9 +60,13 @@ export const en = {
     buildFarm: "Build farm",
     buildBrewery: "Build brewery",
     buildCastle: "Build castle",
+    buildVillage: "Build village",
   },
   castleAction: {
     castleOf: "Castle of {playerName}",
+    createSwordsman: "Create swordsman",
+    createSpearman: "Create spearman",
+    createHorseman: "Create horseman",
   },
   events: {
     noEvents: "No events available...",

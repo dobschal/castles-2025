@@ -13,6 +13,33 @@
   >
     {{ t("villageAction.moveUnit") }}
   </CButton>
+  <CButton
+    v-if="isOwnBuilding"
+    class="small"
+    @click="createUnit(UnitType.SWORDSMAN)"
+    :disabled="!isBuildingSwordsmanAvailable"
+  >
+    {{ t("castleAction.createSwordsman") }}
+    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.SWORDSMAN)" />
+  </CButton>
+  <CButton
+    v-if="isOwnBuilding"
+    class="small"
+    @click="createUnit(UnitType.HORSEMAN)"
+    :disabled="!isBuildingHorsemanAvailable"
+  >
+    {{ t("castleAction.createHorseman") }}
+    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.HORSEMAN)" />
+  </CButton>
+  <CButton
+    v-if="isOwnBuilding"
+    class="small"
+    @click="createUnit(UnitType.SPEARMAN)"
+    :disabled="!isBuildingSpearmanAvailable"
+  >
+    {{ t("castleAction.createSpearman") }}
+    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.SPEARMAN)" />
+  </CButton>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
   </CButton>
@@ -29,13 +56,36 @@ import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
+import { UnitType } from "@/types/enum/UnitType.ts";
+import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import { usePricesStore } from "@/store/pricesStore.ts";
+import { UnitGateway } from "@/gateways/UnitGateway.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
 const authStore = useAuthStore();
+const pricesStore = usePricesStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
+
+const isBuildingSwordsmanAvailable = computed(() => {
+  return (
+    pricesStore.getCreationPrice(UnitType.SWORDSMAN) <= authStore.user!.beer
+  );
+});
+
+const isBuildingHorsemanAvailable = computed(() => {
+  return (
+    pricesStore.getCreationPrice(UnitType.HORSEMAN) <= authStore.user!.beer
+  );
+});
+
+const isBuildingSpearmanAvailable = computed(() => {
+  return (
+    pricesStore.getCreationPrice(UnitType.SPEARMAN) <= authStore.user!.beer
+  );
+});
 
 const unitAtPosition = computed(() => {
   return unitsStore.units.find((unit) => {
@@ -90,6 +140,19 @@ function openMoveUnitActionOverlay(): void {
   close();
   unitsStore.activeMoveUnit = unitAtPosition.value!;
   ACTION.dispatch(UnitMoveAction);
+}
+
+async function createUnit(type): Promise<void> {
+  try {
+    await UnitGateway.instance.createUnit({
+      x: buildingsStore.activeBuilding!.x,
+      y: buildingsStore.activeBuilding!.y,
+      type,
+    });
+    close();
+  } catch (error) {
+    handleFatalError(error);
+  }
 }
 </script>
 

@@ -136,7 +136,7 @@ function onMouseMove(toast: ToastModel): void {
     }
 
     &.success {
-      background-color: #496f2c;
+      background-color: #82ad00;
     }
 
     &.warning {

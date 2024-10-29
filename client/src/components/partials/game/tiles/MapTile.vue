@@ -60,7 +60,7 @@
       />
     </div>
     <BuildingTile v-if="building" :building="building" :map-tile="mapTile" />
-    <UnitTile v-if="unit" :unit="unit" :class="[mapTile.state]" />
+    <UnitTile v-if="unit" :unit="unit" :map-tile="mapTile" />
     <div
       v-if="mapTile.state !== MapTileState.FORBIDDEN"
       class="image-top-layer-wrapper"
@@ -158,13 +158,13 @@ function onMouseLeave(): void {
   user-select: none;
   animation: fade-in 0.5s;
 
-  &.ACCEPTABLE {
+  &:not(.FORBIDDEN) {
     cursor: pointer;
 
     &:hover {
       .image-wrapper {
         img {
-          filter: brightness(1.4);
+          filter: brightness(1.2);
         }
       }
     }

@@ -748,4 +748,34 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
 
+    @Test
+    fun `Fight units can only be build on castles`() {
+        TODO();
+    }
+
+    @Test
+    fun `Fight units can not move over each other if from same player`() {
+        TODO();
+    }
+
+    @Test
+    fun `Fight units can move over other units (fight, one unit gets destroyed)`() {
+        TODO();
+    }
+
+    @Test
+    fun `Farms and Breweries are getting destroyed on conquer`() {
+        TODO();
+    }
+
+    @Test
+    fun `Own Farms and Breweries are not getting destroyed`() {
+        TODO();
+    }
+
+    @Test
+    fun `Castles and villages are getting conquered when other unit is moving onto`() {
+        TODO();
+    }
+
 }
