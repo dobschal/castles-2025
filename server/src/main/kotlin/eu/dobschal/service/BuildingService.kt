@@ -92,6 +92,14 @@ class BuildingService @Inject constructor(
             buildingsAround.find { it.type == BuildingType.FARM && it.user?.id == currentUser.id }
                 ?: throw BadRequestException("serverError.noFarm")
         }
+        // Per village, the user can only have one brewery, farm or castle
+        if (type == BuildingType.BREWERY || type == BuildingType.FARM || type == BuildingType.CASTLE) {
+            val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
+            val buildings = buildingRepository.findAllByUser(currentUser.id!!)
+            if (buildings.count { it.type == type } >= amountOfVillages) {
+                throw BadRequestException("serverError.onlyOnePerVillage")
+            }
+        }
         unitRepository.deleteById(unit.id!!)
         userRepository.deductBeerFromUser(currentUser.id!!, price)
         return persistBuilding(x, y, type, currentUser)
@@ -132,6 +140,15 @@ class BuildingService @Inject constructor(
         if (building.user?.id != currentUser.id) {
             throw BadRequestException("serverError.notYourBuilding")
         }
+        val buildingsAround =
+            buildingRepository.findBuildingsBetween(
+                building.x!! - 1,
+                building.x!! + 2,
+                building.y!! - 1,
+                building.y!! + 2
+            )
+        buildingsAround.find { it.type == BuildingType.FARM && it.user?.id == currentUser.id }
+            ?: throw BadRequestException("serverError.noFarm")
         val event = eventRepository.findEventByXAndYAndType(building.x!!, building.y!!, EventType.BEER_COLLECTED)
         val lastCollectedAt = event?.createdAt ?: LocalDateTime.of(1970, 1, 1, 0, 0)
         val timeSinceLastCollection = LocalDateTime.now().atZone(ZoneId.systemDefault())

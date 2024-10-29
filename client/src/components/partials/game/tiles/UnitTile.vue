@@ -1,10 +1,15 @@
 <template>
   <div class="unit-tile">
-    <div
-      v-if="!buildingOnPosition && isOwnUnit"
-      class="ownership-indicator"
-    ></div>
-    <img src="../../../../assets/tiles/worker.png" alt="Unit" />
+    <img
+      v-if="unit.type === UnitType.WORKER && isOwnUnit"
+      src="../../../../assets/tiles/worker-red-hat.png"
+      alt="Unit"
+    />
+    <img
+      v-else-if="unit.type === UnitType.WORKER && !isOwnUnit"
+      src="../../../../assets/tiles/worker-beige-hat.png"
+      alt="Unit"
+    />
   </div>
 </template>
 
@@ -17,6 +22,7 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import UnitAction from "@/components/partials/game/actions/UnitAction.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
+import { UnitType } from "@/types/enum/UnitType.ts";
 
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
@@ -57,34 +63,10 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 </script>
 
 <style lang="scss" scoped>
-@keyframes pulsate {
-  0% {
-    transform: scale(0.8);
-  }
-  50% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0.8);
-  }
-}
-
 .unit-tile {
   position: absolute;
   pointer-events: none;
   z-index: 3;
-
-  .ownership-indicator {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    box-shadow: 0 0 6px 6px white;
-    animation: pulsate 2s infinite;
-    margin-left: 70%;
-    margin-top: -25%;
-  }
 
   img {
     width: 125%;

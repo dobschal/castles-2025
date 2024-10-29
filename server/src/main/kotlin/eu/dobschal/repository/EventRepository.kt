@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
+import java.time.LocalDateTime
 
 
 @Transactional
@@ -27,6 +28,15 @@ class EventRepository @Inject constructor(private val entityManager: EntityManag
 
     fun findEventByXAndYAndType(x: Int, y: Int, type: EventType): Event? {
         return find("x = ?1 and y = ?2 and type = ?3 ORDER BY id DESC", x, y, type).firstResult()
+    }
+
+    fun countEventsByUnitIdAndTypeLastHour(unitId: Int, type: EventType): Int {
+        return count(
+            "unit.id = ?1 AND type = ?2 AND createdAt > ?3",
+            unitId,
+            type,
+            LocalDateTime.now().minusHours(1)
+        ).toInt()
     }
 }
 

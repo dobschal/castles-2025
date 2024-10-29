@@ -7,11 +7,13 @@ import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
+import eu.dobschal.utils.*
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.NotFoundException
 import kotlin.math.abs
+import kotlin.math.max
 
 @ApplicationScoped
 class UnitService @Inject constructor(
@@ -53,6 +55,12 @@ class UnitService @Inject constructor(
         val price = priceService.getPriceForUnitCreation(user.toDto(), type)
         if (user.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
+        }
+
+        buildingRepository.countCastlesByUser(user.id!!).let {
+            if (max(2, it * UNITS_PER_CASTLE_LEVEL_1) <= unitRepository.countUnitsByUser(user.id!!)) {
+                throw BadRequestException("serverError.tooManyUnits")
+            }
         }
 
         val unit = Unit().apply {
@@ -101,6 +109,17 @@ class UnitService @Inject constructor(
         val price = priceService.getPriceForUnitMove(unit.type)
         if (user.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
+        }
+        eventRepository.countEventsByUnitIdAndTypeLastHour(unit.id!!, EventType.UNIT_MOVED).let {
+            val maxMovesPerHours = when (unit.type) {
+                UnitType.WORKER -> WORKER_MOVES_PER_HOUR
+                UnitType.HORSEMAN -> HORSEMAN_MOVES_PER_HOUR
+                UnitType.SPEARMAN -> SPEARMAN_MOVES_PER_HOUR
+                UnitType.SWORDSMAN -> SWORDSMAN_MOVES_PER_HOUR
+            }
+            if (it >= maxMovesPerHours) {
+                throw BadRequestException("serverError.tooManyMoves")
+            }
         }
         unit.x = x
         unit.y = y

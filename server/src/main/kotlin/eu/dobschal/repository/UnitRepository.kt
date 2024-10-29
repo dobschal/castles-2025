@@ -41,4 +41,8 @@ class UnitRepository : PanacheRepository<Unit> {
     fun deleteById(id: Int) {
         delete("id", id)
     }
+
+    fun countUnitsByUser(userId: Int): Int {
+        return count("user.id = ?1", userId).toInt()
+    }
 }

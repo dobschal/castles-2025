@@ -59,9 +59,6 @@
         alt="Mountain"
       />
     </div>
-    <div v-if="isMouseOver" class="position-text">
-      {{ mapTile.x }} / {{ mapTile.y }}
-    </div>
     <BuildingTile v-if="building" :building="building" :map-tile="mapTile" />
     <UnitTile v-if="unit" :unit="unit" :class="[mapTile.state]" />
     <div
@@ -149,7 +146,7 @@ function onMouseLeave(): void {
 @keyframes fade-in {
   from {
     opacity: 0.5;
-    transform: scale(0.95) translateY(+1rem) translateX(-1rem);
+    transform: translateY(+1rem) translateX(-1rem);
   }
   to {
     opacity: 1;

@@ -1,10 +1,5 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
-    <div
-      v-if="isOwnBuilding"
-      class="ownership-indicator"
-      :class="building.type"
-    ></div>
     <p
       v-if="building.type === BuildingType.VILLAGE"
       class="banner"
@@ -14,8 +9,14 @@
     </p>
     <template v-if="building.type === BuildingType.VILLAGE">
       <img
-        v-if="!isDisabled"
-        src="../../../../assets/tiles/village.png"
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/village-red-roof.png"
+        class="building village"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/village-beige-roof.png"
         class="building village"
         alt="Building"
       />
@@ -40,8 +41,14 @@
     </template>
     <template v-if="building.type === BuildingType.FARM">
       <img
-        v-if="!isDisabled"
-        src="../../../../assets/tiles/farm.png"
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/farm-red-roof.png"
+        class="building farm"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/farm-beige-roof.png"
         class="building farm"
         alt="Building"
       />
@@ -66,8 +73,14 @@
     </template>
     <template v-if="building.type === BuildingType.BREWERY">
       <img
-        v-if="!isDisabled"
-        src="../../../../assets/tiles/brewery.png"
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/brewery-red-roof.png"
+        class="building brewery"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/brewery-beige-roof.png"
         class="building brewery"
         alt="Building"
       />
@@ -93,8 +106,20 @@
     </template>
     <template v-if="building.type === BuildingType.CASTLE">
       <img
-        v-if="building.level === 1"
-        src="../../../../assets/tiles/castle-level-1.png"
+        v-if="building.level === 1 && !isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/castle-level-1-red-roof.png"
+        class="building castle-level-1"
+        alt="Building"
+      />
+      <img
+        v-else-if="building.level === 1 && !isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/castle-level-1-beige-roof.png"
+        class="building castle-level-1"
+        alt="Building"
+      />
+      <img
+        v-else-if="building.level === 1 && isDisabled"
+        src="../../../../assets/tiles/castle-level-1-disabled.png"
         class="building castle-level-1"
         alt="Building"
       />
@@ -189,18 +214,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 </script>
 
 <style lang="scss" scoped>
-@keyframes pulsate {
-  0% {
-    transform: scale(0.8);
-  }
-  50% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0.8);
-  }
-}
-
 .building-tile {
   position: absolute;
   top: 0;
@@ -208,29 +221,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   width: 100%;
   height: 100%;
   user-select: none;
-
-  .ownership-indicator {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    box-shadow: 0 0 6px 6px white;
-    animation: pulsate 2s infinite;
-    margin-left: 70%;
-    margin-top: -50%;
-    z-index: 3;
-
-    &.FARM {
-      margin-left: 50%;
-      margin-top: -10%;
-    }
-
-    &.BREWERY {
-      margin-left: 50%;
-      margin-top: -15%;
-    }
-  }
 
   .banner {
     position: absolute;

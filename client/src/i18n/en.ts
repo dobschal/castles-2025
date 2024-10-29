@@ -15,6 +15,7 @@ export const en = {
     changeLanguage: "Change language: {0}",
     loading: "Loading...",
     welcome: "Welcome {0}!",
+    passwordRepeated: "Please confirm your password.",
   },
   serverError: {
     notEnoughBeer: "Not enough beer available.",
@@ -28,6 +29,7 @@ export const en = {
       "An error occurred during registration. Maybe the username is already taken.",
     action: "Create account",
     toLogin: "To login",
+    passwordsNotEqual: "Passwords do not match.",
   },
   login: {
     title: "Login",

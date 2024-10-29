@@ -13,6 +13,9 @@
       <LabeledInput type="password" v-model="password">
         <CText path="general.password" />
       </LabeledInput>
+      <LabeledInput type="password" v-model="passwordRepeated">
+        <CText path="general.passwordRepeated" />
+      </LabeledInput>
       <CButton type="submit" :disabled="isLoading || !hasInput">
         <CText path="registration.action" />
       </CButton>
@@ -32,23 +35,40 @@ import CText from "@/components/partials/general/CText.vue";
 import CButton from "@/components/partials/general/CButton.vue";
 import { UserGateway } from "@/gateways/UserGateway.ts";
 import router from "@/core/router.ts";
-import { LoginPageRoute } from "@/routes.ts";
+import { LoginPageRoute, MainPageRoute } from "@/routes.ts";
+import { useAuthStore } from "@/store/authStore.ts";
+import { TOAST } from "@/events.ts";
 
 const username = ref("");
 const password = ref("");
+const passwordRepeated = ref("");
 const hasError = ref(false);
 const isLoading = ref(false);
+const authStore = useAuthStore();
 
 const hasInput = computed(
   () => username.value.length > 0 && password.value.length > 0,
 );
 
 async function submitForm(): Promise<void> {
+  if (password.value !== passwordRepeated.value) {
+    TOAST.dispatch({
+      type: "danger",
+      messageKey: "registration.passwordsNotEqual",
+    });
+
+    return;
+  }
+
   isLoading.value = true;
   hasError.value = false;
   try {
     await UserGateway.instance.register(username.value, password.value);
-    await router.push(LoginPageRoute.path);
+    authStore.token = await UserGateway.instance.login(
+      username.value,
+      password.value,
+    );
+    await router.push(MainPageRoute.path);
   } catch (error) {
     console.error("Error during registration: ", error);
     hasError.value = true;

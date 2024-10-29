@@ -15,6 +15,7 @@ export const de = {
     changeLanguage: "Sprache ändern: {0}",
     loading: "Lädt...",
     welcome: "Willkommen {0}!",
+    passwordRepeated: "Bitte bestätige dein Passwort.",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
@@ -28,6 +29,7 @@ export const de = {
       "Fehler bei der Registrierung aufgetreten. Ggf. ist der Nutzername schon vergeben.",
     action: "Account erstellen",
     toLogin: "Zum Login",
+    passwordsNotEqual: "Passwörter stimmen nicht überein.",
   },
   login: {
     title: "Login",

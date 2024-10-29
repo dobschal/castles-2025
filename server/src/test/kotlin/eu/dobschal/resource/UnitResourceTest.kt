@@ -4,9 +4,11 @@ import eu.dobschal.model.dto.request.CreateUnitRequestDto
 import eu.dobschal.model.dto.request.MoveUnitRequestDto
 import eu.dobschal.model.dto.response.ErrorResponseDto
 import eu.dobschal.model.entity.Building
+import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.MapTile
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.utils.START_BEER
@@ -17,6 +19,7 @@ import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 
 @QuarkusTest
@@ -606,12 +609,142 @@ class UnitResourceTest : BaseResourceTest() {
 
     @Test
     fun `A unit has a limited amount of moves per hour`() {
-        TODO()
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.MOUNTAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val farm = Building().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        eventRepository.save(Event().apply {
+            user1 = user1
+            type = EventType.UNIT_MOVED
+            this.unit = unit
+            x = 12
+            y = 12
+            createdAt = LocalDateTime.now().minusMinutes(30)
+        })
+        eventRepository.save(Event().apply {
+            user1 = user1
+            type = EventType.UNIT_MOVED
+            this.unit = unit
+            x = 12
+            y = 13
+            createdAt = LocalDateTime.now().minusMinutes(59)
+        })
+        eventRepository.save(Event().apply {
+            user1 = user1
+            type = EventType.UNIT_MOVED
+            this.unit = unit
+            x = 12
+            y = 14
+            createdAt = LocalDateTime.now().minusMinutes(1)
+        })
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().first().x == 2)
+        assert(unitRepository.listAll().first().y == 2)
+    }
+
+    @Test
+    fun `One can have 2 units only without a castle`() {
+        val unit1 = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit1)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit2)
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+        assert(unitRepository.listAll().size == 2)
     }
 
     @Test
     fun `Amount of units is limited by amount of castles and their level`() {
-        TODO()
+        val unit1 = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit1)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit2)
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER - WORKER_BASE_PRICE * 2 * 2)
+        assert(unitRepository.listAll().size == 3)
     }
 
 

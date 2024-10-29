@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import MainLayout from "@/components/layouts/MainLayout.vue";
 import { useAuthStore } from "@/store/authStore.ts";
+import LoginLayout from "@/components/layouts/LoginLayout.vue";
 
 /**
  * Any RouteRecordRaw object defined and exported here will be automatically
@@ -16,7 +17,7 @@ export const LoginPageRoute: RouteRecordRaw = {
   path: "/login",
   name: "LoginPage",
   component: () => import("@/components/pages/Login.vue"),
-  meta: { title, layout: MainLayout },
+  meta: { title, layout: LoginLayout },
   beforeEnter(): BeforeEnterReturnType {
     const authStore = useAuthStore();
 
@@ -30,7 +31,7 @@ export const RegistrationPageRoute: RouteRecordRaw = {
   path: "/registration",
   name: "RegistrationPage",
   component: () => import("@/components/pages/Registration.vue"),
-  meta: { title, layout: MainLayout },
+  meta: { title, layout: LoginLayout },
   beforeEnter(): BeforeEnterReturnType {
     const authStore = useAuthStore();
 
