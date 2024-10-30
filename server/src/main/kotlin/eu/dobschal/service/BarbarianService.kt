@@ -113,8 +113,8 @@ class BarbarianService @Inject constructor(
         val highestX = buildings.maxByOrNull { it.x!! }?.x ?: margin
         val highestY = buildings.maxByOrNull { it.y!! }?.y ?: margin
         for (i in 0 until 1000) {
-            val x = Random().nextInt(lowestX - margin, highestX + margin)
-            val y = Random().nextInt(lowestY - margin, highestY + margin)
+            val x = kotlin.random.Random.nextInt(lowestX - margin, highestX + margin)
+            val y = kotlin.random.Random.nextInt(lowestY - margin, highestY + margin)
             val conflictingBuilding = buildings.any { abs(it.x!! - x) < 3 && abs(it.y!! - y) < 3 }
             val conflictingUnit = units.any { it.x == x && it.y == y }
             val mapTile = mapTiles.find { it.x == x && it.y == y }

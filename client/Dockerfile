@@ -13,7 +13,7 @@ COPY package*.json ./
 COPY public ./public
 COPY .env* *.js *.json ./
 COPY index.html ./
-COPY vite.config.ts ./
+COPY vite.config.mts ./
 COPY src ./src
 # install project dependencies
 RUN npm ci
