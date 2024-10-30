@@ -123,18 +123,6 @@
         class="building castle-level-1"
         alt="Building"
       />
-      <img
-        v-if="building.level === 2"
-        src="../../../../assets/tiles/castle-level-2.png"
-        class="building castle-level-2"
-        alt="Building"
-      />
-      <img
-        v-if="building.level === 3"
-        src="../../../../assets/tiles/castle-level-3.png"
-        class="building castle-level-3"
-        alt="Building"
-      />
     </template>
   </div>
 </template>
