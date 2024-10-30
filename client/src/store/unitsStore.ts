@@ -13,13 +13,22 @@ export const useUnitsStore = defineStore("units", () => {
   const activeUnit = ref<Optional<UnitEntity>>();
   const activeMoveUnit = ref<Optional<UnitEntity>>();
   const loadUnitsQueue = new Queue(500, 3);
+  const workerMovesPerHour = ref(-1);
+  const spearmanMovesPerHour = ref(-1);
+  const swordsmanMovesPerHour = ref(-1);
+  const horsemanMovesPerHour = ref(-1);
 
   async function loadUnits(): Promise<void> {
     await loadUnitsQueue.add(async () => {
       try {
-        units.value = await UnitGateway.instance.getUnits(
+        const response = await UnitGateway.instance.getUnits(
           mapStore.currentMapRange,
         );
+        units.value = response.units;
+        workerMovesPerHour.value = response.workerMovesPerHour;
+        spearmanMovesPerHour.value = response.spearmanMovesPerHour;
+        swordsmanMovesPerHour.value = response.swordsmanMovesPerHour;
+        horsemanMovesPerHour.value = response.horsemanMovesPerHour;
       } catch (e) {
         handleFatalError(e);
       }
@@ -31,5 +40,9 @@ export const useUnitsStore = defineStore("units", () => {
     units,
     activeUnit,
     activeMoveUnit,
+    workerMovesPerHour,
+    spearmanMovesPerHour,
+    swordsmanMovesPerHour,
+    horsemanMovesPerHour,
   };
 });

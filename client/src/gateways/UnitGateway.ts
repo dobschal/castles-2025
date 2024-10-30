@@ -1,14 +1,15 @@
 import { Gateway } from "@/core/Gateway.ts";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
 import { TwoPointDto } from "@/types/dto/TwoPointDto.ts";
+import { UnitsResponse } from "@/types/response/UnitsReponse.ts";
 
 export class UnitGateway extends Gateway {
   static get instance(): UnitGateway {
     return new UnitGateway();
   }
 
-  async getUnits(data: TwoPointDto): Promise<UnitEntity[]> {
-    return this.request<UnitEntity[]>(
+  async getUnits(data: TwoPointDto): Promise<UnitsResponse> {
+    return this.request<UnitsResponse>(
       "GET",
       "/v1/units?" + this.objectToQueryString(data),
     );

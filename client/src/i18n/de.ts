@@ -16,11 +16,20 @@ export const de = {
     loading: "Lädt...",
     welcome: "Willkommen {0}!",
     passwordRepeated: "Bitte bestätige dein Passwort.",
+    unit: "Einheit",
+  },
+  unitType: {
+    WORKER: "Arbeiter",
+    SWORDSMAN: "Schwertkämpfer",
+    SPEARMAN: "Speerträger",
+    HORSEMAN: "Reiter",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
     onlyOnePerVillage:
       "Du kannst nur eine Brauerei, eine Farm und eine Burg pro Dorf bauen.",
+    tooManyMoves:
+      "Die Einheit hat ihr Limit an Zügen für diese Stunde erreicht.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -58,6 +67,8 @@ export const de = {
   unitAction: {
     chooseAction: "Wähle eine Aktion für die Einheit:",
     moveText: "Wohin soll die Einheit bewegt werden?",
+    movesRemaining:
+      "Diese Einheit hat noch {0} von {1} Zügen pro Stunde übrig.",
     buildFarm: "Farm bauen",
     buildBrewery: "Brauerei bauen",
     buildCastle: "Burg bauen",
@@ -72,17 +83,27 @@ export const de = {
   events: {
     noEvents: "Keine Events vorhanden...",
     openOverlay: "Events anzeigen",
+    buildingDestroyed: "Gebäude zerstört!",
+    buildingConquered: "Gebäude erobert!",
+    lostUnit: "Einheit verloren!",
+    wonFight: "Kampf gewonnen!",
     own: {
-      UNIT_MOVED: "Du hast eine Einheit nach {x}, {y} bewegt.",
-      UNIT_CREATED: "Du hast eine Einheit erstellt.",
+      UNIT_MOVED: "Du hast einen {unitType} nach {x}, {y} bewegt.",
+      UNIT_CREATED: "Du hast einen {unitType} erstellt.",
       BUILDING_CREATED: "Du hast ein Gebäude erstellt.",
       BEER_COLLECTED: "Du hast Bier gesammelt.",
+      BUILDING_CONQUERED: "Du hast ein Gebäude bei {x}, {y} erobert.",
+      BUILDING_DESTROYED: "Du hast ein Gebäude bei {x}, {y} zerstört.",
+      LOST_UNIT: "Du hast einem {unitType} bei {x}, {y} verloren.",
     },
     other: {
-      UNIT_MOVED: "{playerName} hat eine Einheit nach {x}, {y} bewegt.",
-      UNIT_CREATED: "{playerName} hat eine Einheit erstellt.",
+      UNIT_MOVED: "{playerName} hat einen {unitType} nach {x}, {y} bewegt.",
+      UNIT_CREATED: "{playerName} hat einen {unitType} erstellt.",
       BUILDING_CREATED: "{playerName} hat ein Gebäude erstellt.",
       BEER_COLLECTED: "{playerName} hat Bier gesammelt.",
+      BUILDING_CONQUERED: "{playerName} hat ein Gebäude bei {x}, {y} erobert.",
+      BUILDING_DESTROYED: "{playerName} hat ein Gebäude bei {x}, {y} zerstört.",
+      LOST_UNIT: "{playerName} hat einem {unitType} bei {x}, {y} verloren.",
     },
   },
 };

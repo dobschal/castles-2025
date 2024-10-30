@@ -42,6 +42,7 @@ interface CustomEvent {
     x: number;
     y: number;
     playerName: string;
+    unitType: string;
   };
   duration: string;
 }
@@ -57,6 +58,9 @@ const events = computed<Array<CustomEvent>>(() => {
         x: event.x,
         y: event.y,
         playerName: event.user1.username,
+        unitType: event.unit?.type
+          ? t(`unitType.${event.unit?.type}`)
+          : t("general.unit"),
       },
       duration: calculateDuration(
         new Date(),

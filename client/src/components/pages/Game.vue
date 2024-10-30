@@ -25,14 +25,6 @@ import { useActionStore } from "@/store/actionStore.ts";
 import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { Optional } from "@/types/core/Optional.ts";
-import breweryImage from "@/assets/tiles/brewery.png";
-import breweryDisabledImage from "@/assets/tiles/brewery-disabled.png";
-import breweryTopLayerImage from "@/assets/tiles/brewery-top-layer.png";
-import breweryTopLayerDisabledImage from "@/assets/tiles/brewery-top-layer-disabled.png";
-import farmImage from "@/assets/tiles/farm.png";
-import farmDisabledImage from "@/assets/tiles/farm-disabled.png";
-import farmTopLayerImage from "@/assets/tiles/farm-top-layer.png";
-import farmTopLayerDisabledImage from "@/assets/tiles/farm-top-layer-disabled.png";
 import forestImage from "@/assets/tiles/forest.png";
 import forestDisabledImage from "@/assets/tiles/forest-disabled.png";
 import forestTopLayerImage from "@/assets/tiles/forest-top-layer.png";
@@ -41,14 +33,8 @@ import mountainImage from "@/assets/tiles/mountain.png";
 import mountainDisabledImage from "@/assets/tiles/mountain-disabled.png";
 import plainImage from "@/assets/tiles/plain.png";
 import plainDisabledImage from "@/assets/tiles/plain-disabled.png";
-import villageImage from "@/assets/tiles/village.png";
-import villageDisabledImage from "@/assets/tiles/village-disabled.png";
-import villageTopLayerImage from "@/assets/tiles/village-top-layer.png";
-import villageTopLayerDisabledImage from "@/assets/tiles/village-top-layer-disabled.png";
 import waterImage from "@/assets/tiles/water.png";
 import waterDisabledImage from "@/assets/tiles/water-disabled.png";
-import workerImage from "@/assets/tiles/worker.png";
-import workerDisabledImage from "@/assets/tiles/worker-disabled.png";
 import { useI18n } from "vue-i18n";
 import { DIALOG, TOAST } from "@/events.ts";
 
@@ -146,14 +132,6 @@ async function keepLoadingEvents(): Promise<void> {
 async function loadAssets(): Promise<void> {
   const t1 = Date.now();
   const images = [
-    breweryImage,
-    breweryDisabledImage,
-    breweryTopLayerImage,
-    breweryTopLayerDisabledImage,
-    farmImage,
-    farmDisabledImage,
-    farmTopLayerImage,
-    farmTopLayerDisabledImage,
     forestImage,
     forestDisabledImage,
     forestTopLayerImage,
@@ -162,14 +140,8 @@ async function loadAssets(): Promise<void> {
     mountainDisabledImage,
     plainImage,
     plainDisabledImage,
-    villageImage,
-    villageDisabledImage,
-    villageTopLayerImage,
-    villageTopLayerDisabledImage,
     waterImage,
     waterDisabledImage,
-    workerImage,
-    workerDisabledImage,
   ];
   await Promise.all(
     images.map((image) => {

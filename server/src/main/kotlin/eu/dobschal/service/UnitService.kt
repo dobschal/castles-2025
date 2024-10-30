@@ -1,7 +1,10 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.response.UnitsResponseDto
+import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.Unit
+import eu.dobschal.model.entity.User
 import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
@@ -12,6 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.NotFoundException
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -33,7 +37,9 @@ class UnitService @Inject constructor(
         UnitType.SWORDSMAN to BuildingType.CASTLE
     )
 
-    fun getUnits(x1: Int, x2: Int, y1: Int, y2: Int) = unitRepository.findUnitsBetween(x1, x2, y1, y2)
+    fun getUnits(x1: Int, x2: Int, y1: Int, y2: Int): UnitsResponseDto {
+        return UnitsResponseDto(unitRepository.findUnitsBetween(x1, x2, y1, y2))
+    }
 
     fun createUnit(x: Int, y: Int, type: UnitType): Unit {
         val neededBuildingType = buildingUnitMapping[type]
@@ -87,16 +93,17 @@ class UnitService @Inject constructor(
         if (unit.user?.id != user.id) {
             throw BadRequestException("serverError.wrongUnitOwner")
         }
-        if (unit.type == UnitType.WORKER) {
-            val building = buildingRepository.findBuildingByXAndY(x, y)
-            if (building != null && building.user?.id != user.id) {
+        val conflictingBuilding = buildingRepository.findBuildingByXAndY(x, y)?.let { building ->
+            if (unit.type == UnitType.WORKER && building.user?.id != user.id) {
                 throw BadRequestException("serverError.wrongBuildingOwner")
             }
+            building
         }
-        unitRepository.findUnitByXAndY(x, y)?.let {
+        val conflictingUnit = unitRepository.findUnitByXAndY(x, y)?.let {
             if (it.user?.id == user.id || unit.type == UnitType.WORKER) {
                 throw BadRequestException("serverError.conflictingUnit")
             }
+            it
         }
         val isDistanceWrong = abs(unit.x!! - x) > 1 || abs(unit.y!! - y) > 1 || (unit.y == y && unit.x == x)
         if (isDistanceWrong) {
@@ -132,6 +139,80 @@ class UnitService @Inject constructor(
             this.x = x
             this.y = y
         })
+        if (conflictingUnit != null && conflictingUnit.user?.id != user.id) {
+            val lostFight = handleFight(conflictingUnit, unit) != unit
+            if (lostFight) {
+                return unit
+            }
+        }
+        if (conflictingBuilding != null && conflictingBuilding.user?.id != user.id) {
+            handleConquerBuilding(conflictingBuilding, unit, user)
+        }
         return unit
+    }
+
+    private fun handleConquerBuilding(conflictingBuilding: Building, unit: Unit, user: User) {
+        if (conflictingBuilding.type == BuildingType.VILLAGE || conflictingBuilding.type == BuildingType.CASTLE) {
+            buildingRepository.updateOwner(conflictingBuilding.id!!, user.id!!)
+            eventRepository.save(Event().apply {
+                this.user1 = user
+                this.type = EventType.BUILDING_CONQUERED
+                this.building = conflictingBuilding
+                this.x = conflictingBuilding.x!!
+                this.y = conflictingBuilding.y!!
+            })
+        }
+        if (conflictingBuilding.type == BuildingType.FARM || conflictingBuilding.type == BuildingType.BREWERY) {
+            buildingRepository.delete(conflictingBuilding)
+            eventRepository.save(Event().apply {
+                this.user1 = user
+                this.type = EventType.BUILDING_DESTROYED
+                this.x = conflictingBuilding.x!!
+                this.y = conflictingBuilding.y!!
+            })
+        }
+    }
+
+    private fun handleFight(unit1: Unit, unit2: Unit): Unit {
+        val random = Random()
+
+        val looserUnit = if (unit1.type == unit2.type) {
+            val randomBoolean = random.nextBoolean()
+            if (randomBoolean) {
+                unit2
+            } else {
+                unit1
+            }
+        } else {
+            if (unit1.type == UnitType.WORKER) {
+                unit1
+            } else if (unit2.type == UnitType.WORKER) {
+                unit2
+            } else {
+                if (unit1.type == UnitType.HORSEMAN && unit2.type == UnitType.SPEARMAN) {
+                    unit1
+                } else if (unit1.type == UnitType.SPEARMAN && unit2.type == UnitType.SWORDSMAN) {
+                    unit1
+                } else if (unit1.type == UnitType.SWORDSMAN && unit2.type == UnitType.HORSEMAN) {
+                    unit1
+                } else {
+                    unit2
+                }
+            }
+        }
+        val winnerUnit = if (looserUnit == unit1) {
+            unit2
+        } else {
+            unit1
+        }
+        eventRepository.save(Event().apply {
+            this.user1 = looserUnit.user
+            this.user2 = winnerUnit.user
+            this.type = EventType.LOST_UNIT
+            this.x = unit1.x!!
+            this.y = unit1.y!!
+        })
+        unitRepository.deleteById(looserUnit.id!!)
+        return winnerUnit
     }
 }

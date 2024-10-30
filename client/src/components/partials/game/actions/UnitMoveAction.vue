@@ -1,5 +1,8 @@
 <template>
-  <p>👉 {{ t("unitAction.moveText") }}</p>
+  <p>
+    👉
+    <span v-html="t('unitAction.moveText')"></span>
+  </p>
   <CButton class="small" @click="close">
     {{ t("general.cancel") }}
   </CButton>

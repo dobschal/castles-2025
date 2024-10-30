@@ -86,7 +86,7 @@ import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
-import WorkerAction from "@/components/partials/game/actions/WorkerAction.vue";
+import WorkerAction from "@/components/partials/game/actions/UnitAction.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";

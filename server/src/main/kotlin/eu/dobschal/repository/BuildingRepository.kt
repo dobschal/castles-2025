@@ -46,4 +46,8 @@ class BuildingRepository : PanacheRepository<Building> {
     fun countCastlesByUser(userId: Int): Int {
         return count("user.id = ?1 AND type = ?2", userId, BuildingType.CASTLE).toInt()
     }
+
+    fun updateOwner(buildingId: Int, userId: Int) {
+        update("user.id = ?1 where id = ?2", userId, buildingId)
+    }
 }

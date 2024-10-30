@@ -3,6 +3,7 @@ package eu.dobschal.resource
 import eu.dobschal.model.dto.request.CreateUnitRequestDto
 import eu.dobschal.model.dto.request.MoveUnitRequestDto
 import eu.dobschal.model.dto.response.ErrorResponseDto
+import eu.dobschal.model.dto.response.UnitsResponseDto
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.MapTile
@@ -44,8 +45,8 @@ class UnitResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=0&x2=2&y1=0&y2=2")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(List::class.java)
-        assert(response.size == 1)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response.units.size == 1)
     }
 
     @Test
@@ -65,8 +66,8 @@ class UnitResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=2&x2=4&y1=2&y2=4")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(List::class.java)
-        assert(response.size == 0)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response.units.size == 0)
     }
 
     @Test
@@ -120,9 +121,9 @@ class UnitResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Unit>::class.java)
-        assert(response2.size == 1)
-        assert(response2.first().type == UnitType.WORKER)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response2.units.size == 1)
+        assert(response2.units.first().type == UnitType.WORKER)
 
     }
 
@@ -441,8 +442,8 @@ class UnitResourceTest : BaseResourceTest() {
             .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
             .then()
             .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(Array<Unit>::class.java)
-        assert(response2.size == 0)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response2.units.size == 0)
     }
 
     @Test
@@ -750,32 +751,243 @@ class UnitResourceTest : BaseResourceTest() {
 
     @Test
     fun `Fight units can only be build on castles`() {
-        TODO();
+        val castle = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val request = CreateUnitRequestDto(1, 1, UnitType.HORSEMAN)
+        assert(unitRepository.listAll().size == 0)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        val village = Building().apply {
+            x = 1
+            y = 2
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val request2 = CreateUnitRequestDto(1, 2, UnitType.HORSEMAN)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request2)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(unitRepository.listAll().size == 1)
     }
 
     @Test
     fun `Fight units can not move over each other if from same player`() {
-        TODO();
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = UnitType.HORSEMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
     }
 
     @Test
     fun `Fight units can move over other units (fight, one unit gets destroyed)`() {
-        TODO();
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.HORSEMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        assert(unitRepository.listAll().size == 2)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.HORSEMAN)
+        assert(eventRepository.listAll().size == 2)
+        assert(eventRepository.listAll().last().type == EventType.LOST_UNIT)
     }
 
     @Test
     fun `Farms and Breweries are getting destroyed on conquer`() {
-        TODO();
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.HORSEMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit)
+        val farm = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        assert(unitRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SPEARMAN)
+        assert(eventRepository.listAll().size == 3)
+        assert(buildingRepository.listAll().size == 0)
     }
 
     @Test
     fun `Own Farms and Breweries are not getting destroyed`() {
-        TODO();
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit)
+        val farm = Building().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        assert(unitRepository.listAll().size == 1)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(eventRepository.listAll().size == 1)
+        assert(buildingRepository.listAll().size == 1)
     }
 
     @Test
     fun `Castles and villages are getting conquered when other unit is moving onto`() {
-        TODO();
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        assert(unitRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SWORDSMAN)
+        assert(eventRepository.listAll().size == 3)
+        assert(buildingRepository.listAll().size == 1)
+        assert(buildingRepository.listAll().first().user?.id == user1?.id)
     }
 
 }

@@ -16,11 +16,19 @@ export const en = {
     loading: "Loading...",
     welcome: "Welcome {0}!",
     passwordRepeated: "Please confirm your password.",
+    unit: "unit",
+  },
+  unitType: {
+    WORKER: "Worker",
+    SWORDSMAN: "Swordsman",
+    SPEARMAN: "Spearman",
+    HORSEMAN: "Horseman",
   },
   serverError: {
     notEnoughBeer: "Not enough beer available.",
     onlyOnePerVillage:
       "You can only build one brewery, one farm and one castle per village.",
+    tooManyMoves: "The unit has reached its limit of moves for this hour.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -57,6 +65,7 @@ export const en = {
   unitAction: {
     chooseAction: "Choose an action for the unit:",
     moveText: "Where should the unit be moved?",
+    movesRemaining: "This unit has {0} of {1} moves per hour remaining.",
     buildFarm: "Build farm",
     buildBrewery: "Build brewery",
     buildCastle: "Build castle",
@@ -71,17 +80,27 @@ export const en = {
   events: {
     noEvents: "No events available...",
     openOverlay: "Show events",
+    buildingDestroyed: "Building destroyed!",
+    buildingConquered: "Building conquered!",
+    lostUnit: "Unit lost!",
+    wonFight: "You won a fight!",
     own: {
-      UNIT_MOVED: "You moved a unit to {x}, {y}.",
-      UNIT_CREATED: "You created a unit at {x}, {y}.",
+      UNIT_MOVED: "You moved a {unitType} to {x}, {y}.",
+      UNIT_CREATED: "You created a {unitType} at {x}, {y}.",
       BUILDING_CREATED: "You created a building at {x}, {y}.",
       BEER_COLLECTED: "You collected beer at {x}, {y}.",
+      BUILDING_CONQUERED: "You conquered a building at {x}, {y}.",
+      BUILDING_DESTROYED: "You destroyed a building at {x}, {y}.",
+      LOST_UNIT: "You lost a {unitType} at {x}, {y}.",
     },
     other: {
-      UNIT_MOVED: "{playerName} moved a unit to {x}, {y}.",
-      UNIT_CREATED: "{playerName} created a unit at {x}, {y}.",
+      UNIT_MOVED: "{playerName} moved a {unitType} to {x}, {y}.",
+      UNIT_CREATED: "{playerName} created a {unitType} at {x}, {y}.",
       BUILDING_CREATED: "{playerName} created a building at {x}, {y}.",
       BEER_COLLECTED: "{playerName} collected beer at {x}, {y}.",
+      BUILDING_CONQUERED: "{playerName} conquered a building at {x}, {y}.",
+      BUILDING_DESTROYED: "{playerName} destroyed a building at {x}, {y}.",
+      LOST_UNIT: "{playerName} lost a {unitType} at {x}, {y}.",
     },
   },
 };
