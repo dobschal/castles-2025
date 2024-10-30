@@ -1,5 +1,13 @@
 <template>
   <p>
+    {{
+      t("unitAction.movesRemaining", [
+        movesPerHourLimit - movesLastHour,
+        movesPerHourLimit,
+      ])
+    }}
+  </p>
+  <p>
     👉
     <span v-html="t('unitAction.moveText')"></span>
   </p>
@@ -20,19 +28,46 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
-import { handleFatalError } from "@/core/util.ts";
+import { handleFatalError, parseServerDateString } from "@/core/util.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
+import { EventType } from "@/types/enum/EventType.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const unitsStore = useUnitsStore();
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const authStore = useAuthStore();
+const eventsStore = useEventsStore();
 const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
 
 const activeMoveUnit = computed(() => {
   return unitsStore.activeMoveUnit;
+});
+
+const movesLastHour = computed(() => {
+  return eventsStore.events.filter(
+    (event) =>
+      event.unit?.id === activeMoveUnit.value?.id &&
+      event.type === EventType.UNIT_MOVED &&
+      Date.now() - parseServerDateString(event.createdAt).getTime() < 3600000,
+  ).length;
+});
+
+const movesPerHourLimit = computed(() => {
+  switch (activeMoveUnit.value?.type) {
+    case UnitType.WORKER:
+      return unitsStore.workerMovesPerHour;
+    case UnitType.SWORDSMAN:
+      return unitsStore.swordsmanMovesPerHour;
+    case UnitType.SPEARMAN:
+      return unitsStore.spearmanMovesPerHour;
+    case UnitType.HORSEMAN:
+      return unitsStore.horsemanMovesPerHour;
+    default:
+      return 0;
+  }
 });
 
 watch(

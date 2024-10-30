@@ -25,19 +25,10 @@ import { useActionStore } from "@/store/actionStore.ts";
 import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { Optional } from "@/types/core/Optional.ts";
-import forestImage from "@/assets/tiles/forest.png";
-import forestDisabledImage from "@/assets/tiles/forest-disabled.png";
-import forestTopLayerImage from "@/assets/tiles/forest-top-layer.png";
-import forestTopLayerDisabledImage from "@/assets/tiles/forest-top-layer-disabled.png";
-import mountainImage from "@/assets/tiles/mountain.png";
-import mountainDisabledImage from "@/assets/tiles/mountain-disabled.png";
-import plainImage from "@/assets/tiles/plain.png";
-import plainDisabledImage from "@/assets/tiles/plain-disabled.png";
-import waterImage from "@/assets/tiles/water.png";
-import waterDisabledImage from "@/assets/tiles/water-disabled.png";
 import { useI18n } from "vue-i18n";
 import { DIALOG, TOAST } from "@/events.ts";
 
+const images = import.meta.glob("@/assets/tiles/*.png");
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const authStore = useAuthStore();
@@ -77,6 +68,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   isMounted = false;
+  authStore.lastLoginTimestamp = Date.now();
 });
 
 watch(
@@ -131,29 +123,27 @@ async function keepLoadingEvents(): Promise<void> {
 
 async function loadAssets(): Promise<void> {
   const t1 = Date.now();
-  const images = [
-    forestImage,
-    forestDisabledImage,
-    forestTopLayerImage,
-    forestTopLayerDisabledImage,
-    mountainImage,
-    mountainDisabledImage,
-    plainImage,
-    plainDisabledImage,
-    waterImage,
-    waterDisabledImage,
-  ];
-  await Promise.all(
-    images.map((image) => {
-      return new Promise<void>((resolve) => {
+  const promises: Array<Promise<void>> = [];
+  for (const imagesKey in images) {
+    const image = (await images[imagesKey]()) as { default: string };
+    const url: string = image.default;
+
+    promises.push(
+      new Promise((resolve) => {
         const img = new Image();
-        img.src = image;
-        img.onload = () => resolve();
-        cachedImageAssets.push(img);
-      });
-    }),
-  );
-  console.info("Loaded assets in", Date.now() - t1, "ms");
+        img.onload = () => {
+          cachedImageAssets.push(img);
+          resolve();
+        };
+
+        img.src = url;
+      }),
+    );
+  }
+
+  await Promise.all(promises);
+
+  console.info("Loaded ", promises.length, " assets in", Date.now() - t1, "ms");
 }
 </script>
 

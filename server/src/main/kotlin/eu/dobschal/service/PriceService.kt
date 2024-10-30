@@ -63,7 +63,7 @@ class PriceService @Inject constructor(
         type: UnitType,
         units: List<UnitDto>? = null
     ): Int {
-        return unitCreationPrices[type]!![(units ?: unitRepository.findAllByUser(user.id!!)).size]
+        return unitCreationPrices[type]!![(units ?: unitRepository.findAllByUserAsDto(user.id!!)).size]
     }
 
     fun getPriceForUnitMove(type: UnitType): Int {
@@ -92,7 +92,7 @@ class PriceService @Inject constructor(
     fun getAllPrices(): PricesResponseDto {
         val user = userService.getCurrentUserDto()
         val buildings = buildingRepository.findAllByUser(user.id!!)
-        val units = unitRepository.findAllByUser(user.id!!)
+        val units = unitRepository.findAllByUserAsDto(user.id!!)
         val unitCreationPrices = UnitType.entries.associateWith { getPriceForUnitCreation(user, it, units) }
         val unitMovePrices = UnitType.entries.associateWith { getPriceForUnitMove(it) }
         val buildingsPrices = BuildingType.entries.associateWith { getPriceForBuildingCreation(user, it, buildings) }

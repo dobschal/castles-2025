@@ -53,7 +53,7 @@ export const en = {
   },
   villageAction: {
     createWorker: "Create worker",
-    moveUnit: "Move unit",
+    moveUnit: "Move unit ({0}/{1})",
     villageOf: "Village of {playerName}",
   },
   farmAction: {

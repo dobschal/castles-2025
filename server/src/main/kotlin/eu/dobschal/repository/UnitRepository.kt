@@ -32,10 +32,14 @@ class UnitRepository : PanacheRepository<Unit> {
         update("x = ?1, y = ?2 where id = ?3", x, y, id)
     }
 
-    fun findAllByUser(id: Int): List<UnitDto> {
-        return find("#Unit.findAllByUser", id)
+    fun findAllByUserAsDto(userId: Int): List<UnitDto> {
+        return find("#Unit.findAllByUser", userId)
             .project(UnitDto::class.java)
             .list()
+    }
+
+    fun findAllByUser(userId: Int): List<Unit> {
+        return find("user.id = ?1", userId).list()
     }
 
     fun deleteById(id: Int) {

@@ -51,4 +51,8 @@ class UserRepository : PanacheRepository<User> {
         persist(user)
     }
 
+    fun countUsers(): Int {
+        return count().toInt()
+    }
+
 }

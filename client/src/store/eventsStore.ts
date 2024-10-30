@@ -7,6 +7,7 @@ import { EventType } from "@/types/enum/EventType.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { TOAST } from "@/events.ts";
+import { parseServerDateString } from "@/core/util.ts";
 
 export const useEventsStore = defineStore("event", () => {
   const mapStore = useMapStore();
@@ -35,7 +36,14 @@ export const useEventsStore = defineStore("event", () => {
     const existingEventIds = new Set(events.value.map((event) => event.id));
     for (const eventEntity of response.reverse()) {
       if (!existingEventIds.has(eventEntity.id)) {
-        showToastForNewEvent(eventEntity);
+        const lastLoginWasBeforeEvent =
+          authStore.lastLoginTimestamp <
+          parseServerDateString(eventEntity.createdAt).getTime();
+
+        if (lastLoginWasBeforeEvent) {
+          showToastForNewEvent(eventEntity);
+        }
+
         events.value.unshift(eventEntity);
       }
     }

@@ -1,20 +1,17 @@
 <template>
   <p>👉 {{ t("unitAction.chooseAction") }}</p>
-  <p>
-    {{
-      t("unitAction.movesRemaining", [
-        movesPerHourLimit - movesLastHour,
-        movesPerHourLimit,
-      ])
-    }}
-  </p>
   <CButton
     v-if="unitsStore.activeUnit"
     class="small"
     @click="showMoveAction"
     :disabled="isLoading || movesLastHour >= movesPerHourLimit"
   >
-    {{ t("villageAction.moveUnit") }}
+    {{
+      t("villageAction.moveUnit", [
+        movesPerHourLimit - movesLastHour,
+        movesPerHourLimit,
+      ])
+    }}
     <BeerDisplay
       :beer="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
     />

@@ -15,7 +15,6 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.NotFoundException
-import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -93,18 +92,7 @@ class UnitService @Inject constructor(
         if (unit.user?.id != user.id) {
             throw BadRequestException("serverError.wrongUnitOwner")
         }
-        val conflictingBuilding = buildingRepository.findBuildingByXAndY(x, y)?.let { building ->
-            if (unit.type == UnitType.WORKER && building.user?.id != user.id) {
-                throw BadRequestException("serverError.wrongBuildingOwner")
-            }
-            building
-        }
-        val conflictingUnit = unitRepository.findUnitByXAndY(x, y)?.let {
-            if (it.user?.id == user.id || unit.type == UnitType.WORKER) {
-                throw BadRequestException("serverError.conflictingUnit")
-            }
-            it
-        }
+        val (conflictingBuilding, conflictingUnit) = getMoveConflictingBuildingsAndUnits(x, y, unit, user)
         val isDistanceWrong = abs(unit.x!! - x) > 1 || abs(unit.y!! - y) > 1 || (unit.y == y && unit.x == x)
         if (isDistanceWrong) {
             throw BadRequestException("serverError.wrongDistance")
@@ -139,16 +127,47 @@ class UnitService @Inject constructor(
             this.x = x
             this.y = y
         })
+        handleFightAndConquer(conflictingUnit, user, unit, conflictingBuilding)
+        return unit
+    }
+
+    fun handleFightAndConquer(
+        conflictingUnit: Unit?,
+        user: User,
+        unit: Unit,
+        conflictingBuilding: Building?
+    ): Boolean {
         if (conflictingUnit != null && conflictingUnit.user?.id != user.id) {
             val lostFight = handleFight(conflictingUnit, unit) != unit
             if (lostFight) {
-                return unit
+                return true
             }
         }
         if (conflictingBuilding != null && conflictingBuilding.user?.id != user.id) {
             handleConquerBuilding(conflictingBuilding, unit, user)
         }
-        return unit
+        return false
+    }
+
+    fun getMoveConflictingBuildingsAndUnits(
+        x: Int,
+        y: Int,
+        unit: Unit,
+        user: User
+    ): Pair<Building?, Unit?> {
+        val conflictingBuilding = buildingRepository.findBuildingByXAndY(x, y)?.let { building ->
+            if (unit.type == UnitType.WORKER && building.user?.id != user.id) {
+                throw BadRequestException("serverError.wrongBuildingOwner")
+            }
+            building
+        }
+        val conflictingUnit = unitRepository.findUnitByXAndY(x, y)?.let {
+            if (it.user?.id == user.id || unit.type == UnitType.WORKER) {
+                throw BadRequestException("serverError.conflictingUnit")
+            }
+            it
+        }
+        return Pair(conflictingBuilding, conflictingUnit)
     }
 
     private fun handleConquerBuilding(conflictingBuilding: Building, unit: Unit, user: User) {
@@ -174,11 +193,8 @@ class UnitService @Inject constructor(
     }
 
     private fun handleFight(unit1: Unit, unit2: Unit): Unit {
-        val random = Random()
-
         val looserUnit = if (unit1.type == unit2.type) {
-            val randomBoolean = random.nextBoolean()
-            if (randomBoolean) {
+            if (flipCoin()) {
                 unit2
             } else {
                 unit1
