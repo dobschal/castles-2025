@@ -2,6 +2,7 @@ package eu.dobschal.repository
 
 import eu.dobschal.model.dto.UnitDto
 import eu.dobschal.model.entity.Unit
+import eu.dobschal.model.enum.UnitType
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
@@ -48,5 +49,13 @@ class UnitRepository : PanacheRepository<Unit> {
 
     fun countUnitsByUser(userId: Int): Int {
         return count("user.id = ?1", userId).toInt()
+    }
+
+    fun findUnitByTypeAndUser(userId: Int, unitType: UnitType): Unit? {
+        return find("user.id = ?1 and type = ?2", userId, unitType).firstResult()
+    }
+
+    fun findUnitByTypeInAndUser(userId: Int, unitTypes: List<UnitType>): Unit? {
+        return find("user.id = ?1 and type in ?2", userId, unitTypes).firstResult()
     }
 }

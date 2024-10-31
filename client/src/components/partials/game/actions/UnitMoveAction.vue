@@ -28,10 +28,9 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
-import { handleFatalError, parseServerDateString } from "@/core/util.ts";
+import { handleFatalError } from "@/core/util.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
-import { EventType } from "@/types/enum/EventType.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 
 const unitsStore = useUnitsStore();
@@ -47,27 +46,15 @@ const activeMoveUnit = computed(() => {
 });
 
 const movesLastHour = computed(() => {
-  return eventsStore.events.filter(
-    (event) =>
-      event.unit?.id === activeMoveUnit.value?.id &&
-      event.type === EventType.UNIT_MOVED &&
-      Date.now() - parseServerDateString(event.createdAt).getTime() < 3600000,
-  ).length;
+  if (!activeMoveUnit.value) return -1;
+
+  return unitsStore.movesLastHour(activeMoveUnit.value);
 });
 
 const movesPerHourLimit = computed(() => {
-  switch (activeMoveUnit.value?.type) {
-    case UnitType.WORKER:
-      return unitsStore.workerMovesPerHour;
-    case UnitType.SWORDSMAN:
-      return unitsStore.swordsmanMovesPerHour;
-    case UnitType.SPEARMAN:
-      return unitsStore.spearmanMovesPerHour;
-    case UnitType.HORSEMAN:
-      return unitsStore.horsemanMovesPerHour;
-    default:
-      return 0;
-  }
+  if (!activeMoveUnit.value) return -1;
+
+  return unitsStore.movesPerHourLimit(activeMoveUnit.value);
 });
 
 watch(

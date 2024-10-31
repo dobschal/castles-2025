@@ -9,6 +9,7 @@
   <EventsOverlay v-if="!actionStore.isActionActive" />
   <ActionOverlay />
   <StatsOverlay />
+  <TutorialOverlay />
 </template>
 
 <script setup lang="ts">
@@ -26,7 +27,9 @@ import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { useI18n } from "vue-i18n";
-import { DIALOG, TOAST } from "@/events.ts";
+import { DIALOG } from "@/events.ts";
+import { useTutorialStore } from "@/store/tutorialStore.ts";
+import TutorialOverlay from "@/components/partials/game/TutorialOverlay.vue";
 
 const images = import.meta.glob("@/assets/tiles/*.png");
 const buildingsStore = useBuildingsStore();
@@ -36,6 +39,7 @@ const unitsStore = useUnitsStore();
 const eventsStore = useEventsStore();
 const actionStore = useActionStore();
 const pricesStore = usePricesStore();
+const tutorialStore = useTutorialStore();
 let isMounted = false;
 let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 const isLoading = ref(false);
@@ -59,11 +63,9 @@ onMounted(async () => {
   // needs to select the start village
   await buildingsStore.loadStartVillage();
   mapStore.goToPosition(buildingsStore.startVillage ?? { x: 0, y: 0 });
-  TOAST.dispatch({
-    type: "success",
-    messageKey: "general.welcome",
-    messageParams: [authStore.user?.username ?? ""],
-  });
+  setTimeout(async () => {
+    await tutorialStore.loadAndShowTutorial();
+  }, 2000);
 });
 
 onBeforeUnmount(() => {

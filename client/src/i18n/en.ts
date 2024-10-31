@@ -103,4 +103,16 @@ export const en = {
       LOST_UNIT: "{playerName} lost a {unitType} at {x}, {y}.",
     },
   },
+  tutorialAction: {
+    complete: "Complete tutorial",
+    FIRST_WORKER: "Click on a village and create a worker there.",
+    FIRST_FARM:
+      "Move the worker to a free meadow and build a farm. Ensure there is another meadow next to it for the brewery!",
+    FIRST_BREWERY:
+      "Create another worker, move him to a free meadow next to a farm and build a brewery.",
+    FIRST_BEER_COLLECTED:
+      "Tap the beer icon above the brewery and collect your first beer.",
+    FIRST_CASTLE: "Build your first castle to be able to create new units.",
+    FIRST_UNIT: "Create a unit in the castle to be able to defend yourself.",
+  },
 };

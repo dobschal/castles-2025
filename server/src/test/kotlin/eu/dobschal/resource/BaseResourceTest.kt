@@ -32,6 +32,9 @@ open class BaseResourceTest {
     @Inject
     lateinit var eventRepository: EventRepository
 
+    @Inject
+    lateinit var tutorialRepository: TutorialRepository
+
     var user1: User? = null
     var user2: User? = null
     var jwt1: String? = null
@@ -45,6 +48,7 @@ open class BaseResourceTest {
         userRepository.deleteAll()
         unitRepository.deleteAll()
         eventRepository.deleteAll()
+        tutorialRepository.deleteAll()
     }
 
     @BeforeEach

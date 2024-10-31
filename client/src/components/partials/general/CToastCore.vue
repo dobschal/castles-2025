@@ -96,7 +96,7 @@ function onMouseMove(toast: ToastModel): void {
   top: 4rem;
   right: 0;
   max-width: 320px;
-  width: 100%;
+  width: 66%;
   padding: 1rem;
   z-index: 999;
 

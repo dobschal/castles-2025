@@ -1,15 +1,19 @@
 import { defineStore } from "pinia";
-import { handleFatalError } from "@/core/util.ts";
+import { handleFatalError, parseServerDateString } from "@/core/util.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { ref } from "vue";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { Queue } from "@/core/Queue.ts";
+import { EventType } from "@/types/enum/EventType.ts";
+import { UnitType } from "@/types/enum/UnitType.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 export const useUnitsStore = defineStore("units", () => {
   const units = ref<Array<UnitEntity>>([]);
   const mapStore = useMapStore();
+  const eventsStore = useEventsStore();
   const activeUnit = ref<Optional<UnitEntity>>();
   const activeMoveUnit = ref<Optional<UnitEntity>>();
   const loadUnitsQueue = new Queue(500, 3);
@@ -35,7 +39,33 @@ export const useUnitsStore = defineStore("units", () => {
     });
   }
 
+  function movesLastHour(unit: UnitEntity): number {
+    return eventsStore.events.filter(
+      (event) =>
+        event.unit?.id === unit.id &&
+        event.type === EventType.UNIT_MOVED &&
+        Date.now() - parseServerDateString(event.createdAt).getTime() < 3600000,
+    ).length;
+  }
+
+  function movesPerHourLimit(unit: UnitEntity): number {
+    switch (unit.type) {
+      case UnitType.WORKER:
+        return workerMovesPerHour.value;
+      case UnitType.SWORDSMAN:
+        return swordsmanMovesPerHour.value;
+      case UnitType.SPEARMAN:
+        return spearmanMovesPerHour.value;
+      case UnitType.HORSEMAN:
+        return horsemanMovesPerHour.value;
+      default:
+        return 0;
+    }
+  }
+
   return {
+    movesPerHourLimit,
+    movesLastHour,
     loadUnits,
     units,
     activeUnit,

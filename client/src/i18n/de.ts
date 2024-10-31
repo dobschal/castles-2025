@@ -106,4 +106,18 @@ export const de = {
       LOST_UNIT: "{playerName} hat einem {unitType} bei {x}, {y} verloren.",
     },
   },
+  tutorialAction: {
+    complete: "Tutorial abschließen",
+    FIRST_WORKER: "Klicke auf ein Dorf und erstelle dort einen Arbeiter.",
+    FIRST_FARM:
+      "Bewege den Arbeiter auf eine freie Wiese und baue eine Farm. Stelle sicher, dass neben der Wiese eine weitere für die Brauerei ist!",
+    FIRST_BREWERY:
+      "Erstelle einen weiteren Arbeiter, bewege ihn auf eine freie Wiese neben einer Farm und baue eine Brauerei.",
+    FIRST_BEER_COLLECTED:
+      "Tippe auf das Bier-Symbol über der Brauerei und sammle dein erstes Bier.",
+    FIRST_CASTLE:
+      "Baue deine erste Burg, um neue Einheiten erstellen zu können.",
+    FIRST_UNIT:
+      "Erstelle eine Einheit in der Burg um dich verteidigen zu können.",
+  },
 };

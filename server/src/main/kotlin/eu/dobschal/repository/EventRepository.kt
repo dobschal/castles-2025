@@ -38,5 +38,9 @@ class EventRepository @Inject constructor(private val entityManager: EntityManag
             LocalDateTime.now().minusHours(1)
         ).toInt()
     }
+
+    fun findEventByTypeAndUser(userId: Int, eventType: EventType): Event? {
+        return find("user1.id = ?1 and type = ?2", userId, eventType).firstResult()
+    }
 }
 

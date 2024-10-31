@@ -50,4 +50,8 @@ class BuildingRepository : PanacheRepository<Building> {
     fun updateOwner(buildingId: Int, userId: Int) {
         update("user.id = ?1 where id = ?2", userId, buildingId)
     }
+
+    fun findBuildingByTypeAndUser(userId: Int, buildingType: BuildingType): Building? {
+        return find("user.id = ?1 and type = ?2", userId, buildingType).firstResult()
+    }
 }

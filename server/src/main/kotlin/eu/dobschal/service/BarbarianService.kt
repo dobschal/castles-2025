@@ -1,14 +1,13 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.MapTile
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.entity.User
+import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
-import eu.dobschal.repository.BuildingRepository
-import eu.dobschal.repository.MapTileRepository
-import eu.dobschal.repository.UnitRepository
-import eu.dobschal.repository.UserRepository
+import eu.dobschal.repository.*
 import io.quarkus.scheduler.Scheduled
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -22,7 +21,8 @@ class BarbarianService @Inject constructor(
     private val unitRepository: UnitRepository,
     private val buildingRepository: BuildingRepository,
     private val mapTileRepository: MapTileRepository,
-    private val unitService: UnitService
+    private val unitService: UnitService,
+    private val eventRepository: EventRepository
 ) {
 
     val logger = KotlinLogging.logger {}
@@ -35,7 +35,7 @@ class BarbarianService @Inject constructor(
             "barbarian",
             UUID.randomUUID().toString()
         )
-        val amountOfWantedBarbarianUnits = userRepository.countUsers() - 1
+        val amountOfWantedBarbarianUnits = userRepository.countUsers() + 10
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
@@ -56,6 +56,13 @@ class BarbarianService @Inject constructor(
                     unit,
                     barbarianUser
                 )
+                eventRepository.save(Event().apply {
+                    this.user1 = barbarianUser
+                    this.type = EventType.UNIT_MOVED
+                    this.unit = unit
+                    this.x = x
+                    this.y = y
+                })
                 unitRepository.updatePosition(unit.id!!, x, y)
                 unitService.handleFightAndConquer(conflictingUnit, barbarianUser, unit, conflictingBuilding)
                 logger.info { "Moved barbarian unit from ${unit.x}, ${unit.y} to $x, $y" }
