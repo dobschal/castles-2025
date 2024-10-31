@@ -47,12 +47,15 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
+import { useTutorialStore } from "@/store/tutorialStore.ts";
+import { TutorialType } from "@/types/enum/TutorialType.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const authStore = useAuthStore();
 const unitsStore = useUnitsStore();
 const pricesStore = usePricesStore();
+const tutorialStore = useTutorialStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 
@@ -132,6 +135,10 @@ async function createWorker(): Promise<void> {
       type: UnitType.WORKER,
     });
     close();
+
+    if (tutorialStore.tutorial?.type === TutorialType.FIRST_WORKER) {
+      await tutorialStore.loadAndShowTutorial();
+    }
   } catch (error) {
     handleFatalError(error);
   }

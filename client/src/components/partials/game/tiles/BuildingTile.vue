@@ -10,31 +10,31 @@
     <template v-if="building.type === BuildingType.VILLAGE">
       <img
         v-if="!isDisabled && isOwnBuilding"
-        src="../../../../assets/tiles/village-red-roof.png"
+        src="../../../../assets/tiles/village-red-roof-min.png"
         class="building village"
         alt="Building"
       />
       <img
         v-else-if="!isDisabled && !isOwnBuilding"
-        src="../../../../assets/tiles/village-beige-roof.png"
+        src="../../../../assets/tiles/village-beige-roof-min.png"
         class="building village"
         alt="Building"
       />
       <img
         v-else
-        src="../../../../assets/tiles/village-disabled.png"
+        src="../../../../assets/tiles/village-disabled-min.png"
         class="building village"
         alt="Building"
       />
       <img
         v-if="!isDisabled"
-        src="../../../../assets/tiles/village-top-layer.png"
+        src="../../../../assets/tiles/village-top-layer-min.png"
         class="building-top-layer village"
         alt="Building"
       />
       <img
         v-else
-        src="../../../../assets/tiles/village-top-layer-disabled.png"
+        src="../../../../assets/tiles/village-top-layer-disabled-min.png"
         class="building-top-layer village"
         alt="Building"
       />
@@ -42,31 +42,31 @@
     <template v-if="building.type === BuildingType.FARM">
       <img
         v-if="!isDisabled && isOwnBuilding"
-        src="../../../../assets/tiles/farm-red-roof.png"
+        src="../../../../assets/tiles/farm-red-roof-min.png"
         class="building farm"
         alt="Building"
       />
       <img
         v-else-if="!isDisabled && !isOwnBuilding"
-        src="../../../../assets/tiles/farm-beige-roof.png"
+        src="../../../../assets/tiles/farm-beige-roof-min.png"
         class="building farm"
         alt="Building"
       />
       <img
         v-else
-        src="../../../../assets/tiles/farm-disabled.png"
+        src="../../../../assets/tiles/farm-disabled-min.png"
         class="building farm"
         alt="Building"
       />
       <img
         v-if="!isDisabled"
-        src="../../../../assets/tiles/farm-top-layer.png"
+        src="../../../../assets/tiles/farm-top-layer-min.png"
         class="building-top-layer farm"
         alt="Building"
       />
       <img
         v-else
-        src="../../../../assets/tiles/farm-top-layer-disabled.png"
+        src="../../../../assets/tiles/farm-top-layer-disabled-min.png"
         class="building-top-layer farm"
         alt="Building"
       />
@@ -74,31 +74,31 @@
     <template v-if="building.type === BuildingType.BREWERY">
       <img
         v-if="!isDisabled && isOwnBuilding"
-        src="../../../../assets/tiles/brewery-red-roof.png"
+        src="../../../../assets/tiles/brewery-red-roof-min.png"
         class="building brewery"
         alt="Building"
       />
       <img
         v-else-if="!isDisabled && !isOwnBuilding"
-        src="../../../../assets/tiles/brewery-beige-roof.png"
+        src="../../../../assets/tiles/brewery-beige-roof-min.png"
         class="building brewery"
         alt="Building"
       />
       <img
         v-else
-        src="../../../../assets/tiles/brewery-disabled.png"
+        src="../../../../assets/tiles/brewery-disabled-min.png"
         class="building brewery"
         alt="Building"
       />
       <img
         v-if="!isDisabled"
-        src="../../../../assets/tiles/brewery-top-layer.png"
+        src="../../../../assets/tiles/brewery-top-layer-min.png"
         class="building-top-layer brewery"
         alt="Building"
       />
       <img
         v-else
-        src="../../../../assets/tiles/brewery-top-layer-disabled.png"
+        src="../../../../assets/tiles/brewery-top-layer-disabled-min.png"
         class="building-top-layer brewery"
         alt="Building"
       />
@@ -107,19 +107,19 @@
     <template v-if="building.type === BuildingType.CASTLE">
       <img
         v-if="building.level === 1 && !isDisabled && isOwnBuilding"
-        src="../../../../assets/tiles/castle-level-1-red-roof.png"
+        src="../../../../assets/tiles/castle-level-1-red-roof-min.png"
         class="building castle-level-1"
         alt="Building"
       />
       <img
         v-else-if="building.level === 1 && !isDisabled && !isOwnBuilding"
-        src="../../../../assets/tiles/castle-level-1-beige-roof.png"
+        src="../../../../assets/tiles/castle-level-1-beige-roof-min.png"
         class="building castle-level-1"
         alt="Building"
       />
       <img
         v-else-if="building.level === 1 && isDisabled"
-        src="../../../../assets/tiles/castle-level-1-disabled.png"
+        src="../../../../assets/tiles/castle-level-1-disabled-min.png"
         class="building castle-level-1"
         alt="Building"
       />

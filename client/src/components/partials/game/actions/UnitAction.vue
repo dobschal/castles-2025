@@ -72,12 +72,15 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { useAuthStore } from "@/store/authStore.ts";
+import { useTutorialStore } from "@/store/tutorialStore.ts";
+import { TutorialType } from "@/types/enum/TutorialType.ts";
 
 const unitsStore = useUnitsStore();
 const pricesStore = usePricesStore();
 const mapStore = useMapStore();
 const buildingStore = useBuildingsStore();
 const authStore = useAuthStore();
+const tutorialStore = useTutorialStore();
 const isLoading = ref(false);
 
 const { t } = useI18n();
@@ -192,6 +195,17 @@ async function saveBuilding(type: BuildingType): Promise<void> {
       type,
     );
     close();
+
+    if (
+      tutorialStore.tutorial &&
+      [
+        TutorialType.FIRST_BREWERY,
+        TutorialType.FIRST_FARM,
+        TutorialType.FIRST_CASTLE,
+      ].includes(tutorialStore.tutorial?.type)
+    ) {
+      await tutorialStore.loadAndShowTutorial();
+    }
   } catch (error) {
     handleFatalError(error);
   } finally {

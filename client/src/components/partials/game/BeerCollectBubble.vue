@@ -1,6 +1,6 @@
 <template>
   <div class="bubble" @click="collectBeer" @mousedown.stop @touchstart.stop>
-    <img src="@/assets/beer.png" alt="Beer" />
+    <img src="@/assets/beer-min.png" alt="Beer" />
   </div>
 </template>
 

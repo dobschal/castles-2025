@@ -20,11 +20,12 @@
 import { useI18n } from "vue-i18n";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { TutorialStatus } from "@/types/enum/TutorialStatus.ts";
 import { TutorialGateway } from "@/gateways/TutorialGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { MAP_TILE_CLICKED } from "@/events.ts";
+import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 
 const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
@@ -36,12 +37,19 @@ const canBeCompleted = computed(() => {
 });
 
 onMounted(() => {
-  MAP_TILE_CLICKED.on(close);
+  MAP_TILE_CLICKED.on(onMapTileClicked);
 });
 
 onBeforeUnmount(() => {
-  MAP_TILE_CLICKED.off(close);
+  MAP_TILE_CLICKED.off(onMapTileClicked);
 });
+
+// if the user e.g. clicked on the village, the tutorial should be closed
+// before the village action is opened and we need to dispatch the event again
+function onMapTileClicked(mapTile: MapTileDto): void {
+  close();
+  nextTick(() => MAP_TILE_CLICKED.dispatch(mapTile));
+}
 
 function close(): void {
   emit("close-action");

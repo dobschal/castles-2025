@@ -1,6 +1,6 @@
 <template>
   <div class="beer-display" :class="size ?? 'md'">
-    <span>{{ beer }}</span> <img src="@/assets/beer.png" alt="Beer" />
+    <span>{{ beer }}</span> <img src="@/assets/beer-min.png" alt="Beer" />
   </div>
 </template>
 

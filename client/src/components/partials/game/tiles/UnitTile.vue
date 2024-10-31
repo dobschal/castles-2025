@@ -3,36 +3,36 @@
     <template v-if="unit.type === UnitType.WORKER">
       <img
         v-if="isDisabled"
-        src="../../../../assets/tiles/worker-disabled.png"
+        src="../../../../assets/tiles/worker-disabled-min.png"
         alt="Unit"
       />
       <img
         v-else-if="isOwnUnit"
-        src="../../../../assets/tiles/worker-red-hat.png"
+        src="../../../../assets/tiles/worker-red-hat-min.png"
         alt="Unit"
       />
       <img
         v-else-if="!isOwnUnit"
-        src="../../../../assets/tiles/worker-beige-hat.png"
+        src="../../../../assets/tiles/worker-beige-hat-min.png"
         alt="Unit"
       />
     </template>
     <template v-if="unit.type === UnitType.SWORDSMAN">
       <img
         v-if="isDisabled"
-        src="../../../../assets/tiles/swordsman-disabled.png"
+        src="../../../../assets/tiles/swordsman-disabled-min.png"
         class="swordsman"
         alt="Unit"
       />
       <img
         v-else-if="isOwnUnit"
-        src="../../../../assets/tiles/swordsman-red.png"
+        src="../../../../assets/tiles/swordsman-red-min.png"
         class="swordsman"
         alt="Unit"
       />
       <img
         v-else-if="!isOwnUnit"
-        src="../../../../assets/tiles/swordsman-beige.png"
+        src="../../../../assets/tiles/swordsman-beige-min.png"
         class="swordsman"
         alt="Unit"
       />
@@ -40,19 +40,19 @@
     <template v-if="unit.type === UnitType.HORSEMAN">
       <img
         v-if="isDisabled"
-        src="../../../../assets/tiles/hosreman-disabled.png"
+        src="../../../../assets/tiles/hosreman-disabled-min.png"
         class="hosreman"
         alt="Unit"
       />
       <img
         v-else-if="isOwnUnit"
-        src="../../../../assets/tiles/hosreman-red.png"
+        src="../../../../assets/tiles/hosreman-red-min.png"
         class="hosreman"
         alt="Unit"
       />
       <img
         v-else-if="!isOwnUnit"
-        src="../../../../assets/tiles/hosreman-beige.png"
+        src="../../../../assets/tiles/hosreman-beige-min.png"
         class="hosreman"
         alt="Unit"
       />
@@ -60,19 +60,19 @@
     <template v-if="unit.type === UnitType.SPEARMAN">
       <img
         v-if="isDisabled"
-        src="../../../../assets/tiles/spearman-disabled.png"
+        src="../../../../assets/tiles/spearman-disabled-min.png"
         class="spearman"
         alt="Unit"
       />
       <img
         v-else-if="isOwnUnit"
-        src="../../../../assets/tiles/spearman-red.png"
+        src="../../../../assets/tiles/spearman-red-min.png"
         class="spearman"
         alt="Unit"
       />
       <img
         v-else-if="!isOwnUnit"
-        src="../../../../assets/tiles/spearman-beige.png"
+        src="../../../../assets/tiles/spearman-beige-min.png"
         class="spearman"
         alt="Unit"
       />

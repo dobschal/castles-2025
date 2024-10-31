@@ -55,6 +55,16 @@ body {
   box-sizing: border-box;
 }
 
+h1 {
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
 hr {
   border: none;
   border-top: 4px solid rgb(117, 59, 22);

@@ -31,7 +31,7 @@ import { DIALOG } from "@/events.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import TutorialOverlay from "@/components/partials/game/TutorialOverlay.vue";
 
-const images = import.meta.glob("@/assets/tiles/*.png");
+const images = import.meta.glob("@/assets/tiles/*-min.png");
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const authStore = useAuthStore();

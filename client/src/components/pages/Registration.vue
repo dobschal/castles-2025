@@ -1,8 +1,10 @@
 <template>
   <Page>
-    <h1>
+    <h1>Castles <small>of Beer and Dragons</small></h1>
+    <p v-html="t('registration.intro')"></p>
+    <h2>
       <CText path="registration.title" />
-    </h1>
+    </h2>
     <p v-if="hasError" class="error-message">
       <CText path="registration.error" />
     </p>
@@ -24,6 +26,11 @@
         <CText path="registration.toLogin" />
       </CButton>
     </form>
+    <p>
+      <small>
+        <CText path="registration.cookieInfo" />
+      </small>
+    </p>
   </Page>
 </template>
 
@@ -38,6 +45,7 @@ import router from "@/core/router.ts";
 import { LoginPageRoute, MainPageRoute } from "@/routes.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { TOAST } from "@/events.ts";
+import { useI18n } from "vue-i18n";
 
 const username = ref("");
 const password = ref("");
@@ -45,6 +53,7 @@ const passwordRepeated = ref("");
 const hasError = ref(false);
 const isLoading = ref(false);
 const authStore = useAuthStore();
+const { t } = useI18n();
 
 const hasInput = computed(
   () => username.value.length > 0 && password.value.length > 0,
@@ -81,5 +90,9 @@ async function submitForm(): Promise<void> {
 <style lang="scss" scoped>
 .error-message {
   color: red;
+}
+
+form {
+  margin-bottom: 2rem;
 }
 </style>

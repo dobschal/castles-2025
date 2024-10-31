@@ -4,7 +4,7 @@
     @click="openTutorialAction"
     class="small tutorial-button"
   >
-    <img src="@/assets/scroll.png" alt="Tutorial" />
+    <img src="@/assets/scroll-min.png" alt="Tutorial" />
   </CButton>
 </template>
 

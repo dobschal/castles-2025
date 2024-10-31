@@ -40,6 +40,10 @@ export const en = {
     action: "Create account",
     toLogin: "To login",
     passwordsNotEqual: "Passwords do not match.",
+    intro:
+      "Welcome to the browser game <b><i>Castles of Beer and Dragons</i></b>! Sign up now and gain fame and fortune.",
+    cookieInfo:
+      "This site does not use cookies and no personal data is stored. When using the game, game events and data are stored on the server and in the browser. If you do not agree with this, do not play.",
   },
   login: {
     title: "Login",

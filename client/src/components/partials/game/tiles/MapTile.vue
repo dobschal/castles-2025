@@ -36,25 +36,25 @@
     <div v-else class="image-wrapper">
       <img
         v-if="mapTile.type === MapTileType.FOREST"
-        src="@/assets/tiles/forest-disabled.png"
+        src="@/assets/tiles/forest-disabled-min.png"
         class="forest"
         alt="Forest"
       />
       <img
         v-else-if="mapTile.type === MapTileType.PLAIN"
-        src="@/assets/tiles/plain-disabled.png"
+        src="@/assets/tiles/plain-disabled-min.png"
         class="plain"
         alt="Plain"
       />
       <img
         v-else-if="mapTile.type === MapTileType.WATER"
-        src="@/assets/tiles/water-disabled.png"
+        src="@/assets/tiles/water-disabled-min.png"
         class="water"
         alt="Water"
       />
       <img
         v-else-if="mapTile.type === MapTileType.MOUNTAIN"
-        src="@/assets/tiles/mountain-disabled.png"
+        src="@/assets/tiles/mountain-disabled-min.png"
         class="mountain"
         alt="Mountain"
       />
@@ -75,7 +75,7 @@
     <div v-else class="image-top-layer-wrapper">
       <img
         v-if="mapTile.type === MapTileType.FOREST"
-        src="@/assets/tiles/forest-top-layer-disabled.png"
+        src="@/assets/tiles/forest-top-layer-disabled-min.png"
         class="forest-top-layer"
         alt="Forest"
       />
@@ -85,11 +85,11 @@
 
 <script setup lang="ts">
 import { MapTileType } from "@/types/enum/MapTileType.ts";
-import mountainTile from "@/assets/tiles/mountain.png";
-import waterTile from "@/assets/tiles/water.png";
-import forestTile from "@/assets/tiles/forest.png";
-import forestTileTopLayer from "@/assets/tiles/forest-top-layer.png";
-import plainTile from "@/assets/tiles/plain.png";
+import mountainTile from "@/assets/tiles/mountain-min.png";
+import waterTile from "@/assets/tiles/water-min.png";
+import forestTile from "@/assets/tiles/forest-min.png";
+import forestTileTopLayer from "@/assets/tiles/forest-top-layer-min.png";
+import plainTile from "@/assets/tiles/plain-min.png";
 import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import BuildingTile from "@/components/partials/game/tiles/BuildingTile.vue";

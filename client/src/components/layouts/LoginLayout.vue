@@ -49,7 +49,7 @@ section {
   width: 100%;
   height: calc(100vh - 4rem);
   overflow-y: auto;
-  background: url("@/assets/background.png") no-repeat center center fixed;
+  background: url("@/assets/background-min.png") no-repeat center center fixed;
   background-size: cover;
 }
 </style>

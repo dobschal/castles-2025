@@ -35,7 +35,7 @@ class BarbarianService @Inject constructor(
             "barbarian",
             UUID.randomUUID().toString()
         )
-        val amountOfWantedBarbarianUnits = userRepository.countUsers() + 10
+        val amountOfWantedBarbarianUnits = userRepository.countUsers() + 5
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
@@ -50,22 +50,26 @@ class BarbarianService @Inject constructor(
         val units = unitRepository.findAllByUser(barbarianUser.id!!)
         for (unit in units) {
             findMapTileToMoveTo(unit, unit.x!!, unit.y!!, mapTiles, units, barbarianUser).let { (x, y) ->
-                val (conflictingBuilding, conflictingUnit) = unitService.getMoveConflictingBuildingsAndUnits(
-                    x,
-                    y,
-                    unit,
-                    barbarianUser
-                )
-                eventRepository.save(Event().apply {
-                    this.user1 = barbarianUser
-                    this.type = EventType.UNIT_MOVED
-                    this.unit = unit
-                    this.x = x
-                    this.y = y
-                })
-                unitRepository.updatePosition(unit.id!!, x, y)
-                unitService.handleFightAndConquer(conflictingUnit, barbarianUser, unit, conflictingBuilding)
-                logger.info { "Moved barbarian unit from ${unit.x}, ${unit.y} to $x, $y" }
+                try {
+                    val (conflictingBuilding, conflictingUnit) = unitService.getMoveConflictingBuildingsAndUnits(
+                        x,
+                        y,
+                        unit,
+                        barbarianUser
+                    )
+                    eventRepository.save(Event().apply {
+                        this.user1 = barbarianUser
+                        this.type = EventType.UNIT_MOVED
+                        this.unit = unit
+                        this.x = x
+                        this.y = y
+                    })
+                    unitRepository.updatePosition(unit.id!!, x, y)
+                    unitService.handleFightAndConquer(conflictingUnit, barbarianUser, unit, conflictingBuilding)
+                    logger.info { "Moved barbarian unit from ${unit.x}, ${unit.y} to $x, $y" }
+                } catch (e: Exception) {
+                    logger.error(e) { "Could not move barbarian unit from ${unit.x}, ${unit.y} to $x, $y" }
+                }
             }
         }
     }
@@ -122,7 +126,7 @@ class BarbarianService @Inject constructor(
         for (i in 0 until 1000) {
             val x = kotlin.random.Random.nextInt(lowestX - margin, highestX + margin)
             val y = kotlin.random.Random.nextInt(lowestY - margin, highestY + margin)
-            val conflictingBuilding = buildings.any { abs(it.x!! - x) < 3 && abs(it.y!! - y) < 3 }
+            val conflictingBuilding = buildings.any { abs(it.x!! - x) < 5 && abs(it.y!! - y) < 5 }
             val conflictingUnit = units.any { it.x == x && it.y == y }
             val mapTile = mapTiles.find { it.x == x && it.y == y }
             if (!conflictingBuilding && !conflictingUnit && mapTile?.type != MapTileType.WATER) {
