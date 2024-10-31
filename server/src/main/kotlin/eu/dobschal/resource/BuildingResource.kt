@@ -45,4 +45,5 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     @Path("/collect-beer")
     fun collectBeer(request: CollectBeerRequestDto) =
         buildingService.collectBeer(request.buildingId, request.amountOfBeer)
+    
 }

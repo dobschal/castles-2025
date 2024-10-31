@@ -23,7 +23,7 @@
       :disabled="!isAllowedToBuildFarm || isLoading"
     >
       {{ t("unitAction.buildFarm") }}
-      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.BREWERY)" />
+      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.FARM)" />
     </CButton>
     <CButton
       class="small"
@@ -31,7 +31,7 @@
       :disabled="!isAllowedToBuildBrewery || isLoading"
     >
       {{ t("unitAction.buildBrewery") }}
-      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.FARM)" />
+      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.BREWERY)" />
     </CButton>
     <CButton
       class="small"

@@ -24,8 +24,8 @@ const val FARM_BASE_PRICE = 50
 const val BREWERY_BASE_PRICE = 100
 
 // Beer Production
-const val BREWERY_BEER_PRODUCTION_PER_HOUR = 60
-const val BREWERY_BEER_STORAGE = 150
+const val BREWERY_BEER_PRODUCTION_PER_HOUR = 80
+const val BREWERY_BEER_STORAGE = 160
 const val VILLAGE_LEVEL_1_BEER_STORAGE = 800
 
 // Unit Move Limits
