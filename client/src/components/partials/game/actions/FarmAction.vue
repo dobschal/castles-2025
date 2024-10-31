@@ -11,7 +11,12 @@
     class="small"
     @click="openMoveUnitActionOverlay"
   >
-    {{ t("villageAction.moveUnit") }}
+    {{
+      t("villageAction.moveUnit", [
+        movesPerHourLimit - movesLastHour,
+        movesPerHourLimit,
+      ])
+    }}
   </CButton>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
@@ -44,6 +49,18 @@ const unitAtPosition = computed(() => {
       unit.y === buildingsStore.activeBuilding!.y
     );
   });
+});
+
+const movesLastHour = computed(() => {
+  if (!unitAtPosition.value) return -1;
+
+  return unitsStore.movesLastHour(unitAtPosition.value);
+});
+
+const movesPerHourLimit = computed(() => {
+  if (!unitAtPosition.value) return -1;
+
+  return unitsStore.movesPerHourLimit(unitAtPosition.value);
 });
 
 const isOwnBuilding = computed(() => {

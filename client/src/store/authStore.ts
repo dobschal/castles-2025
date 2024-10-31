@@ -49,6 +49,12 @@ export const useAuthStore = defineStore(
     });
 
     async function loadUser(): Promise<void> {
+      if (!UserGateway) {
+        setTimeout(() => loadUser(), 100);
+
+        return;
+      }
+
       try {
         user.value = await UserGateway.instance.getUser();
       } catch (error) {
