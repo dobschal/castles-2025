@@ -126,11 +126,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   if (
     props.unit.x !== mapTile.x ||
     props.unit.y !== mapTile.y ||
-    !isOwnUnit.value ||
     buildingOnPosition.value // If there is a building on that field --> open the building action first
   ) {
     return;
   }
+
+  console.log("UnitTile: onMapTileClicked", props.unit.id);
 
   unitsStore.activeUnit = props.unit;
   ACTION.dispatch(WorkerAction);

@@ -79,10 +79,11 @@ class BarbarianServiceTest {
     fun `controlBarbarians creates barbarian user and barbarian units if it does not exist`() {
         barbarianService.controlBarbarians()
         assert(userRepository.userExists("barbarian"))
-        assert(unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!) == 2)
+        val amount = unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!)
+        assert(amount == 5) // (2 users + barbarian user) * 1.5 = 4.5 --> ceil --> 5
         val unit1 = unitRepository.listAll().first()
         barbarianService.controlBarbarians()
-        assert(unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!) == 2)
+        assert(unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!) == 5)
         val unit2 = unitRepository.listAll().first()
         assert(unit1.id == unit2.id)
         assert(unit1.x != unit2.x || unit1.y != unit2.y)

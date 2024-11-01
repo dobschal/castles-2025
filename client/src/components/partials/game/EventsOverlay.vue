@@ -1,5 +1,14 @@
 <template>
   <div v-if="isOpen" class="events-overlay">
+    <p
+      class="show-on-map-toggle"
+      @click="eventsStore.showEventsOnMap = !eventsStore.showEventsOnMap"
+    >
+      <span class="checkbox" :class="{ active: eventsStore.showEventsOnMap }">
+        ✓
+      </span>
+      {{ t("events.showOnMap") }}
+    </p>
     <div
       class="entry"
       v-for="event in events"
@@ -28,6 +37,7 @@ import { useAuthStore } from "@/store/authStore.ts";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useMapStore } from "@/store/mapStore.ts";
 import { parseServerDateString } from "@/core/util.ts";
+import { EventType } from "@/types/enum/EventType.ts";
 
 const authStore = useAuthStore();
 const eventsStore = useEventsStore();
@@ -48,26 +58,28 @@ interface CustomEvent {
 }
 
 const events = computed<Array<CustomEvent>>(() => {
-  return eventsStore.events.map((event) => {
-    const isOwnEvent = event.user1.id === authStore.user?.id;
+  return eventsStore.events
+    .filter((event) => event.type !== EventType.BEER_COLLECTED) // don't need to show this...
+    .map((event) => {
+      const isOwnEvent = event.user1.id === authStore.user?.id;
 
-    return {
-      id: event.id,
-      translationKey: `events.${isOwnEvent ? "own" : "other"}.${event.type}`,
-      params: {
-        x: event.x,
-        y: event.y,
-        playerName: event.user1.username,
-        unitType: event.unit?.type
-          ? t(`unitType.${event.unit?.type}`)
-          : t("general.unit"),
-      },
-      duration: calculateDuration(
-        new Date(),
-        parseServerDateString(event.createdAt),
-      ),
-    };
-  });
+      return {
+        id: event.id,
+        translationKey: `events.${isOwnEvent ? "own" : "other"}.${event.type}`,
+        params: {
+          x: event.x,
+          y: event.y,
+          playerName: event.user1.username,
+          unitType: event.unit?.type
+            ? t(`unitType.${event.unit?.type}`)
+            : t("general.unit"),
+        },
+        duration: calculateDuration(
+          new Date(),
+          parseServerDateString(event.createdAt),
+        ),
+      };
+    });
 });
 
 function goToEventPosition(event: CustomEvent): void {
@@ -101,6 +113,7 @@ function toggle(): void {
   bottom: 1rem;
   left: 1rem;
   z-index: 99;
+  user-select: none;
 }
 
 .events-overlay {
@@ -111,21 +124,47 @@ function toggle(): void {
   background: antiquewhite;
   box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
   border: solid 3px rgb(117, 59, 22);
-  padding: 1rem;
   color: black;
   line-height: 1rem;
   width: calc(100% - 2rem);
   max-width: 400px;
   max-height: 200px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  touch-action: pan-y pan-x;
+  user-select: none;
 
-  .close-button {
-    margin-left: auto;
-    padding: 0.5rem;
+  * {
+    touch-action: pan-y pan-x;
+  }
+
+  .show-on-map-toggle {
+    padding: 1rem;
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: antiquewhite;
+
+    .checkbox {
+      margin-right: 0.5rem;
+      display: inline-block;
+      color: transparent;
+      border: solid 1px black;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 24px;
+      text-align: center;
+
+      &.active {
+        color: black;
+      }
+    }
   }
 
   .entry {
-    margin-bottom: 0.5rem;
+    margin: 0 1rem 1rem 1rem;
 
     &:hover,
     &:active {

@@ -990,4 +990,9 @@ class UnitResourceTest : BaseResourceTest() {
         assert(buildingRepository.listAll().first().user?.id == user1?.id)
     }
 
+    @Test
+    fun `If loosing the last village, destroy all other buildings (expect castles) and give user START BEER`() {
+        TODO();
+    }
+
 }

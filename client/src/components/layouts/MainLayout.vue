@@ -97,6 +97,7 @@ nav {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  user-select: none;
 
   h1 {
     font-size: 2rem;

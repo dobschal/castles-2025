@@ -67,6 +67,7 @@ export const en = {
     breweryOf: "Brewery of {playerName}",
   },
   unitAction: {
+    unitOf: "Unit of {playerName} at {x}, {y}",
     chooseAction: "Choose an action for the unit:",
     moveText: "Where should the unit be moved?",
     movesRemaining: "This unit has {0} of {1} moves per hour remaining.",
@@ -82,6 +83,7 @@ export const en = {
     createHorseman: "Create horseman",
   },
   events: {
+    showOnMap: "Show events on map?",
     noEvents: "No events available...",
     openOverlay: "Events",
     buildingDestroyed: "Building destroyed!",

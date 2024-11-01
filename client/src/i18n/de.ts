@@ -69,6 +69,7 @@ export const de = {
     breweryOf: "Brauerei von {playerName}",
   },
   unitAction: {
+    unitOf: "Einheit von {playerName} in {x}, {y}",
     chooseAction: "Wähle eine Aktion für die Einheit:",
     moveText: "Wohin soll die Einheit bewegt werden?",
     movesRemaining:
@@ -85,6 +86,7 @@ export const de = {
     createHorseman: "Reiter erstellen",
   },
   events: {
+    showOnMap: "Ereignisse auf Karte anzeigen?",
     noEvents: "Keine Ereignisse vorhanden...",
     openOverlay: "Ereignisse",
     buildingDestroyed: "Gebäude zerstört!",

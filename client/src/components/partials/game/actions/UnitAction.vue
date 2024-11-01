@@ -1,55 +1,66 @@
 <template>
-  <p>👉 {{ t("unitAction.chooseAction") }}</p>
-  <CButton
-    v-if="unitsStore.activeUnit"
-    class="small with-icon"
-    @click="showMoveAction"
-    :disabled="isLoading || movesLastHour >= movesPerHourLimit"
-  >
-    {{
-      t("villageAction.moveUnit", [
-        movesPerHourLimit - movesLastHour,
-        movesPerHourLimit,
-      ])
-    }}
-    <BeerDisplay
-      :beer="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
-    />
-  </CButton>
-  <template v-if="unitsStore.activeUnit?.type === UnitType.WORKER">
+  <template v-if="isOwnUnit">
+    <p>👉 {{ t("unitAction.chooseAction") }}</p>
     <CButton
+      v-if="unitsStore.activeUnit"
       class="small with-icon"
-      @click="saveBuilding(BuildingType.FARM)"
-      :disabled="!isAllowedToBuildFarm || isLoading"
+      @click="showMoveAction"
+      :disabled="isLoading || movesLastHour >= movesPerHourLimit"
     >
-      {{ t("unitAction.buildFarm") }}
-      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.FARM)" />
+      {{
+        t("villageAction.moveUnit", [
+          movesPerHourLimit - movesLastHour,
+          movesPerHourLimit,
+        ])
+      }}
+      <BeerDisplay
+        :beer="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
+      />
     </CButton>
-    <CButton
-      class="small with-icon"
-      @click="saveBuilding(BuildingType.BREWERY)"
-      :disabled="!isAllowedToBuildBrewery || isLoading"
-    >
-      {{ t("unitAction.buildBrewery") }}
-      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.BREWERY)" />
-    </CButton>
-    <CButton
-      class="small with-icon"
-      @click="saveBuilding(BuildingType.CASTLE)"
-      :disabled="!isAllowedToBuildCastle || isLoading"
-    >
-      {{ t("unitAction.buildCastle") }}
-      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CASTLE)" />
-    </CButton>
-    <CButton
-      class="small with-icon"
-      @click="saveBuilding(BuildingType.VILLAGE)"
-      :disabled="!isAllowedToBuildVillage || isLoading"
-    >
-      {{ t("unitAction.buildVillage") }}
-      <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.VILLAGE)" />
-    </CButton>
+    <template v-if="unitsStore.activeUnit?.type === UnitType.WORKER">
+      <CButton
+        class="small with-icon"
+        @click="saveBuilding(BuildingType.FARM)"
+        :disabled="!isAllowedToBuildFarm || isLoading"
+      >
+        {{ t("unitAction.buildFarm") }}
+        <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.FARM)" />
+      </CButton>
+      <CButton
+        class="small with-icon"
+        @click="saveBuilding(BuildingType.BREWERY)"
+        :disabled="!isAllowedToBuildBrewery || isLoading"
+      >
+        {{ t("unitAction.buildBrewery") }}
+        <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.BREWERY)" />
+      </CButton>
+      <CButton
+        class="small with-icon"
+        @click="saveBuilding(BuildingType.CASTLE)"
+        :disabled="!isAllowedToBuildCastle || isLoading"
+      >
+        {{ t("unitAction.buildCastle") }}
+        <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CASTLE)" />
+      </CButton>
+      <CButton
+        class="small with-icon"
+        @click="saveBuilding(BuildingType.VILLAGE)"
+        :disabled="!isAllowedToBuildVillage || isLoading"
+      >
+        {{ t("unitAction.buildVillage") }}
+        <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.VILLAGE)" />
+      </CButton>
+    </template>
   </template>
+  <p v-else>
+    {{
+      t("unitAction.unitOf", {
+        playerName: activeUnit?.user.username,
+        x: activeUnit?.x,
+        y: activeUnit?.y,
+      })
+    }}
+  </p>
   <CButton class="small" @click="close" :disabled="isLoading">
     {{ t("general.cancel") }}
   </CButton>
@@ -88,6 +99,10 @@ const emit = defineEmits(["close-action"]);
 
 const activeUnit = computed(() => {
   return unitsStore.activeUnit;
+});
+
+const isOwnUnit = computed(() => {
+  return activeUnit.value?.user.id === authStore.user?.id;
 });
 
 const movesLastHour = computed(() => {

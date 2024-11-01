@@ -6,6 +6,14 @@
       :style="getMapTileStyle(mapTile)"
       :map-tile="mapTile"
     />
+    <template v-if="eventsStore.showEventsOnMap && !actionStore.isActionActive">
+      <EventTile
+        :key="event.id"
+        v-for="event in eventsStore.events"
+        :event="event"
+        :style="getMapTileStyle(event)"
+      />
+    </template>
   </div>
 </template>
 
@@ -15,7 +23,10 @@ import { useMapStore } from "@/store/mapStore.ts";
 import MapTile from "@/components/partials/game/tiles/MapTile.vue";
 import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
-import { MapTileDto } from "@/types/dto/MapTileDto.ts";
+import EventTile from "@/components/partials/game/tiles/EventTile.vue";
+import { useEventsStore } from "@/store/eventsStore.ts";
+import { PointDto } from "@/types/dto/PointDto.ts";
+import { useActionStore } from "@/store/actionStore.ts";
 
 interface MapTileStyle {
   left: string;
@@ -29,6 +40,8 @@ interface MapTileStyle {
 
 const map = ref<Optional<HTMLElement>>();
 const mapStore = useMapStore();
+const eventsStore = useEventsStore();
+const actionStore = useActionStore();
 const isDragging = ref(false);
 const mouseDownTime = ref(0);
 const touchDownTime = ref(0);
@@ -70,7 +83,7 @@ function getMapStyle(): Record<string, string> {
   };
 }
 
-function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
+function getMapTileStyle(mapTile: PointDto): MapTileStyle {
   const x = mapTile.x * mapStore.mapTileSize - mapStore.mapTileSize / 2;
   const y = mapTile.y * mapStore.mapTileSize - mapStore.mapTileSize / 2;
 
@@ -79,7 +92,7 @@ function getMapTileStyle(mapTile: MapTileDto): MapTileStyle {
     height: mapStore.mapTileSize + "px",
     left: x + "px",
     top: y + "px",
-    zIndex: 9999 - mapTile.x + mapTile.y * 10,
+    zIndex: 999 - mapTile.x + mapTile.y * 10,
   };
 }
 

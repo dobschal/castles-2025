@@ -6,52 +6,60 @@ import { useMapStore } from "@/store/mapStore.ts";
 import { EventType } from "@/types/enum/EventType.ts";
 import { Optional } from "@/types/core/Optional.ts";
 
-export const useEventsStore = defineStore("event", () => {
-  const mapStore = useMapStore();
-  const events = ref<Array<EventEntity>>([]);
+export const useEventsStore = defineStore(
+  "event",
+  () => {
+    const mapStore = useMapStore();
+    const events = ref<Array<EventEntity>>([]);
+    const showEventsOnMap = ref(true);
 
-  function removeEventsNotOnCurrentMap(): void {
-    for (let i = events.value.length - 1; i >= 0; i--) {
-      if (
-        !mapStore.isOnCurrentMap({
-          x: events.value[i].x,
-          y: events.value[i].y,
-        })
-      ) {
-        events.value.splice(i, 1);
-      }
-    }
-  }
-
-  async function loadEvents(): Promise<void> {
-    removeEventsNotOnCurrentMap();
-
-    const response = await EventGateway.instance.getEvents(
-      mapStore.currentMapRange,
-    );
-    const existingEventIds = new Set(events.value.map((event) => event.id));
-    for (const eventEntity of response.reverse()) {
-      if (!existingEventIds.has(eventEntity.id)) {
-        events.value.unshift(eventEntity);
+    function removeEventsNotOnCurrentMap(): void {
+      for (let i = events.value.length - 1; i >= 0; i--) {
+        if (
+          !mapStore.isOnCurrentMap({
+            x: events.value[i].x,
+            y: events.value[i].y,
+          })
+        ) {
+          events.value.splice(i, 1);
+        }
       }
     }
 
-    events.value.sort((a, b) => b.id - a.id);
-  }
+    async function loadEvents(): Promise<void> {
+      removeEventsNotOnCurrentMap();
 
-  function findLatestEventByPositionAndType(
-    x: number,
-    y: number,
-    type: EventType,
-  ): Optional<EventEntity> {
-    return events.value.find(
-      (event) => event.x === x && event.y === y && event.type === type,
-    );
-  }
+      const response = await EventGateway.instance.getEvents(
+        mapStore.currentMapRange,
+      );
+      const existingEventIds = new Set(events.value.map((event) => event.id));
+      for (const eventEntity of response.reverse()) {
+        if (!existingEventIds.has(eventEntity.id)) {
+          events.value.unshift(eventEntity);
+        }
+      }
 
-  return {
-    events,
-    loadEvents,
-    findLatestEventByPositionAndType,
-  };
-});
+      events.value.sort((a, b) => b.id - a.id);
+    }
+
+    function findLatestEventByPositionAndType(
+      x: number,
+      y: number,
+      type: EventType,
+    ): Optional<EventEntity> {
+      return events.value.find(
+        (event) => event.x === x && event.y === y && event.type === type,
+      );
+    }
+
+    return {
+      events,
+      loadEvents,
+      findLatestEventByPositionAndType,
+      showEventsOnMap,
+    };
+  },
+  {
+    persist: true,
+  },
+);

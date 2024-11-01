@@ -24,6 +24,7 @@ nav {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  user-select: none;
 
   h1 {
     font-size: 2rem;
@@ -32,7 +33,7 @@ nav {
 
     img {
       height: 2rem;
-      margin-right: 0rem;
+      margin-right: 0;
       transform: translateY(0.35rem);
     }
   }
