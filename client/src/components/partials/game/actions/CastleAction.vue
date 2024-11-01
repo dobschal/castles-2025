@@ -8,14 +8,20 @@
   </p>
   <CButton
     v-if="isOwnBuilding && unitAtPosition"
-    class="small"
+    class="small with-icon"
     @click="openMoveUnitActionOverlay"
   >
-    {{ t("villageAction.moveUnit") }}
+    {{
+      t("villageAction.moveUnit", [
+        movesPerHourLimit - movesLastHour,
+        movesPerHourLimit,
+      ])
+    }}
+    <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
   </CButton>
   <CButton
     v-if="isOwnBuilding"
-    class="small"
+    class="small with-icon"
     @click="createUnit(UnitType.SWORDSMAN)"
     :disabled="!isBuildingSwordsmanAvailable"
   >
@@ -24,7 +30,7 @@
   </CButton>
   <CButton
     v-if="isOwnBuilding"
-    class="small"
+    class="small with-icon"
     @click="createUnit(UnitType.HORSEMAN)"
     :disabled="!isBuildingHorsemanAvailable"
   >
@@ -33,7 +39,7 @@
   </CButton>
   <CButton
     v-if="isOwnBuilding"
-    class="small"
+    class="small with-icon"
     @click="createUnit(UnitType.SPEARMAN)"
     :disabled="!isBuildingSpearmanAvailable"
   >
@@ -94,6 +100,18 @@ const unitAtPosition = computed(() => {
       unit.y === buildingsStore.activeBuilding!.y
     );
   });
+});
+
+const movesLastHour = computed(() => {
+  if (!unitAtPosition.value) return -1;
+
+  return unitsStore.movesLastHour(unitAtPosition.value);
+});
+
+const movesPerHourLimit = computed(() => {
+  if (!unitAtPosition.value) return -1;
+
+  return unitsStore.movesPerHourLimit(unitAtPosition.value);
 });
 
 const isOwnBuilding = computed(() => {

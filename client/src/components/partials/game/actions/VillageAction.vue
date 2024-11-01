@@ -8,7 +8,7 @@
   </p>
   <CButton
     v-if="isOwnBuilding && unitAtPosition"
-    class="small"
+    class="small with-icon"
     @click="openUnitActionOverlay"
   >
     {{
@@ -17,6 +17,7 @@
         movesPerHourLimit,
       ])
     }}
+    <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
   </CButton>
   <CButton
     v-if="isOwnBuilding"

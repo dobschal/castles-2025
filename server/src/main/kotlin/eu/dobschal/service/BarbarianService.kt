@@ -14,6 +14,7 @@ import jakarta.inject.Inject
 import mu.KotlinLogging
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.ceil
 
 @ApplicationScoped
 class BarbarianService @Inject constructor(
@@ -35,7 +36,7 @@ class BarbarianService @Inject constructor(
             "barbarian",
             UUID.randomUUID().toString()
         )
-        val amountOfWantedBarbarianUnits = userRepository.countUsers() + 5
+        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 1.5).toInt()
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {

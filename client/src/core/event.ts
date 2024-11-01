@@ -21,7 +21,7 @@ export function defineEvent<DataType>(): IEvent<DataType> {
       const index = _listeners.findIndex((l) => l.callback === callback);
 
       if (index === -1) {
-        throw new Error("Tried to remove non existing event listener.");
+        return console.warn("Tried to remove non existing event listener.");
       }
 
       _listeners.splice(index, 1);

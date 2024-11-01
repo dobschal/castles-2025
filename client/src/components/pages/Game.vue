@@ -10,6 +10,7 @@
   <ActionOverlay />
   <StatsOverlay />
   <TutorialOverlay />
+  <ZoomOverlay v-if="!actionStore.isActionActive" />
 </template>
 
 <script setup lang="ts">
@@ -30,6 +31,7 @@ import { useI18n } from "vue-i18n";
 import { DIALOG } from "@/events.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import TutorialOverlay from "@/components/partials/game/TutorialOverlay.vue";
+import ZoomOverlay from "@/components/partials/game/ZoomOverlay.vue";
 
 const images = import.meta.glob("@/assets/tiles/*-min.png");
 const buildingsStore = useBuildingsStore();
@@ -49,6 +51,7 @@ const { t } = useI18n();
 onMounted(async () => {
   isMounted = true;
   isLoading.value = true;
+  mapStore.adjustZoomLevelToScreen();
   await Promise.all([
     loadAssets(),
     authStore.loadUser(),
@@ -70,7 +73,6 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   isMounted = false;
-  authStore.lastLoginTimestamp = Date.now();
 });
 
 watch(

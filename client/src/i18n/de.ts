@@ -85,8 +85,8 @@ export const de = {
     createHorseman: "Reiter erstellen",
   },
   events: {
-    noEvents: "Keine Events vorhanden...",
-    openOverlay: "Events anzeigen",
+    noEvents: "Keine Ereignisse vorhanden...",
+    openOverlay: "Ereignisse",
     buildingDestroyed: "Gebäude zerstört!",
     buildingConquered: "Gebäude erobert!",
     lostUnit: "Einheit verloren!",

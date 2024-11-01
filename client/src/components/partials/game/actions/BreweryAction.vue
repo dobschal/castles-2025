@@ -8,7 +8,7 @@
   </p>
   <CButton
     v-if="isOwnBuilding && unitAtPosition"
-    class="small"
+    class="small with-icon"
     @click="openMoveUnitActionOverlay"
   >
     {{
@@ -17,6 +17,7 @@
         movesPerHourLimit,
       ])
     }}
+    <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
   </CButton>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
@@ -34,7 +35,10 @@ import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
+import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import { usePricesStore } from "@/store/pricesStore.ts";
 
+const pricesStore = usePricesStore();
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();

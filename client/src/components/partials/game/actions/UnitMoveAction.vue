@@ -1,13 +1,5 @@
 <template>
   <p>
-    {{
-      t("unitAction.movesRemaining", [
-        movesPerHourLimit - movesLastHour,
-        movesPerHourLimit,
-      ])
-    }}
-  </p>
-  <p>
     👉
     <span v-html="t('unitAction.moveText')"></span>
   </p>
@@ -41,18 +33,6 @@ const emit = defineEmits(["close-action"]);
 
 const activeMoveUnit = computed(() => {
   return unitsStore.activeMoveUnit;
-});
-
-const movesLastHour = computed(() => {
-  if (!activeMoveUnit.value) return -1;
-
-  return unitsStore.movesLastHour(activeMoveUnit.value);
-});
-
-const movesPerHourLimit = computed(() => {
-  if (!activeMoveUnit.value) return -1;
-
-  return unitsStore.movesPerHourLimit(activeMoveUnit.value);
 });
 
 watch(

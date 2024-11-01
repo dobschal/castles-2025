@@ -83,7 +83,7 @@ export const en = {
   },
   events: {
     noEvents: "No events available...",
-    openOverlay: "Show events",
+    openOverlay: "Events",
     buildingDestroyed: "Building destroyed!",
     buildingConquered: "Building conquered!",
     lostUnit: "Unit lost!",

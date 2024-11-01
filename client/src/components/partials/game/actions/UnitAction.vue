@@ -2,7 +2,7 @@
   <p>👉 {{ t("unitAction.chooseAction") }}</p>
   <CButton
     v-if="unitsStore.activeUnit"
-    class="small"
+    class="small with-icon"
     @click="showMoveAction"
     :disabled="isLoading || movesLastHour >= movesPerHourLimit"
   >
@@ -18,7 +18,7 @@
   </CButton>
   <template v-if="unitsStore.activeUnit?.type === UnitType.WORKER">
     <CButton
-      class="small"
+      class="small with-icon"
       @click="saveBuilding(BuildingType.FARM)"
       :disabled="!isAllowedToBuildFarm || isLoading"
     >
@@ -26,7 +26,7 @@
       <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.FARM)" />
     </CButton>
     <CButton
-      class="small"
+      class="small with-icon"
       @click="saveBuilding(BuildingType.BREWERY)"
       :disabled="!isAllowedToBuildBrewery || isLoading"
     >
@@ -34,7 +34,7 @@
       <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.BREWERY)" />
     </CButton>
     <CButton
-      class="small"
+      class="small with-icon"
       @click="saveBuilding(BuildingType.CASTLE)"
       :disabled="!isAllowedToBuildCastle || isLoading"
     >
@@ -42,7 +42,7 @@
       <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CASTLE)" />
     </CButton>
     <CButton
-      class="small"
+      class="small with-icon"
       @click="saveBuilding(BuildingType.VILLAGE)"
       :disabled="!isAllowedToBuildVillage || isLoading"
     >

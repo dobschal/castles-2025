@@ -74,6 +74,16 @@ function close(): void {
     flex-direction: column;
     align-items: center;
     animation: drive-in 0.5s cubic-bezier(0.33, 0.96, 0.52, 1.13);
+
+    :deep(button.with-icon) {
+      width: 100%;
+      max-width: 320px;
+      text-align: left;
+
+      div {
+        margin-left: auto;
+      }
+    }
   }
 }
 </style>

@@ -48,11 +48,13 @@ body {
   width: 100%;
   min-height: 100vh;
   background: antiquewhite;
+  touch-action: none;
 }
 
 * {
   font-family: "MedievalSharp", sans-serif;
   box-sizing: border-box;
+  touch-action: none;
 }
 
 h1 {

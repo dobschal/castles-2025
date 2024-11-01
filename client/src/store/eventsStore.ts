@@ -5,14 +5,10 @@ import { EventGateway } from "@/gateways/EventGateway.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { EventType } from "@/types/enum/EventType.ts";
 import { Optional } from "@/types/core/Optional.ts";
-import { useAuthStore } from "@/store/authStore.ts";
-import { TOAST } from "@/events.ts";
-import { parseServerDateString } from "@/core/util.ts";
 
 export const useEventsStore = defineStore("event", () => {
   const mapStore = useMapStore();
   const events = ref<Array<EventEntity>>([]);
-  const authStore = useAuthStore();
 
   function removeEventsNotOnCurrentMap(): void {
     for (let i = events.value.length - 1; i >= 0; i--) {
@@ -36,14 +32,6 @@ export const useEventsStore = defineStore("event", () => {
     const existingEventIds = new Set(events.value.map((event) => event.id));
     for (const eventEntity of response.reverse()) {
       if (!existingEventIds.has(eventEntity.id)) {
-        const lastLoginWasBeforeEvent =
-          authStore.lastLoginTimestamp <
-          parseServerDateString(eventEntity.createdAt).getTime();
-
-        if (lastLoginWasBeforeEvent) {
-          showToastForNewEvent(eventEntity);
-        }
-
         events.value.unshift(eventEntity);
       }
     }
@@ -59,60 +47,6 @@ export const useEventsStore = defineStore("event", () => {
     return events.value.find(
       (event) => event.x === x && event.y === y && event.type === type,
     );
-  }
-
-  function showToastForNewEvent(eventEntity: EventEntity): void {
-    if (
-      eventEntity.type === EventType.LOST_UNIT &&
-      eventEntity.user1.id === authStore.user?.id
-    ) {
-      {
-        TOAST.dispatch({
-          type: "danger",
-          messageKey: "events.lostUnit",
-        });
-      }
-    } else if (
-      eventEntity.type === EventType.LOST_UNIT &&
-      eventEntity.user2?.id === authStore.user?.id
-    ) {
-      TOAST.dispatch({
-        type: "success",
-        messageKey: "events.wonFight",
-      });
-    } else if (
-      eventEntity.type === EventType.BUILDING_CONQUERED &&
-      eventEntity.user1.id === authStore.user?.id
-    ) {
-      TOAST.dispatch({
-        type: "success",
-        messageKey: "events.buildingConquered",
-      });
-    } else if (
-      eventEntity.type === EventType.BUILDING_CONQUERED &&
-      eventEntity.user1.id !== authStore.user?.id
-    ) {
-      TOAST.dispatch({
-        type: "danger",
-        messageKey: "events.buildingConquered",
-      });
-    } else if (
-      eventEntity.type === EventType.BUILDING_DESTROYED &&
-      eventEntity.user1.id === authStore.user?.id
-    ) {
-      TOAST.dispatch({
-        type: "success",
-        messageKey: "events.buildingDestroyed",
-      });
-    } else if (
-      eventEntity.type === EventType.BUILDING_DESTROYED &&
-      eventEntity.user1.id !== authStore.user?.id
-    ) {
-      TOAST.dispatch({
-        type: "danger",
-        messageKey: "events.buildingDestroyed",
-      });
-    }
   }
 
   return {

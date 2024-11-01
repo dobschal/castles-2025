@@ -166,8 +166,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     &.hosreman {
       width: 130%;
       height: 130%;
-      margin-left: -10%;
-      margin-top: -15%;
+      margin-left: -5%;
+      margin-top: -25%;
     }
   }
 }

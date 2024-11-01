@@ -16,6 +16,9 @@ export const useMapStore = defineStore("map", () => {
   const offsetY = ref(0);
   const mapControlsDisabled = ref(false);
   const loadMapQueue = new Queue(500, 3);
+  const allowedZoomSteps = [
+    10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 1000,
+  ];
 
   // Used to calculate the rotation of the map
   const radians = 45 * (Math.PI / 180);
@@ -120,7 +123,45 @@ export const useMapStore = defineStore("map", () => {
     );
   }
 
+  function zoomIn(): void {
+    const currentZoomIndex = allowedZoomSteps.indexOf(mapTileSize.value);
+
+    if (currentZoomIndex === allowedZoomSteps.length - 1) {
+      return;
+    }
+
+    const currentCenter = centerPosition.value;
+    mapTileSize.value = allowedZoomSteps[currentZoomIndex + 1];
+    goToPosition(currentCenter);
+  }
+
+  function zoomOut(): void {
+    const currentZoomIndex = allowedZoomSteps.indexOf(mapTileSize.value);
+
+    if (currentZoomIndex === 0) {
+      return;
+    }
+
+    const currentCenter = centerPosition.value;
+    mapTileSize.value = allowedZoomSteps[currentZoomIndex - 1];
+    goToPosition(currentCenter);
+  }
+
+  function adjustMapTileSizeToScreen(): void {
+    const minTilesX = 4;
+    const maxTilesX = 20;
+
+    if (amountOfTilesX.value < minTilesX) {
+      zoomOut();
+    } else if (amountOfTilesX.value >= maxTilesX) {
+      zoomIn();
+    }
+  }
+
   return {
+    adjustZoomLevelToScreen: adjustMapTileSizeToScreen,
+    zoomIn,
+    zoomOut,
     mapControlsDisabled,
     loadMap,
     goToPosition,

@@ -14,7 +14,6 @@ export const useAuthStore = defineStore(
   () => {
     const token = ref("");
     const user = ref<Optional<UserEntity>>();
-    const lastLoginTimestamp = ref();
 
     const hasToken = computed(() => token.value !== "");
 
@@ -69,7 +68,6 @@ export const useAuthStore = defineStore(
       isTokenExpired,
       user,
       loadUser,
-      lastLoginTimestamp,
     };
   },
 
