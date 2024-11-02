@@ -1065,7 +1065,7 @@ class BuildingResourceTest : BaseResourceTest() {
             .`when`()
             .delete(endpoint)
             .then()
-            .statusCode(Response.Status.NO_CONTENT.statusCode)
+            .statusCode(Response.Status.OK.statusCode)
 
         val farmsAfterDestroy = buildingRepository.countBuildingTypeByUser(user1?.id!!, BuildingType.FARM)
         assert(farmsAfterDestroy == farmsBeforeDestroy - 1)

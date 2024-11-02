@@ -34,6 +34,7 @@ export const en = {
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
+    buildingDestroyed: "Building successfully destroyed.",
   },
   registration: {
     title: "Registration",
