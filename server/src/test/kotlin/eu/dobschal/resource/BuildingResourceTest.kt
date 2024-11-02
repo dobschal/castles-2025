@@ -1044,4 +1044,24 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(response.buildings.size == 2)
     }
 
+    @Test
+    fun `Destroying own building works`() {
+
+    }
+
+    @Test
+    fun `Destroying own building fails if last available village`() {
+
+    }
+
+    @Test
+    fun `Destroying building fails if no building`() {
+
+    }
+
+    @Test
+    fun `Destroying building fails if not own building`() {
+
+    }
+
 }

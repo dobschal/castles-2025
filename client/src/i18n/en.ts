@@ -30,6 +30,7 @@ export const en = {
       "You can only build one brewery, one farm and one castle per village.",
     tooManyMoves: "The unit has reached its limit of moves for this hour.",
     notYourBuilding: "You can only destroy your own buildings.",
+    lastVillage: "You cannot destroy your last village.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",

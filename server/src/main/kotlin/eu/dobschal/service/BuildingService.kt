@@ -113,7 +113,13 @@ class BuildingService @Inject constructor(
             throw BadRequestException("serverError.notYourBuilding")
         }
 
-        // TODO: check for building types: not allowed to delete last village
+        if (building.type == BuildingType.VILLAGE) {
+            // if it's a village check if it's his last village
+            val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
+            if (amountOfVillages < 2) {
+                throw BadRequestException("serverError.lastVillage")
+            }
+        }
 
         buildingRepository.delete(building)
     }
