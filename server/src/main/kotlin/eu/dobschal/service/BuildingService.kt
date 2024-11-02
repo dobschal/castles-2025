@@ -105,6 +105,17 @@ class BuildingService @Inject constructor(
         return persistBuilding(x, y, type, currentUser)
     }
 
+    fun destroyBuilding(x: Int, y: Int) {
+        val currentUser = userService.getCurrentUser()
+
+        val building = buildingRepository.findBuildingByXAndY(x, y) ?: throw NotFoundException("serverError.noBuilding")
+        if (building.user != currentUser) {
+            throw BadRequestException("serverError.notYourBuilding")
+        }
+
+        buildingRepository.delete(building)
+    }
+
     private fun persistBuilding(
         x: Int,
         y: Int,

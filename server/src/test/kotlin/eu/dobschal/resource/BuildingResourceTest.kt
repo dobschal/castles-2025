@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
-import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
+import eu.dobschal.model.dto.request.BaseCoordinatesDto
 import eu.dobschal.model.dto.response.BuildingsResponseDto
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.model.entity.Building
@@ -96,7 +96,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = BuildingType.FARM
         }
         buildingRepository.save(farm)
-        val request = SaveStartVillageRequestDto(2, 3)
+        val request = BaseCoordinatesDto(2, 3)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -116,7 +116,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.WATER
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -136,7 +136,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -164,7 +164,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -184,7 +184,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -213,7 +213,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
