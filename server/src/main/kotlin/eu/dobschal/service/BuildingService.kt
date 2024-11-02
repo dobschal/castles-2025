@@ -113,6 +113,8 @@ class BuildingService @Inject constructor(
             throw BadRequestException("serverError.notYourBuilding")
         }
 
+        // TODO: check for building types: not allowed to delete last village
+
         buildingRepository.delete(building)
     }
 
