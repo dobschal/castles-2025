@@ -109,7 +109,7 @@ class BuildingService @Inject constructor(
         val currentUser = userService.getCurrentUser()
 
         val building = buildingRepository.findBuildingByXAndY(x, y) ?: throw NotFoundException("serverError.noBuilding")
-        if (building.user != currentUser) {
+        if (building.user?.id != currentUser.id) {
             throw BadRequestException("serverError.notYourBuilding")
         }
 

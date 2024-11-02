@@ -39,12 +39,17 @@ class BuildingRepository : PanacheRepository<Building> {
             .list()
     }
 
+    fun countBuildingTypeByUser(userId: Int, BuildingType: BuildingType): Int {
+        return count("user.id = ?1 AND type = ?2", userId, BuildingType).toInt()
+
+    }
+
     fun countVillagesByUser(userId: Int): Int {
-        return count("user.id = ?1 AND type = ?2", userId, BuildingType.VILLAGE).toInt()
+        return countBuildingTypeByUser(userId, BuildingType.VILLAGE)
     }
 
     fun countCastlesByUser(userId: Int): Int {
-        return count("user.id = ?1 AND type = ?2", userId, BuildingType.CASTLE).toInt()
+        return countBuildingTypeByUser(userId, BuildingType.VILLAGE)
     }
 
     fun updateOwner(buildingId: Int, userId: Int) {

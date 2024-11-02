@@ -1046,22 +1046,89 @@ class BuildingResourceTest : BaseResourceTest() {
 
     @Test
     fun `Destroying own building works`() {
+        val x = 20
+        val y = 20
+        val farm = Building().apply {
+            this.x = x
+            this.y = y
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        val farmsBeforeDestroy = buildingRepository.countBuildingTypeByUser(user1?.id!!, BuildingType.FARM)
 
+        val request = BaseCoordinatesDto(x, y)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .delete(endpoint)
+            .then()
+            .statusCode(Response.Status.NO_CONTENT.statusCode)
+
+        val farmsAfterDestroy = buildingRepository.countBuildingTypeByUser(user1?.id!!, BuildingType.FARM)
+        assert(farmsAfterDestroy == farmsBeforeDestroy - 1)
     }
 
     @Test
     fun `Destroying own building fails if last available village`() {
+        val x = 14
+        val y = 14
+        val village = Building().apply {
+            this.x = x
+            this.y = y
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+
+        val request = BaseCoordinatesDto(x, y)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .delete(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
 
     }
 
     @Test
     fun `Destroying building fails if no building`() {
-
+        val request = BaseCoordinatesDto(999, 999)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .delete(endpoint)
+            .then()
+            .statusCode(Response.Status.NOT_FOUND.statusCode)
     }
 
     @Test
     fun `Destroying building fails if not own building`() {
+        val x = 18
+        val y = 18
+        val farm = Building().apply {
+            this.x = x
+            this.y = y
+            user = user2
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
 
+        val request = BaseCoordinatesDto(x, y)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .delete(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
     }
 
 }
