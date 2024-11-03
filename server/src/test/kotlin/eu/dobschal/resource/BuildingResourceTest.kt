@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
-import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.request.BaseCoordinatesDto
+import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.response.BuildingsResponseDto
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.model.entity.Building
@@ -1129,6 +1129,127 @@ class BuildingResourceTest : BaseResourceTest() {
             .delete(endpoint)
             .then()
             .statusCode(Response.Status.BAD_REQUEST.statusCode)
+    }
+
+    @Test
+    fun `A village can only have 2 breweries`() {
+        val village = Building().apply {
+            x = 14
+            y = 14
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val farm = Building().apply {
+            x = 12
+            y = 13
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        val brewery = Building().apply {
+            x = 14
+            y = 15
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 4)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 4)
+    }
+
+    @Test
+    fun `A village can only have 2 breweries (fail)`() {
+        val village = Building().apply {
+            x = 14
+            y = 14
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val farm = Building().apply {
+            x = 12
+            y = 13
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+        val brewery = Building().apply {
+            x = 14
+            y = 15
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery)
+        val brewery2 = Building().apply {
+            x = 14
+            y = 17
+            user = user1
+            type = BuildingType.BREWERY
+        }
+        buildingRepository.save(brewery2)
+        val unit = Unit().apply {
+            x = 13
+            y = 13
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit)
+        val mapTile = MapTile().apply {
+            x = 13
+            y = 13
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 4)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 4)
     }
 
 }

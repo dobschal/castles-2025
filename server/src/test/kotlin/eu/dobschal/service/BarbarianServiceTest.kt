@@ -80,10 +80,10 @@ class BarbarianServiceTest {
         barbarianService.controlBarbarians()
         assert(userRepository.userExists("barbarian"))
         val amount = unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!)
-        assert(amount == 5) // (2 users + barbarian user) * 1.5 = 4.5 --> ceil --> 5
+        assert(amount == 6) // (2 users + barbarian user) * 1.75 = 5.25 --> ceil --> 6
         val unit1 = unitRepository.listAll().first()
         barbarianService.controlBarbarians()
-        assert(unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!) == 5)
+        assert(unitRepository.countUnitsByUser(userRepository.findByUsername("barbarian")!!.id!!) == 6)
         val unit2 = unitRepository.listAll().first()
         assert(unit1.id == unit2.id)
         assert(unit1.x != unit2.x || unit1.y != unit2.y)

@@ -109,7 +109,7 @@ class BuildingService @Inject constructor(
         return persistBuilding(x, y, type, currentUser)
     }
 
-    fun destroyBuilding(x: Int, y: Int) {
+    fun destroyBuilding(x: Int, y: Int): SuccessResponseDto {
         val currentUser = userService.getCurrentUser()
 
         val building = buildingRepository.findBuildingByXAndY(x, y) ?: throw NotFoundException("serverError.noBuilding")
@@ -132,6 +132,7 @@ class BuildingService @Inject constructor(
             this.x = x
             this.y = y
         })
+        return SuccessResponseDto("serverSuccess.buildingDestroyed")
     }
 
     private fun persistBuilding(

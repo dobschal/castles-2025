@@ -25,6 +25,13 @@ export class BuildingGateway extends Gateway {
     );
   }
 
+  async destroyBuilding(x: number, y: number): Promise<void> {
+    return this.request<void>("DELETE", `/v1/buildings`, {
+      x,
+      y,
+    });
+  }
+
   async createBuilding(
     data: PointDto,
     type: BuildingType,

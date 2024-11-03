@@ -181,4 +181,8 @@ export const en = {
     selectAvatar: "Select an avatar image:",
     showOnMap: "Show on map",
   },
+  destroyBuilding: {
+    button: "Destroy building",
+    question: "Do you really want to destroy this building?",
+  },
 };

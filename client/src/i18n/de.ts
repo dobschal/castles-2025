@@ -187,4 +187,8 @@ export const de = {
     selectAvatar: "Wähle ein Avatar-Bild:",
     showOnMap: "Auf Karte anzeigen",
   },
+  destroyBuilding: {
+    button: "Gebäude zerstören",
+    question: "Möchtest du dieses Gebäude wirklich zerstören?",
+  },
 };

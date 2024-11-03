@@ -21,12 +21,15 @@
   </CButton>
   <CButton
     v-if="isOwnBuilding"
-    class="small"
+    class="small with-icon"
     @click="createWorker"
     :disabled="!isBuildingWorkerAvailable"
   >
     {{ t("villageAction.createWorker") }}
     <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
+  </CButton>
+  <CButton v-if="isOwnBuilding" class="small" @click="destroy">
+    {{ t("destroyBuilding.button") }}
   </CButton>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
@@ -40,7 +43,7 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { handleFatalError } from "@/core/util.ts";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useI18n } from "vue-i18n";
-import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
+import { ACTION, DIALOG, MAP_TILE_CLICKED } from "@/events.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
@@ -50,6 +53,7 @@ import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
+import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -125,6 +129,24 @@ onBeforeUnmount(() => {
     buildingsStore.activeBuilding = undefined;
   }
 });
+
+async function destroy(): Promise<void> {
+  DIALOG.dispatch({
+    questionKey: "destroyBuilding.question",
+    onYes: async () => {
+      try {
+        if (!buildingsStore.activeBuilding) return;
+        await BuildingGateway.instance.destroyBuilding(
+          buildingsStore.activeBuilding.x,
+          buildingsStore.activeBuilding.y,
+        );
+        close();
+      } catch (error) {
+        handleFatalError(error);
+      }
+    },
+  });
+}
 
 function close(): void {
   emit("close-action");
