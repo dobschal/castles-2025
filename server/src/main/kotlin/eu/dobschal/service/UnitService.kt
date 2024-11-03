@@ -194,28 +194,11 @@ class UnitService @Inject constructor(
     }
 
     private fun handleFight(unit1: Unit, unit2: Unit): Unit {
-        val looserUnit = if (unit1.type == unit2.type) {
-            if (flipCoin()) {
-                unit2
-            } else {
-                unit1
-            }
-        } else {
-            if (unit1.type == UnitType.WORKER) {
-                unit1
-            } else if (unit2.type == UnitType.WORKER) {
-                unit2
-            } else {
-                if (unit1.type == UnitType.HORSEMAN && unit2.type == UnitType.SPEARMAN) {
-                    unit1
-                } else if (unit1.type == UnitType.SPEARMAN && unit2.type == UnitType.SWORDSMAN) {
-                    unit1
-                } else if (unit1.type == UnitType.SWORDSMAN && unit2.type == UnitType.HORSEMAN) {
-                    unit1
-                } else {
-                    unit2
-                }
-            }
+        val looserUnit = when {
+            unit1.type == unit2.type -> if (flipCoin()) unit2 else unit1
+            unit1.type == UnitType.WORKER -> unit1
+            unit2.type == UnitType.WORKER -> unit2
+            else -> determineLooser(unit1, unit2)
         }
         val winnerUnit = if (looserUnit == unit1) {
             unit2
@@ -231,5 +214,14 @@ class UnitService @Inject constructor(
         })
         unitRepository.deleteById(looserUnit.id!!)
         return winnerUnit
+    }
+
+    private fun determineLooser(unit1: Unit, unit2: Unit): Unit {
+        return when {
+            unit1.type == UnitType.HORSEMAN && unit2.type == UnitType.SPEARMAN -> unit1 // Spearmen wins against Horseman
+            unit1.type == UnitType.SPEARMAN && unit2.type == UnitType.SWORDSMAN -> unit1 // Swordsmen wins against Spearmen
+            unit1.type == UnitType.SWORDSMAN && unit2.type == UnitType.HORSEMAN -> unit1 // Horseman wins against Swordsmen
+            else -> unit2
+        }
     }
 }
