@@ -180,6 +180,7 @@ class UnitService @Inject constructor(
                 this.x = conflictingBuilding.x!!
                 this.y = conflictingBuilding.y!!
             })
+            // TODO: if was last village or castle --> game over
         }
         if (conflictingBuilding.type == BuildingType.FARM || conflictingBuilding.type == BuildingType.BREWERY) {
             buildingRepository.delete(conflictingBuilding)

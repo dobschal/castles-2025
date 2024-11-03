@@ -2,6 +2,7 @@ import { RouteRecordRaw } from "vue-router";
 import MainLayout from "@/components/layouts/MainLayout.vue";
 import { useAuthStore } from "@/store/authStore.ts";
 import LoginLayout from "@/components/layouts/LoginLayout.vue";
+import GameLayout from "@/components/layouts/GameLayout.vue";
 
 /**
  * Any RouteRecordRaw object defined and exported here will be automatically
@@ -41,9 +42,30 @@ export const RegistrationPageRoute: RouteRecordRaw = {
   },
 };
 
+export const WikiPageRoute: RouteRecordRaw = {
+  path: "/wiki",
+  name: "WikiPage",
+  component: () => import("@/components/pages/Wiki.vue"),
+  meta: { title, layout: MainLayout },
+};
+
+export const UserListPageRoute: RouteRecordRaw = {
+  path: "/users",
+  name: "UserListPage",
+  component: () => import("@/components/pages/UserListPage.vue"),
+  meta: { title, layout: MainLayout, roles: ["user"] },
+};
+
+export const UserProfilePageRoute: RouteRecordRaw = {
+  path: "/user-profile",
+  name: "UserProfilePage",
+  component: () => import("@/components/pages/UserProfilePage.vue"),
+  meta: { title, layout: MainLayout, roles: ["user"] },
+};
+
 export const MainPageRoute: RouteRecordRaw = {
   path: "/",
   name: "GamePage",
   component: () => import("@/components/pages/Game.vue"),
-  meta: { title, layout: MainLayout, roles: ["user"] },
+  meta: { title, layout: GameLayout, roles: ["user"] },
 };

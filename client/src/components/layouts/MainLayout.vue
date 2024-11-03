@@ -16,30 +16,7 @@
     </button>
   </nav>
   <div v-if="dropdownMenuVisible" class="dropdown-menu">
-    <div v-if="authStore.hasToken">
-      <h2>Menu</h2>
-      <ul>
-        <li>
-          <span class="link" @click="logout">{{ t("general.logout") }}</span>
-        </li>
-        <li>
-          <span class="link" @click="toggleLanguage">
-            {{
-              t("general.changeLanguage", [
-                i18n.global.locale.value === "en" ? "Deutsch" : "English",
-              ])
-            }}
-          </span>
-        </li>
-      </ul>
-    </div>
-    <div>
-      <CButton @click="closeDropdownMenu">{{ t("general.back") }}</CButton>
-      <small>
-        App {{ versionStore.clientVersion }} | Server:
-        {{ versionStore.serverVersion }}
-      </small>
-    </div>
+    <NavigationMenu @close="closeDropdownMenu" />
   </div>
   <section>
     <slot />
@@ -47,18 +24,15 @@
 </template>
 
 <script setup lang="ts">
-import { useVersionStore } from "@/store/versionStore.ts";
 import { ref } from "vue";
-import CButton from "@/components/partials/general/CButton.vue";
-import { useI18n } from "vue-i18n";
-import { useAuthStore } from "@/store/authStore.ts";
 import router from "@/core/router.ts";
-import { i18n, setLocale } from "@/core/i18n.ts";
+import NavigationMenu from "@/components/partials/NavigationMenu.vue";
 
-const versionStore = useVersionStore();
 const dropdownMenuVisible = ref(false);
-const { t } = useI18n();
-const authStore = useAuthStore();
+
+router.afterEach(() => {
+  closeDropdownMenu();
+});
 
 function onBurgerButtonClick(): void {
   dropdownMenuVisible.value = !dropdownMenuVisible.value;
@@ -66,16 +40,6 @@ function onBurgerButtonClick(): void {
 
 function closeDropdownMenu(): void {
   dropdownMenuVisible.value = false;
-}
-
-function logout(): void {
-  authStore.token = "";
-  closeDropdownMenu();
-  router.push("/login");
-}
-
-function toggleLanguage(): void {
-  setLocale(i18n.global.locale.value === "en" ? "de" : "en");
 }
 </script>
 
@@ -133,43 +97,15 @@ nav {
   padding: 2rem 3rem calc(2rem + env(safe-area-inset-bottom)) 3rem;
   animation: drive-in 0.5s ease-in-out;
   overflow-y: auto;
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      margin-bottom: 0.5rem;
-
-      &:before {
-        content: ">";
-        margin-right: 0.5rem;
-      }
-
-      a:link,
-      a:visited,
-      .link {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      a:hover,
-      a:active,
-      .link:hover,
-      .link:active {
-        color: black;
-        text-decoration: underline;
-      }
-    }
-  }
 }
 
 section {
-  display: flex;
   width: 100%;
   height: calc(100vh - 4rem);
   overflow-y: auto;
+  padding: 2rem 0;
+  background: url("@/assets/background-min.png") no-repeat center center fixed;
+  background-size: cover;
+  touch-action: pan-y pan-x;
 }
 </style>

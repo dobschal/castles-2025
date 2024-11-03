@@ -52,5 +52,6 @@ section {
   overflow-y: auto;
   background: url("@/assets/background-min.png") no-repeat center center fixed;
   background-size: cover;
+  touch-action: pan-y pan-x;
 }
 </style>

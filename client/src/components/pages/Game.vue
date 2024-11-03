@@ -31,7 +31,9 @@ import { useI18n } from "vue-i18n";
 import { DIALOG } from "@/events.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import TutorialOverlay from "@/components/partials/game/TutorialOverlay.vue";
-import ZoomOverlay from "@/components/partials/game/ZoomOverlay.vue";
+import ZoomOverlay from "@/components/partials/game/MapControlOverlay.vue";
+import { useRoute } from "vue-router";
+import router from "@/core/router.ts";
 
 const images = import.meta.glob("@/assets/tiles/*-min.png");
 const buildingsStore = useBuildingsStore();
@@ -47,11 +49,12 @@ let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 const isLoading = ref(false);
 const cachedImageAssets: Array<HTMLImageElement> = [];
 const { t } = useI18n();
+const route = useRoute();
 
 onMounted(async () => {
   isMounted = true;
   isLoading.value = true;
-  mapStore.adjustZoomLevelToScreen();
+  mapStore.adjustMapTileSizeToScreen();
   await Promise.all([
     loadAssets(),
     authStore.loadUser(),
@@ -62,10 +65,23 @@ onMounted(async () => {
     keepLoadingEvents(),
   ]);
   setTimeout(() => (isLoading.value = false), 500);
+
   // The promise here might be resolved very late if the user
   // needs to select the start village
   await buildingsStore.loadStartVillage();
-  mapStore.goToPosition(buildingsStore.startVillage ?? { x: 0, y: 0 });
+
+  // If the user is redirected to the map with x and y query params
+  // we need to go to that position.
+  if (route.query.x && route.query.y) {
+    mapStore.goToPosition({
+      x: Number(route.query.x),
+      y: Number(route.query.y),
+    });
+    router.replace({ query: {} });
+  } else {
+    mapStore.goToPosition(buildingsStore.startVillage ?? { x: 0, y: 0 });
+  }
+
   setTimeout(async () => {
     await tutorialStore.loadAndShowTutorial();
   }, 2000);

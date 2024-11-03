@@ -104,6 +104,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   }
 
   return {
+    breweryBeerProductionPerHour,
     calculateBeerToCollect,
     loadBuildings,
     loadStartVillage,

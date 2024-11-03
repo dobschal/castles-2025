@@ -1,35 +1,25 @@
 package eu.dobschal.resource
 
 import eu.dobschal.model.dto.UserCredentialsDto
+import eu.dobschal.model.dto.UserRankingDto
 import eu.dobschal.model.dto.response.JwtResponseDto
+import eu.dobschal.model.entity.Building
+import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.entity.User
-import eu.dobschal.repository.UserRepository
+import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.UnitType
 import eu.dobschal.utils.hash
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
-import jakarta.inject.Inject
-import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import mu.KotlinLogging
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 @QuarkusTest
-class UserResourceTest {
-
-    private val logger = KotlinLogging.logger {}
-
-    @Inject
-    private lateinit var userRepository: UserRepository
+class UserResourceTest : BaseResourceTest() {
 
     val endpoint = "/v1/users"
-
-    @AfterEach
-    @Transactional
-    fun tearDown() {
-        userRepository.deleteAll()
-    }
 
     @Test
     fun `Login for none existing user fails`() {
@@ -77,7 +67,7 @@ class UserResourceTest {
             .then()
             .statusCode(Response.Status.BAD_REQUEST.statusCode)
         val amountOfUsers = userRepository.findAll().count()
-        assert(amountOfUsers.toInt() == 1)
+        assert(amountOfUsers.toInt() == 3)
     }
 
     @Test
@@ -90,7 +80,7 @@ class UserResourceTest {
             .then()
             .statusCode(Response.Status.BAD_REQUEST.statusCode)
         val amountOfUsers = userRepository.findAll().count()
-        assert(amountOfUsers.toInt() == 0)
+        assert(amountOfUsers.toInt() == 2)
     }
 
     @Test
@@ -104,7 +94,7 @@ class UserResourceTest {
             .then()
             .statusCode(Response.Status.OK.statusCode)
         val amountOfUsers = userRepository.findAll().count()
-        assert(amountOfUsers.toInt() == 2)
+        assert(amountOfUsers.toInt() == 4)
     }
 
     @Test
@@ -148,6 +138,191 @@ class UserResourceTest {
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(User::class.java)
         assert(user.username == "existing-user")
+    }
+
+    @Test
+    fun `GET users rankings returns list of all users with points`() {
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val village = Building().apply {
+            x = 3
+            y = 2
+            user = user2
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+
+        val unit1 = Unit().apply {
+            x = 3
+            y = 30
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit1)
+
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint/ranking")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<UserRankingDto>::class.java)
+
+        assert(response.size == 2)
+        val user1Response = response.find { it.username == "user1" }
+        val user2Response = response.find { it.username == "user2" }
+        assert(user1Response?.points == 1)
+        assert(user2Response?.points == 5)
+    }
+
+    @Test
+    fun `Ranking contains oldest village`() {
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val village = Building().apply {
+            x = 3
+            y = 2
+            user = user2
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val village2 = Building().apply {
+            x = 20
+            y = 20
+            user = user2
+            type = BuildingType.VILLAGE
+            createdAt = LocalDateTime.now().minusDays(1)
+        }
+        buildingRepository.save(village2)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+
+        val unit1 = Unit().apply {
+            x = 3
+            y = 30
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit1)
+
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint/ranking")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Array<UserRankingDto>::class.java)
+
+        assert(response.size == 2)
+        val user2Response = response.find { it.username == "user2" }
+        assert(user2Response?.x == 20)
+        assert(user2Response?.y == 20)
+    }
+
+    @Test
+    fun `GET user ranking returns user with points`() {
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val village = Building().apply {
+            x = 3
+            y = 2
+            user = user2
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+        val unit1 = Unit().apply {
+            x = 3
+            y = 30
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit1)
+
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint/${user2?.id}/ranking")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(UserRankingDto::class.java)
+        assert(response?.points == 6)
+    }
+
+    @Test
+    fun `Can change avatar id`() {
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .put("$endpoint/${user1?.id}/avatar/2")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint/${user1?.id}/ranking")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(UserRankingDto::class.java)
+        assert(response?.avatarImageId == 2)
+    }
+
+    @Test
+    fun `Cannot change avatar id of other players`() {
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt2")
+            .`when`()
+            .put("$endpoint/${user1?.id}/avatar/2")
+            .then()
+            .statusCode(Response.Status.UNAUTHORIZED.statusCode)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint/${user1?.id}/ranking")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(UserRankingDto::class.java)
+        assert(response?.avatarImageId == 0)
     }
 
 }

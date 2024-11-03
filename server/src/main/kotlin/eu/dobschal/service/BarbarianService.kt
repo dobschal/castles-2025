@@ -36,7 +36,7 @@ class BarbarianService @Inject constructor(
             "barbarian",
             UUID.randomUUID().toString()
         )
-        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 1.5).toInt()
+        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 1.75).toInt()
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {

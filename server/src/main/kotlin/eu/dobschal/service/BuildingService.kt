@@ -93,10 +93,14 @@ class BuildingService @Inject constructor(
                 ?: throw BadRequestException("serverError.noFarm")
         }
         // Per village, the user can only have one brewery, farm or castle
-        if (type == BuildingType.BREWERY || type == BuildingType.FARM || type == BuildingType.CASTLE) {
-            val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
-            val buildings = buildingRepository.findAllByUser(currentUser.id!!)
+        val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
+        val buildings = buildingRepository.findAllByUser(currentUser.id!!)
+        if (type == BuildingType.FARM || type == BuildingType.CASTLE) {
             if (buildings.count { it.type == type } >= amountOfVillages) {
+                throw BadRequestException("serverError.onlyOnePerVillage")
+            }
+        } else if (type == BuildingType.BREWERY) {
+            if (buildings.count { it.type == type } >= amountOfVillages * 2) {
                 throw BadRequestException("serverError.onlyOnePerVillage")
             }
         }

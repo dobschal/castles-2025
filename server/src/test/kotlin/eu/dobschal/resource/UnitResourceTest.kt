@@ -627,7 +627,7 @@ class UnitResourceTest : BaseResourceTest() {
             x = 2
             y = 2
             user = user1
-            type = UnitType.WORKER
+            type = UnitType.HORSEMAN
         }
         unitRepository.save(unit)
         eventRepository.save(Event().apply {

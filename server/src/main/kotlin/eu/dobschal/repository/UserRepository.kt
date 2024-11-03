@@ -6,6 +6,7 @@ import eu.dobschal.utils.START_BEER
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
+import jakarta.ws.rs.NotFoundException
 
 @Transactional
 @ApplicationScoped
@@ -53,6 +54,13 @@ class UserRepository : PanacheRepository<User> {
 
     fun countUsers(): Int {
         return count().toInt()
+    }
+
+    fun updateAvatar(userId: Int, avatarId: Int): User {
+        val user = findById(userId) ?: throw NotFoundException("serverError.userNotFound")
+        user.avatarId = avatarId
+        persist(user)
+        return user
     }
 
 }

@@ -17,6 +17,7 @@ export const de = {
     welcome: "Willkommen {0}!",
     passwordRepeated: "Bitte bestätige dein Passwort.",
     unit: "Einheit",
+    toGame: "Zum Spiel",
   },
   unitType: {
     WORKER: "Arbeiter",
@@ -27,7 +28,7 @@ export const de = {
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
     onlyOnePerVillage:
-      "Du kannst nur eine Brauerei, eine Farm und eine Burg pro Dorf bauen.",
+      "Du kannst nur zwei Brauereien, eine Farm und eine Burg pro Dorf bauen.",
     tooManyMoves:
       "Die Einheit hat ihr Limit an Zügen für diese Stunde erreicht.",
   },
@@ -66,7 +67,8 @@ export const de = {
     farmOf: "Farm von {playerName}",
   },
   breweryAction: {
-    breweryOf: "Brauerei von {playerName}",
+    breweryOf:
+      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert.",
   },
   unitAction: {
     unitOf: "Einheit von {playerName} in {x}, {y}",
@@ -125,5 +127,61 @@ export const de = {
       "Baue deine erste Burg, um neue Einheiten erstellen zu können.",
     FIRST_UNIT:
       "Erstelle eine Einheit in der Burg um dich verteidigen zu können.",
+  },
+  wiki: {
+    link: "Regeln & Infos",
+    description:
+      "Bei Castles baut ihr euer eigenes Imperium aus Burgen auf und verteidigt\n" +
+      "      es gegen andere Spieler und Barbaren. Hier erfahrt ihr alles wichtige zum\n" +
+      "      Spiel und den Regeln.",
+    title1: "Die Karte",
+    paragraph1:
+      "Die Karte besteht aus vier verschiedenen Typen von Feldern: Wald, Wiese,\n" +
+      "      Wasser und Berg. Gebäude können nur auf Wiesen platziert werden. Einheiten\n" +
+      "      können nicht über Wasser laufen. Die Karte ist fast endlos groß und\n" +
+      "      aktualisiert sich während des Spiels in Echtzeit.",
+    title2: "Burgen, Dörfer, Brauereien ...",
+    paragraph2:
+      "Es gibt verschiedene Gebäude im Spiel, die unterschiedliche Funktionen\n" +
+      "      haben. Farm und Brauerei produzieren Bier, das für den Bau von Einheiten\n" +
+      "      und Gebäuden gebraucht wird. Farm und Brauerei müssen direkt nebeneinander\n" +
+      "      sein. In Burgen könnt ihr Einheiten zur Verteidigung und zum Angriff\n" +
+      "      erstellen. Dörfer können Arbeiter ausbilden und speichern euer Bier. Je\n" +
+      "      mehr Dörfer ihr habt, desto mehr Bier könnt ihr speichern.\n" +
+      "      Im Fall einer Eroberung werden Farm und Brauerei zerstört. Dörfer und\n" +
+      "      Burgen werden eingenommen.",
+    title3: "Einheiten und Kämpfe",
+    paragraph3:
+      "In Burgen und Dörfern könnt ihr Einheiten bauen. Dies kostet euch Bier.\n" +
+      "      Auch das Bewegen von Einheiten kostet Bier. Es kann immer nur eine Einheit\n" +
+      "      auf einem Feld sein. Sind befeindete Einheiten auf einem Feld, kommt es\n" +
+      '      zum Kampf. Kämpfe funktionieren nach dem Prinzio "Stein, Schere, Papier".\n' +
+      "      Reiter gewinnt gegen Schwertkämpfer, Schwertkämpfer gewinnt gegen\n" +
+      "      Speerträger und Speerträger gewinnt gegen Reiter. Der Gewinner bleibt auf\n" +
+      "      dem Feld, der Verlierer wird zerstört. Arbeiter können nicht angreifen und\n" +
+      "      werden von Kampfeinheiten zerstört.",
+    title4: "Barbaren",
+    paragraph4:
+      "Auf der Karte erscheinen willkürlich Barbaren. Diese greifen euch und\n" +
+      "      andere Spieler an. Sie zerstören Gebäude und töten Einheiten. Ihr könnt\n" +
+      "      Barbaren besiegen, indem ihr Einheiten auf sie bewegt. Die Bewegungen von\n" +
+      "      Barbaren sind zufällig. Die Anzahl der Barbaren richtet sich nach der\n" +
+      "      Anzahl der Spieler",
+    title5: "Drachen, Städte und mehr",
+    paragraph5:
+      "Ich entwickele Castles stetig weiter und freue mich auf eure\n" +
+      "      Unterstützung! Drachen, Städte und vieles mehr sind geplant. Bleibt\n" +
+      "      gespannt und schreibt mir gerne, wenn ihr Ideen oder Anregungen habt.\n" +
+      "      Vielen Dank fürs Testen und Spielen! 🍻",
+  },
+  users: {
+    link: "Spieler",
+    description:
+      "Spielerliste sortiert nach Punkten. Pro Gebäude gibt es 2 Punkte, pro Einheit 1 Punkt.",
+  },
+  userProfile: {
+    link: "Profil",
+    selectAvatar: "Wähle ein Avatar-Bild:",
+    showOnMap: "Auf Karte anzeigen",
   },
 };

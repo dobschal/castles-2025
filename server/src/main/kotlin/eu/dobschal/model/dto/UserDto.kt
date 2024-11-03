@@ -9,5 +9,6 @@ class UserDto(
     var username: String? = null,
     var password: String? = null,
     var beer: Int? = null,
+    val avatarId: Int? = null,
     var createdAt: LocalDateTime? = null
 )

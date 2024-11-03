@@ -6,10 +6,7 @@ import eu.dobschal.utils.USER_ROLE
 import jakarta.annotation.security.PermitAll
 import jakarta.annotation.security.RolesAllowed
 import jakarta.inject.Inject
-import jakarta.ws.rs.GET
-import jakarta.ws.rs.POST
-import jakarta.ws.rs.Path
-import jakarta.ws.rs.Produces
+import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 
 @Path("/v1/users")
@@ -30,5 +27,21 @@ class UserResource @Inject constructor(private val userService: UserService) {
     @Path("/current")
     @RolesAllowed(USER_ROLE)
     fun getCurrentUser() = userService.getCurrentUserDto()
+
+    @GET
+    @RolesAllowed(USER_ROLE)
+    @Path("/ranking")
+    fun getAllRankings() = userService.listAllRankings()
+
+    @GET
+    @RolesAllowed(USER_ROLE)
+    @Path("/{user_id}/ranking")
+    fun getOneRanking(@PathParam("user_id") userId: Int) = userService.getOneRanking(userId)
+
+    @PUT
+    @Path("/{user_id}/avatar/{avatar_id}")
+    @RolesAllowed(USER_ROLE)
+    fun setAvatar(@PathParam("user_id") userId: Int, @PathParam("avatar_id") avatarId: Int) =
+        userService.setAvatar(userId, avatarId)
 
 }

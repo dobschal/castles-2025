@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useMapStore } from "@/store/mapStore.ts";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { handleFatalError } from "@/core/util.ts";
@@ -74,6 +74,7 @@ const authStore = useAuthStore();
 const pricesStore = usePricesStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
+const zoomMapTileSizeBeforeAction = ref(100);
 
 const isBuildingSwordsmanAvailable = computed(() => {
   return (
@@ -128,7 +129,8 @@ onMounted(() => {
   MAP_TILE_CLICKED.on(close);
 
   mapStore.mapControlsDisabled = true;
-  mapStore.mapTileSize = 200;
+  zoomMapTileSizeBeforeAction.value = mapStore.mapTileSize;
+  mapStore.mapTileSize = mapStore.findMaxZoomInMapTileSize();
   mapStore.goToPosition({
     x: buildingsStore.activeBuilding.x,
     y: buildingsStore.activeBuilding.y,
@@ -137,7 +139,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   mapStore.mapControlsDisabled = false;
-  mapStore.mapTileSize = 100;
+  mapStore.mapTileSize = zoomMapTileSizeBeforeAction.value;
 
   MAP_TILE_CLICKED.off(close);
 

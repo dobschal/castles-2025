@@ -1,8 +1,11 @@
 package eu.dobschal.service
 
 import eu.dobschal.model.dto.UserDto
+import eu.dobschal.model.dto.UserRankingDto
 import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.model.entity.User
+import eu.dobschal.repository.BuildingRepository
+import eu.dobschal.repository.UnitRepository
 import eu.dobschal.repository.UserRepository
 import eu.dobschal.utils.JWT_ISSUER
 import eu.dobschal.utils.USER_ROLE
@@ -17,11 +20,49 @@ import org.eclipse.microprofile.jwt.JsonWebToken
 
 
 @ApplicationScoped
-class UserService @Inject constructor(private val userRepository: UserRepository, private var jwt: JsonWebToken) {
+class UserService @Inject constructor(
+    private val userRepository: UserRepository,
+    private var jwt: JsonWebToken,
+    private val buildingRepository: BuildingRepository,
+    private val unitRepository: UnitRepository
+) {
 
     private val logger = KotlinLogging.logger {}
 
+    fun listAllRankings(): List<UserRankingDto> {
+        val buildings = buildingRepository.listAll()
+        val units = unitRepository.listAll()
+        return userRepository.listAll().map { user ->
+            val oldestBuildingOfUser =
+                buildings.filter { it.user?.username == user.username }.minByOrNull { it.createdAt }
+            UserRankingDto(
+                user.id!!,
+                user.username,
+                buildings.count { it.user?.username == user.username } * 2 + units.count { it.user?.username == user.username },
+                user.avatarId ?: 0,
+                oldestBuildingOfUser?.x ?: 0,
+                oldestBuildingOfUser?.y ?: 0
+            )
+        }
+    }
+
+    fun getOneRanking(userId: Int): UserRankingDto {
+        val user = userRepository.findById(userId)
+            ?: throw BadRequestException("User not found")
+        val buildings = buildingRepository.findAllByUser(userId)
+        val units = unitRepository.findAllByUser(userId)
+        return UserRankingDto(
+            user.id!!,
+            user.username,
+            buildings.count() * 2 + units.count(),
+            user.avatarId ?: 0,
+            buildings.minByOrNull { it.createdAt!! }?.x ?: 0,
+            buildings.minByOrNull { it.createdAt!! }?.y ?: 0
+        )
+    }
+
     fun registerUser(username: String, password: String): User {
+
         if (username.isBlank() || password.isBlank()) {
             throw BadRequestException("Username and password must not be empty")
         }
@@ -63,6 +104,14 @@ class UserService @Inject constructor(private val userRepository: UserRepository
         return userRepository.findByUsername(username)
             ?.apply { password = "" }
             ?: throw UnauthorizedException("User not found")
+    }
+
+    fun setAvatar(userId: Int, avatarId: Int): User {
+        val currentUser = getCurrentUser()
+        if (currentUser.id != userId) {
+            throw UnauthorizedException("serverError.unauthorized")
+        }
+        return userRepository.updateAvatar(userId, avatarId)
     }
 
 }
