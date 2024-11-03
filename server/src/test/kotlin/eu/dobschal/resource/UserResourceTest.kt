@@ -25,7 +25,6 @@ class UserResourceTest : BaseResourceTest() {
     fun `Login for none existing user fails`() {
         given()
             .body(UserCredentialsDto("non-existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
@@ -37,7 +36,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user", "wrong-password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
@@ -49,7 +47,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
@@ -61,7 +58,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/register")
             .then()
@@ -74,7 +70,6 @@ class UserResourceTest : BaseResourceTest() {
     fun `Registration without username or password fails`() {
         given()
             .body("{}")
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/register")
             .then()
@@ -88,7 +83,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user-2", "password-2"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/register")
             .then()
@@ -100,7 +94,6 @@ class UserResourceTest : BaseResourceTest() {
     @Test
     fun `Secured route is not accessible without JWT`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .get("$endpoint/current")
             .then()
@@ -110,7 +103,6 @@ class UserResourceTest : BaseResourceTest() {
     @Test
     fun `Secured route is not accessible with wrong JWT`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer fnsdlgvndflkgdvn")
             .`when`()
             .get("$endpoint/current")
@@ -123,14 +115,12 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         val response = given()
             .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(JwtResponseDto::class.java)
         val user = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer ${response.jwt}")
             .`when`()
             .get("$endpoint/current")
@@ -173,7 +163,6 @@ class UserResourceTest : BaseResourceTest() {
         unitRepository.save(unit1)
 
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/ranking")
@@ -229,7 +218,6 @@ class UserResourceTest : BaseResourceTest() {
         unitRepository.save(unit1)
 
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/ranking")
@@ -275,7 +263,6 @@ class UserResourceTest : BaseResourceTest() {
         unitRepository.save(unit1)
 
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/${user2?.id}/ranking")
@@ -288,14 +275,12 @@ class UserResourceTest : BaseResourceTest() {
     @Test
     fun `Can change avatar id`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .put("$endpoint/${user1?.id}/avatar/2")
             .then()
             .statusCode(Response.Status.OK.statusCode)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/${user1?.id}/ranking")
@@ -308,14 +293,12 @@ class UserResourceTest : BaseResourceTest() {
     @Test
     fun `Cannot change avatar id of other players`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt2")
             .`when`()
             .put("$endpoint/${user1?.id}/avatar/2")
             .then()
             .statusCode(Response.Status.UNAUTHORIZED.statusCode)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/${user1?.id}/ranking")

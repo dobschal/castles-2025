@@ -19,7 +19,6 @@ class TutorialResourceTest : BaseResourceTest() {
     @Test
     fun `Getting next tutorial works`() {
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
@@ -33,7 +32,6 @@ class TutorialResourceTest : BaseResourceTest() {
     @Test
     fun `Set tutorial status works`() {
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
@@ -44,7 +42,6 @@ class TutorialResourceTest : BaseResourceTest() {
         assert(response.type == TutorialType.FIRST_WORKER)
         val request = SetTutorialStatusRequestDto(TutorialStatus.COMPLETED, response.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
@@ -57,7 +54,6 @@ class TutorialResourceTest : BaseResourceTest() {
     @Test
     fun `Get next tutorial works when one is solved`() {
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
@@ -68,7 +64,6 @@ class TutorialResourceTest : BaseResourceTest() {
         assert(response.type == TutorialType.FIRST_WORKER)
         val request = SetTutorialStatusRequestDto(TutorialStatus.COMPLETED, response.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
@@ -77,7 +72,6 @@ class TutorialResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.OK.statusCode)
         assert(tutorialRepository.findById(response.id!!)?.status == TutorialStatus.COMPLETED)
         val response2 = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
@@ -98,7 +92,6 @@ class TutorialResourceTest : BaseResourceTest() {
             })
         }
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
@@ -118,7 +111,6 @@ class TutorialResourceTest : BaseResourceTest() {
         }
         unitRepository.save(unit)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
