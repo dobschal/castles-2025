@@ -19,6 +19,11 @@
       <img src="@/assets/wiki/unit.png" alt="Unit" />
       {{ t("wiki.paragraph3") }}
     </p>
+    <h2>{{ t("wiki.title6") }}</h2>
+    <p>
+      <img src="@/assets/wiki/costs.png" alt="Kosten" />
+      {{ t("wiki.paragraph6") }}
+    </p>
     <h2>{{ t("wiki.title4") }}</h2>
     <p>
       <img src="@/assets/wiki/barbar.png" alt="Barbar" />

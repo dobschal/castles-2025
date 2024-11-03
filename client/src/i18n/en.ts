@@ -170,6 +170,12 @@ export const en = {
       "      support! Dragons, cities, and much more are planned. Stay\n" +
       "      tuned and feel free to write to me if you have ideas or suggestions.\n" +
       "      Thank you for testing and playing! 🍻",
+    title6: "Costs",
+    paragraph6:
+      "The costs for buildings and units are calculated based on already created buildings and units." +
+      "For example, if you already own a brewery, the next brewery will cost more beer. " +
+      "The same applies to units and castles. Example: You own 3 units (type does not matter) and " +
+      "the base price for a horseman is 100 beer. The next horseman would cost 100 x 2 x 2 x 2 = 800 beer.",
   },
   users: {
     link: "Players",

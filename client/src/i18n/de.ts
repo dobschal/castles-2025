@@ -176,6 +176,12 @@ export const de = {
       "      Unterstützung! Drachen, Städte und vieles mehr sind geplant. Bleibt\n" +
       "      gespannt und schreibt mir gerne, wenn ihr Ideen oder Anregungen habt.\n" +
       "      Vielen Dank fürs Testen und Spielen! 🍻",
+    title6: "Kosten",
+    paragraph6:
+      "Kosten für Gebäude und Einheiten berechnen sich auf Basis von bereits erstellten Gebäuden und Einheiten." +
+      "Besitzt man z.B. bereits eine Brauerei, so kostet die nächste Brauerei mehr Bier. " +
+      "Gleiches gilt für Einheiten und Burgen. Beispiel: Man besitzt 3 Einheiten (Typ egal) und " +
+      "der Basispreis für einen Reiter beträgt 100 Bier. Der nächste Reiter würde 100 x 2 x 2 x 2 = 800 Bier kosten.",
   },
   users: {
     link: "Spieler",
