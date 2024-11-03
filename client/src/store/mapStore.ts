@@ -62,13 +62,16 @@ export const useMapStore = defineStore("map", () => {
   });
 
   function findMaxZoomInMapTileSize(): number {
-    for (const allowedZoomStep of allowedZoomMapTileSizes) {
-      if (allowedZoomStep > windowWidth.value / 4) {
-        return allowedZoomStep;
+    for (const allowedMapTileSize of allowedZoomMapTileSizes) {
+      if (
+        allowedMapTileSize > windowWidth.value / 4 ||
+        allowedMapTileSize === 300
+      ) {
+        return allowedMapTileSize;
       }
     }
 
-    return 200;
+    return 300;
   }
 
   function getOffset(
