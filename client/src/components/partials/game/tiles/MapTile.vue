@@ -59,8 +59,10 @@
         alt="Mountain"
       />
     </div>
-    <BuildingTile v-if="building" :building="building" :map-tile="mapTile" />
-    <UnitTile v-if="unit" :unit="unit" :map-tile="mapTile" />
+    <template v-if="isLazy">
+      <BuildingTile v-if="building" :building="building" :map-tile="mapTile" />
+      <UnitTile v-if="unit" :unit="unit" :map-tile="mapTile" />
+    </template>
     <div
       v-if="mapTile.state !== MapTileState.FORBIDDEN"
       class="image-top-layer-wrapper"
@@ -93,7 +95,7 @@ import plainTile from "@/assets/tiles/plain-min.png";
 import { MAP_TILE_CLICKED } from "@/events.ts";
 import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import BuildingTile from "@/components/partials/game/tiles/BuildingTile.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
@@ -101,6 +103,7 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import UnitTile from "@/components/partials/game/tiles/UnitTile.vue";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
 
+const isLazy = ref(false);
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
 const props = defineProps<{
@@ -119,6 +122,12 @@ const unit = computed(() => {
   return unitsStore.units.find((unit) => {
     return unit.x === props.mapTile.x && unit.y === props.mapTile.y;
   });
+});
+
+onMounted(() => {
+  setTimeout(() => {
+    isLazy.value = true;
+  }, 10);
 });
 
 function onMouseDown(): void {
@@ -143,20 +152,9 @@ function onMouseLeave(): void {
 </script>
 
 <style lang="scss" scoped>
-@keyframes fade-in {
-  from {
-    opacity: 0.5;
-    transform: translateY(+1rem) translateX(-1rem);
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .map-tile {
   position: absolute;
   user-select: none;
-  animation: fade-in 0.5s;
 
   &:not(.FORBIDDEN) {
     cursor: pointer;
