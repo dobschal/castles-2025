@@ -30,9 +30,12 @@ export const de = {
       "Du kannst nur eine Brauerei, eine Farm und eine Burg pro Dorf bauen.",
     tooManyMoves:
       "Die Einheit hat ihr Limit an Zügen für diese Stunde erreicht.",
+    notYourBuilding: "Du kannst nur deine eigenen Gebäude zerstören.",
+    lastVillage: "Du kannst dein letztes Dorf nicht zerstören.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
+    buildingDestroyed: "Gebäude erfolgreich zerstört.",
   },
   registration: {
     title: "Registrierung",

@@ -3,7 +3,7 @@ package eu.dobschal.resource
 import eu.dobschal.model.dto.EventDto
 import eu.dobschal.model.dto.request.CreateUnitRequestDto
 import eu.dobschal.model.dto.request.MoveUnitRequestDto
-import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
+import eu.dobschal.model.dto.request.BaseCoordinatesDto
 import eu.dobschal.model.entity.*
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.BuildingType
@@ -86,7 +86,7 @@ class EventResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -108,7 +108,7 @@ class EventResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -142,7 +142,7 @@ class EventResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
