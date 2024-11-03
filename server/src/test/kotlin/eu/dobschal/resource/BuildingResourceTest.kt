@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
-import eu.dobschal.model.dto.request.SaveStartVillageRequestDto
+import eu.dobschal.model.dto.request.BaseCoordinatesDto
 import eu.dobschal.model.dto.response.BuildingsResponseDto
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.model.entity.Building
@@ -96,7 +96,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = BuildingType.FARM
         }
         buildingRepository.save(farm)
-        val request = SaveStartVillageRequestDto(2, 3)
+        val request = BaseCoordinatesDto(2, 3)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -116,7 +116,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.WATER
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -136,7 +136,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -164,7 +164,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -184,7 +184,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -213,7 +213,7 @@ class BuildingResourceTest : BaseResourceTest() {
             type = MapTileType.PLAIN
         }
         mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = SaveStartVillageRequestDto(1, 1)
+        val request = BaseCoordinatesDto(1, 1)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -1045,124 +1045,90 @@ class BuildingResourceTest : BaseResourceTest() {
     }
 
     @Test
-    fun `A village can only have 2 breweries`() {
-        val village = Building().apply {
-            x = 14
-            y = 14
-            user = user1
-            type = BuildingType.VILLAGE
-        }
-        buildingRepository.save(village)
+    fun `Destroying own building works`() {
+        val x = 20
+        val y = 20
         val farm = Building().apply {
-            x = 12
-            y = 13
+            this.x = x
+            this.y = y
             user = user1
             type = BuildingType.FARM
         }
         buildingRepository.save(farm)
-        val brewery = Building().apply {
-            x = 14
-            y = 15
-            user = user1
-            type = BuildingType.BREWERY
-        }
-        buildingRepository.save(brewery)
-        val unit = Unit().apply {
-            x = 13
-            y = 13
-            user = user1
-            type = UnitType.WORKER
-        }
-        unitRepository.save(unit)
-        val mapTile = MapTile().apply {
-            x = 13
-            y = 13
-            type = MapTileType.PLAIN
-        }
-        mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+        val farmsBeforeDestroy = buildingRepository.countBuildingTypeByUser(user1?.id!!, BuildingType.FARM)
+
+        val request = BaseCoordinatesDto(x, y)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
-            .post(endpoint)
+            .delete(endpoint)
             .then()
             .statusCode(Response.Status.OK.statusCode)
-        assert(buildingRepository.listAll().size == 4)
-        val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
-            .`when`()
-            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
-            .then()
-            .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(BuildingsResponseDto::class.java)
-        assert(response.buildings.size == 4)
+
+        val farmsAfterDestroy = buildingRepository.countBuildingTypeByUser(user1?.id!!, BuildingType.FARM)
+        assert(farmsAfterDestroy == farmsBeforeDestroy - 1)
     }
 
     @Test
-    fun `A village can only have 2 breweries (fail)`() {
+    fun `Destroying own building fails if last available village`() {
+        val x = 14
+        val y = 14
         val village = Building().apply {
-            x = 14
-            y = 14
+            this.x = x
+            this.y = y
             user = user1
             type = BuildingType.VILLAGE
         }
         buildingRepository.save(village)
-        val farm = Building().apply {
-            x = 12
-            y = 13
-            user = user1
-            type = BuildingType.FARM
-        }
-        buildingRepository.save(farm)
-        val brewery = Building().apply {
-            x = 14
-            y = 15
-            user = user1
-            type = BuildingType.BREWERY
-        }
-        buildingRepository.save(brewery)
-        val brewery2 = Building().apply {
-            x = 14
-            y = 17
-            user = user1
-            type = BuildingType.BREWERY
-        }
-        buildingRepository.save(brewery2)
-        val unit = Unit().apply {
-            x = 13
-            y = 13
-            user = user1
-            type = UnitType.WORKER
-        }
-        unitRepository.save(unit)
-        val mapTile = MapTile().apply {
-            x = 13
-            y = 13
-            type = MapTileType.PLAIN
-        }
-        mapTileRepository.saveMapTiles(setOf(mapTile))
-        val request = CreateBuildingRequestDto(13, 13, BuildingType.BREWERY)
+
+        val request = BaseCoordinatesDto(x, y)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
-            .post(endpoint)
+            .delete(endpoint)
             .then()
             .statusCode(Response.Status.BAD_REQUEST.statusCode)
-        assert(buildingRepository.listAll().size == 4)
-        val response = given()
+
+    }
+
+    @Test
+    fun `Destroying building fails if no building`() {
+        val request = BaseCoordinatesDto(999, 999)
+        given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
+            .body(request)
             .`when`()
-            .get("$endpoint?x1=10&x2=20&y1=10&y2=20")
+            .delete(endpoint)
             .then()
-            .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(BuildingsResponseDto::class.java)
-        assert(response.buildings.size == 4)
+            .statusCode(Response.Status.NOT_FOUND.statusCode)
+    }
+
+    @Test
+    fun `Destroying building fails if not own building`() {
+        val x = 18
+        val y = 18
+        val farm = Building().apply {
+            this.x = x
+            this.y = y
+            user = user2
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm)
+
+        val request = BaseCoordinatesDto(x, y)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .delete(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
     }
 
 }

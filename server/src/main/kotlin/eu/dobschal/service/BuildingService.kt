@@ -109,6 +109,31 @@ class BuildingService @Inject constructor(
         return persistBuilding(x, y, type, currentUser)
     }
 
+    fun destroyBuilding(x: Int, y: Int) {
+        val currentUser = userService.getCurrentUser()
+
+        val building = buildingRepository.findBuildingByXAndY(x, y) ?: throw NotFoundException("serverError.noBuilding")
+        if (building.user?.id != currentUser.id) {
+            throw BadRequestException("serverError.notYourBuilding")
+        }
+
+        if (building.type == BuildingType.VILLAGE) {
+            // if it's a village check if it's his last village
+            val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
+            if (amountOfVillages < 2) {
+                throw BadRequestException("serverError.lastVillage")
+            }
+        }
+
+        buildingRepository.delete(building)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.BUILDING_DESTROYED
+            this.x = x
+            this.y = y
+        })
+    }
+
     private fun persistBuilding(
         x: Int,
         y: Int,
