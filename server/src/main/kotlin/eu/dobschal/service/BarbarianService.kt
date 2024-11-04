@@ -28,7 +28,7 @@ class BarbarianService @Inject constructor(
 
     val logger = KotlinLogging.logger {}
 
-    @Scheduled(every = "30m")
+    @Scheduled(every = "45m")
     fun controlBarbarians() {
         logger.info { "Checking barbarians" }
         val t1 = System.currentTimeMillis()
@@ -36,7 +36,7 @@ class BarbarianService @Inject constructor(
             "barbarian",
             UUID.randomUUID().toString()
         )
-        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 1.75).toInt()
+        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 2).toInt()
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
@@ -127,7 +127,7 @@ class BarbarianService @Inject constructor(
         for (i in 0 until 1000) {
             val x = kotlin.random.Random.nextInt(lowestX - margin, highestX + margin)
             val y = kotlin.random.Random.nextInt(lowestY - margin, highestY + margin)
-            val conflictingBuilding = buildings.any { abs(it.x!! - x) < 5 && abs(it.y!! - y) < 5 }
+            val conflictingBuilding = buildings.any { abs(it.x!! - x) < 3 && abs(it.y!! - y) < 3 }
             val conflictingUnit = units.any { it.x == x && it.y == y }
             val mapTile = mapTiles.find { it.x == x && it.y == y }
             if (!conflictingBuilding && !conflictingUnit && mapTile?.type != MapTileType.WATER) {
