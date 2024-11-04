@@ -28,7 +28,7 @@ export const useAuthStore = defineStore(
       const expiration = parsed.exp * 1000;
       console.info(
         "Session expires in ",
-        (expiration - Date.now()) / 1000 / 60 / 60 / 24,
+        Math.floor((expiration - Date.now()) / 1000 / 60 / 60 / 24),
         " days",
       );
 
