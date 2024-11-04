@@ -6,7 +6,7 @@
       :style="getMapTileStyle(mapTile)"
       :map-tile="mapTile"
     />
-    <template v-if="eventsStore.showEventsOnMap && !actionStore.isActionActive">
+    <template v-if="authStore.showEventsOnMap && !actionStore.isActionActive">
       <EventTile
         :key="event.id"
         v-for="event in eventsStore.events"
@@ -27,6 +27,7 @@ import EventTile from "@/components/partials/game/tiles/EventTile.vue";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
 import { useActionStore } from "@/store/actionStore.ts";
+import { useAuthStore } from "@/store/authStore.ts";
 
 interface MapTileStyle {
   left: string;
@@ -39,6 +40,7 @@ interface MapTileStyle {
 // region variables
 
 const map = ref<Optional<HTMLElement>>();
+const authStore = useAuthStore();
 const mapStore = useMapStore();
 const eventsStore = useEventsStore();
 const actionStore = useActionStore();
@@ -115,12 +117,15 @@ function onMapMouseMove(event: MouseEvent): void {
     return;
   }
 
-  mapStore.offsetX += event.movementX;
-  mapStore.offsetY += event.movementY;
+  setTimeout(() => {
+    mapStore.offsetX += event.movementX;
+    mapStore.offsetY += event.movementY;
+  });
 }
 
 function onMapMouseUp(): void {
   isDragging.value = false;
+  mapStore.updateCenterPosition();
 }
 
 function onTouchStart(event: TouchEvent): void {
@@ -139,8 +144,10 @@ function onTouchMove(event: TouchEvent): void {
     return;
   }
 
-  mapStore.offsetX += event.touches[0].clientX - lastTouch.value.x;
-  mapStore.offsetY += event.touches[0].clientY - lastTouch.value.y;
+  setTimeout(() => {
+    mapStore.offsetX += event.touches[0].clientX - lastTouch.value.x;
+    mapStore.offsetY += event.touches[0].clientY - lastTouch.value.y;
+  });
 
   lastTouch.value.x = event.touches[0].clientX;
   lastTouch.value.y = event.touches[0].clientY;
@@ -148,6 +155,7 @@ function onTouchMove(event: TouchEvent): void {
 
 function onToucheEnd(): void {
   isDragging.value = false;
+  mapStore.updateCenterPosition();
 }
 
 // endregion

@@ -77,6 +77,7 @@ const arrowStyle = computed(() => {
   transform: rotate(45deg) translateY(-200%) translateX(110%);
   display: flex;
   animation: bounce 1s infinite;
+  will-change: transform;
 
   &:hover {
     animation: none;

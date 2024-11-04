@@ -19,6 +19,10 @@ export const useMapStore = defineStore("map", () => {
   const allowedZoomMapTileSizes = [
     10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 1000,
   ];
+  const centerPosition = ref<PointDto>({
+    x: 0,
+    y: 0,
+  });
 
   // Used to calculate the rotation of the map
   const radians = 45 * (Math.PI / 180);
@@ -34,22 +38,6 @@ export const useMapStore = defineStore("map", () => {
     Math.ceil(windowHeight.value / mapTileSize.value),
   );
 
-  // The center position is used to load the right amount of
-  // tiles around the player. This is actually hard to calculate
-  // because the map is rotated 45deg... if it is working, leave it as it is
-  const centerPosition = computed(() => {
-    const screenX = (windowWidth.value - offsetX.value * 2) / 2;
-    const screenY = (windowHeight.value - 64 - offsetY.value * 2) / 2; // 64px is the height of the top bar
-
-    const rotatedScreenX = screenX * cos - screenY * sin;
-    const rotatedScreenY = screenX * sin + screenY * cos;
-
-    const x = Math.round(rotatedScreenX / mapTileSize.value);
-    const y = Math.round(rotatedScreenY / mapTileSize.value);
-
-    return { x, y };
-  });
-
   const currentMapRange = computed<TwoPointDto>(() => {
     const amountOfTiles = Math.max(amountOfTilesX.value, amountOfTilesY.value);
 
@@ -60,6 +48,22 @@ export const useMapStore = defineStore("map", () => {
       y2: Math.ceil(centerPosition.value.y + amountOfTiles / 1.5),
     };
   });
+
+  // The center position is used to load the right amount of
+  // tiles around the player. This is actually hard to calculate
+  // because the map is rotated 45deg... if it is working, leave it as it is
+  function updateCenterPosition(): void {
+    const screenX = (windowWidth.value - offsetX.value * 2) / 2;
+    const screenY = (windowHeight.value - 64 - offsetY.value * 2) / 2; // 64px is the height of the top bar
+
+    const rotatedScreenX = screenX * cos - screenY * sin;
+    const rotatedScreenY = screenX * sin + screenY * cos;
+
+    const x = Math.round(rotatedScreenX / mapTileSize.value);
+    const y = Math.round(rotatedScreenY / mapTileSize.value);
+
+    centerPosition.value = { x, y };
+  }
 
   function findMaxZoomInMapTileSize(): number {
     for (const allowedMapTileSize of allowedZoomMapTileSizes) {
@@ -105,6 +109,7 @@ export const useMapStore = defineStore("map", () => {
     const offset = getOffset(windowWidth.value, windowHeight.value, x, y);
     offsetX.value = offset.offsetX;
     offsetY.value = offset.offsetY;
+    updateCenterPosition();
   }
 
   async function loadMap(): Promise<void> {
@@ -172,6 +177,7 @@ export const useMapStore = defineStore("map", () => {
   }
 
   return {
+    updateCenterPosition,
     findMaxZoomInMapTileSize,
     adjustMapTileSizeToScreen,
     zoomIn,

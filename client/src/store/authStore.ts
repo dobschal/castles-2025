@@ -14,6 +14,7 @@ export const useAuthStore = defineStore(
   () => {
     const token = ref("");
     const user = ref<Optional<UserEntity>>();
+    const showEventsOnMap = ref(true);
 
     const hasToken = computed(() => token.value !== "");
 
@@ -62,6 +63,7 @@ export const useAuthStore = defineStore(
     }
 
     return {
+      showEventsOnMap,
       token,
       hasToken,
       roles,

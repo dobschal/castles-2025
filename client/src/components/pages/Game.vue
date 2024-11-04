@@ -26,7 +26,6 @@ import EventsOverlay from "@/components/partials/game/EventsOverlay.vue";
 import { useActionStore } from "@/store/actionStore.ts";
 import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
-import { Optional } from "@/types/core/Optional.ts";
 import { useI18n } from "vue-i18n";
 import { DIALOG } from "@/events.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
@@ -45,7 +44,6 @@ const actionStore = useActionStore();
 const pricesStore = usePricesStore();
 const tutorialStore = useTutorialStore();
 let isMounted = false;
-let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 const isLoading = ref(false);
 const cachedImageAssets: Array<HTMLImageElement> = [];
 const { t } = useI18n();
@@ -94,17 +92,13 @@ onBeforeUnmount(() => {
 watch(
   () => mapStore.centerPosition,
   () => {
-    if (loadTimeout) {
-      clearTimeout(loadTimeout);
-    }
-
-    loadTimeout = setTimeout(async () => {
+    setTimeout(async () => {
       await Promise.all([
         mapStore.loadMap(),
         buildingsStore.loadBuildings(),
         unitsStore.loadUnits(),
       ]);
-    }, 200);
+    });
   },
 );
 
