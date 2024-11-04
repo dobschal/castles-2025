@@ -12,16 +12,16 @@ export const useMapStore = defineStore("map", () => {
   const mapTileSize = ref(100);
   const windowWidth = ref(window.innerWidth);
   const windowHeight = ref(window.innerHeight);
-  const offsetX = ref(0);
-  const offsetY = ref(0);
+  const offsetX = ref(-1);
+  const offsetY = ref(-1);
   const mapControlsDisabled = ref(false);
-  const loadMapQueue = new Queue(500, 3);
+  const loadMapQueue = new Queue(200, 3);
   const allowedZoomMapTileSizes = [
     10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 1000,
   ];
   const centerPosition = ref<PointDto>({
-    x: 0,
-    y: 0,
+    x: -1,
+    y: -1,
   });
 
   // Used to calculate the rotation of the map
@@ -106,6 +106,7 @@ export const useMapStore = defineStore("map", () => {
   }
 
   function goToPosition({ x, y }: PointDto): void {
+    console.log("Go to position: ", x, y);
     const offset = getOffset(windowWidth.value, windowHeight.value, x, y);
     offsetX.value = offset.offsetX;
     offsetY.value = offset.offsetY;
@@ -114,6 +115,7 @@ export const useMapStore = defineStore("map", () => {
 
   async function loadMap(): Promise<void> {
     await loadMapQueue.add(async () => {
+      console.log("Load map...");
       try {
         const response = await MapGateway.instance.getMapTiles(
           currentMapRange.value,

@@ -58,7 +58,7 @@ function getAvatarStyle(user: UserRankingEntity): Record<string, string> {
   li {
     display: flex;
     align-items: center;
-    padding: 1rem;
+    padding: 1rem 0;
     border-bottom: 1px solid #ccc;
     cursor: pointer;
 
@@ -74,6 +74,7 @@ function getAvatarStyle(user: UserRankingEntity): Record<string, string> {
       margin-right: 1rem;
       background-size: cover;
       box-shadow: 0.1rem 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.5);
+      flex: 0 0 3rem;
     }
 
     .username {

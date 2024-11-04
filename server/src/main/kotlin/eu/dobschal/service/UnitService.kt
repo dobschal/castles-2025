@@ -63,7 +63,7 @@ class UnitService @Inject constructor(
         }
 
         buildingRepository.countCastlesByUser(user.id!!).let {
-            if (max(2, it * UNITS_PER_CASTLE_LEVEL_1) <= unitRepository.countUnitsByUser(user.id!!)) {
+            if (max(2, it * UNITS_PER_CASTLE) <= unitRepository.countUnitsByUser(user.id!!)) {
                 throw BadRequestException("serverError.tooManyUnits")
             }
         }

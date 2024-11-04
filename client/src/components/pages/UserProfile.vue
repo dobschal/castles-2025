@@ -45,7 +45,7 @@ const authStore = useAuthStore();
 const { t } = useI18n();
 const userRanking = ref<Optional<UserRankingEntity>>();
 const route = useRoute();
-const amountOfAvatars = 14; // depends on the amount of avatar images in the assets folder
+const amountOfAvatars = 20; // depends on the amount of avatar images in the assets folder
 
 const userId = computed(() => {
   return Number(route.query.id);

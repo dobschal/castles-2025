@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
@@ -28,12 +28,8 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const loadBuildingsQueue = new Queue(500, 3);
   const breweryBeerProductionPerHour = ref<number>(-1);
   const breweryBeerStorage = ref<number>(-1);
-  const villageLevel1BeerStorage = ref<number>(-1);
+  const maxBeerStorage = ref<number>(-1);
   const amountOfOwnVillages = ref<number>(-1);
-
-  const maxBeerStorage = computed(() => {
-    return villageLevel1BeerStorage.value * amountOfOwnVillages.value;
-  });
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -62,7 +58,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
         breweryBeerProductionPerHour.value =
           response.breweryBeerProductionPerHour;
         breweryBeerStorage.value = response.breweryBeerStorage;
-        villageLevel1BeerStorage.value = response.villageLevel1BeerStorage;
+        maxBeerStorage.value = response.totalBeerStorage;
         amountOfOwnVillages.value = response.amountOfVillages;
       } catch (e) {
         handleFatalError(e);

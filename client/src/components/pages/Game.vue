@@ -53,6 +53,7 @@ onMounted(async () => {
   isMounted = true;
   isLoading.value = true;
   mapStore.adjustMapTileSizeToScreen();
+  mapStore.updateCenterPosition();
   await Promise.all([
     loadAssets(),
     authStore.loadUser(),
@@ -91,14 +92,13 @@ onBeforeUnmount(() => {
 
 watch(
   () => mapStore.centerPosition,
-  () => {
-    setTimeout(async () => {
-      await Promise.all([
-        mapStore.loadMap(),
-        buildingsStore.loadBuildings(),
-        unitsStore.loadUnits(),
-      ]);
-    });
+  async () => {
+    console.log("Center position changed");
+    await Promise.all([
+      mapStore.loadMap(),
+      buildingsStore.loadBuildings(),
+      unitsStore.loadUnits(),
+    ]);
   },
 );
 

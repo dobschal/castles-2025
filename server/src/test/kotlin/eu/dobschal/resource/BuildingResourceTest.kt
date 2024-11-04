@@ -699,7 +699,8 @@ class BuildingResourceTest : BaseResourceTest() {
         }
         buildingRepository.save(farm)
         assert(buildingRepository.listAll().size == 3)
-        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER)
+        userRepository.setBeerTo(user1!!.id!!, 0)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == 0)
         val request = CollectBeerRequestDto(brewery.id!!, BREWERY_BEER_STORAGE)
         val response = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -711,7 +712,7 @@ class BuildingResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.OK.statusCode)
             .extract().asString()
         logger.info { response }
-        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER + BREWERY_BEER_STORAGE)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == BREWERY_BEER_STORAGE)
     }
 
     @Test
@@ -848,9 +849,9 @@ class BuildingResourceTest : BaseResourceTest() {
             type = BuildingType.FARM
         }
         buildingRepository.save(farm)
-        userRepository.addBeerToUser(user1!!.id!!, VILLAGE_LEVEL_1_BEER_STORAGE - user1!!.beer!! - 5)
+        userRepository.addBeerToUser(user1!!.id!!, VILLAGE_BASE_PRICE * 2 - user1!!.beer!! - 5)
         assert(buildingRepository.listAll().size == 3)
-        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE - 5)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_BASE_PRICE * 2 - 5)
         val request = CollectBeerRequestDto(brewery.id!!, 5)
         val response = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -862,7 +863,7 @@ class BuildingResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.OK.statusCode)
             .extract().asString()
         logger.info { response }
-        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_BASE_PRICE * 2)
     }
 
     @Test
@@ -895,9 +896,9 @@ class BuildingResourceTest : BaseResourceTest() {
             type = BuildingType.FARM
         }
         buildingRepository.save(farm)
-        userRepository.addBeerToUser(user1!!.id!!, VILLAGE_LEVEL_1_BEER_STORAGE - user1!!.beer!! - 5)
+        userRepository.addBeerToUser(user1!!.id!!, VILLAGE_BASE_PRICE * 2 - user1!!.beer!! - 5)
         assert(buildingRepository.listAll().size == 4)
-        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE - 5)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_BASE_PRICE * 2 - 5)
         val request = CollectBeerRequestDto(brewery.id!!, BREWERY_BEER_STORAGE)
         val response = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
@@ -909,7 +910,7 @@ class BuildingResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.OK.statusCode)
             .extract().asString()
         logger.info { response }
-        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_LEVEL_1_BEER_STORAGE + BREWERY_BEER_STORAGE - 5)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == VILLAGE_BASE_PRICE * 2 + BREWERY_BEER_STORAGE - 5)
     }
 
     @Test
@@ -1251,5 +1252,6 @@ class BuildingResourceTest : BaseResourceTest() {
             .extract().`as`(BuildingsResponseDto::class.java)
         assert(response.buildings.size == 4)
     }
+    
 
 }

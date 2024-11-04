@@ -12,7 +12,6 @@ import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
 import eu.dobschal.utils.BREWERY_BEER_PRODUCTION_PER_HOUR
 import eu.dobschal.utils.BREWERY_BEER_STORAGE
-import eu.dobschal.utils.VILLAGE_LEVEL_1_BEER_STORAGE
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
@@ -65,7 +64,7 @@ class BuildingService @Inject constructor(
             buildings,
             BREWERY_BEER_PRODUCTION_PER_HOUR,
             BREWERY_BEER_STORAGE,
-            VILLAGE_LEVEL_1_BEER_STORAGE,
+            priceService.getPriceForBuildingCreation(userService.getCurrentUserDto(), BuildingType.VILLAGE),
             buildingRepository.countVillagesByUser(userService.getCurrentUserDto().id!!),
         )
     }
@@ -189,8 +188,7 @@ class BuildingService @Inject constructor(
                 BREWERY_BEER_STORAGE,
                 floor((timeSinceLastCollection.toDouble() / 3600) * BREWERY_BEER_PRODUCTION_PER_HOUR.toDouble()).toInt()
             )
-        val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
-        val beerLimit = VILLAGE_LEVEL_1_BEER_STORAGE * amountOfVillages;
+        val beerLimit = priceService.getPriceForBuildingCreation(currentUser.toDto(), BuildingType.VILLAGE);
         if (beerProducedSinceLastCollection + currentUser.beer!! > beerLimit) {
             beerProducedSinceLastCollection = beerLimit - currentUser.beer!!
         }
