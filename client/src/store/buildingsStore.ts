@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
@@ -29,6 +29,11 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const breweryBeerProductionPerHour = ref<number>(-1);
   const breweryBeerStorage = ref<number>(-1);
   const villageLevel1BeerStorage = ref<number>(-1);
+  const amountOfOwnVillages = ref<number>(-1);
+
+  const maxBeerStorage = computed(() => {
+    return villageLevel1BeerStorage.value * amountOfOwnVillages.value;
+  });
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -58,6 +63,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
           response.breweryBeerProductionPerHour;
         breweryBeerStorage.value = response.breweryBeerStorage;
         villageLevel1BeerStorage.value = response.villageLevel1BeerStorage;
+        amountOfOwnVillages.value = response.amountOfVillages;
       } catch (e) {
         handleFatalError(e);
       }
@@ -87,6 +93,8 @@ export const useBuildingsStore = defineStore("buildings", () => {
       return 0;
     }
 
+    // TODO: Actually that fails because we might not have the correct event in the store...
+
     const event = eventsStore.findLatestEventByPositionAndType(
       building.x,
       building.y,
@@ -104,6 +112,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   }
 
   return {
+    maxBeerStorage,
     breweryBeerProductionPerHour,
     calculateBeerToCollect,
     loadBuildings,

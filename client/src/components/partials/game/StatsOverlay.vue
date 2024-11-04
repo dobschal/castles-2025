@@ -1,14 +1,20 @@
 <template>
   <div class="stats-overlay">
-    <BeerDisplay size="lg" :beer="authStore.user?.beer ?? 0" />
+    <BeerDisplay
+      size="lg"
+      :beer="authStore.user?.beer ?? 0"
+      :limit="buildingsStore.maxBeerStorage"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useAuthStore } from "@/store/authStore.ts";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import { useBuildingsStore } from "@/store/buildingsStore.ts";
 
 const authStore = useAuthStore();
+const buildingsStore = useBuildingsStore();
 </script>
 
 <style lang="scss" scoped>

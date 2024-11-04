@@ -5,4 +5,5 @@ export interface BuildingsResponse {
   breweryBeerProductionPerHour: number;
   breweryBeerStorage: number;
   villageLevel1BeerStorage: number;
+  amountOfVillages: number;
 }

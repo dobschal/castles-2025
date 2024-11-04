@@ -71,7 +71,7 @@ export const de = {
   },
   breweryAction: {
     breweryOf:
-      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert.",
+      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert. Aktuell sind {beerToCollect} Bier verfügbar.",
   },
   unitAction: {
     unitOf: "Einheit von {playerName} in {x}, {y}",

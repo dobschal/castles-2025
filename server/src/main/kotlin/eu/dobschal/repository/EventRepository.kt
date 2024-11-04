@@ -21,7 +21,7 @@ class EventRepository @Inject constructor() : PanacheRepository<Event> {
 
     @Scheduled(every = "5m")
     fun setEventThresholdId() {
-        find("createdAt > ?1 ORDER BY id DESC", LocalDateTime.now().minusHours(12)).firstResult()?.let {
+        find("createdAt > ?1 ORDER BY id ASC", LocalDateTime.now().minusHours(12)).firstResult()?.let {
             thresholdId = it.id!!
         }
     }

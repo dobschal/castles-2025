@@ -68,7 +68,8 @@ export const en = {
     farmOf: "Farm of {playerName}",
   },
   breweryAction: {
-    breweryOf: "Brewery of {playerName} that produces {beer} beer per hour.",
+    breweryOf:
+      "Brewery of {playerName} that produces {beer} beer per hour. {beerToCollect} beer can be collected.",
   },
   unitAction: {
     unitOf: "Unit of {playerName} at {x}, {y}",

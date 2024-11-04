@@ -4,6 +4,7 @@
       t("breweryAction.breweryOf", {
         playerName: buildingsStore.activeBuilding?.user.username,
         beer: buildingsStore.breweryBeerProductionPerHour,
+        beerToCollect: beerToCollect,
       })
     }}
   </p>
@@ -51,6 +52,12 @@ const authStore = useAuthStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
+
+const beerToCollect = computed(() => {
+  if (!buildingsStore.activeBuilding) return 0;
+
+  return buildingsStore.calculateBeerToCollect(buildingsStore.activeBuilding);
+});
 
 const unitAtPosition = computed(() => {
   return unitsStore.units.find((unit) => {

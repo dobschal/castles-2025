@@ -65,7 +65,8 @@ class BuildingService @Inject constructor(
             buildings,
             BREWERY_BEER_PRODUCTION_PER_HOUR,
             BREWERY_BEER_STORAGE,
-            VILLAGE_LEVEL_1_BEER_STORAGE
+            VILLAGE_LEVEL_1_BEER_STORAGE,
+            buildingRepository.countVillagesByUser(userService.getCurrentUserDto().id!!),
         )
     }
 
