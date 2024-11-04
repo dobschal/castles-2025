@@ -144,10 +144,8 @@ function onTouchMove(event: TouchEvent): void {
     return;
   }
 
-  setTimeout(() => {
-    mapStore.offsetX += event.touches[0].clientX - lastTouch.value.x;
-    mapStore.offsetY += event.touches[0].clientY - lastTouch.value.y;
-  });
+  mapStore.offsetX += event.touches[0].clientX - lastTouch.value.x;
+  mapStore.offsetY += event.touches[0].clientY - lastTouch.value.y;
 
   lastTouch.value.x = event.touches[0].clientX;
   lastTouch.value.y = event.touches[0].clientY;
