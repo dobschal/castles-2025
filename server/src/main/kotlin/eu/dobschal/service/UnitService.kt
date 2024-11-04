@@ -172,6 +172,7 @@ class UnitService @Inject constructor(
 
     private fun handleConquerBuilding(conflictingBuilding: Building, unit: Unit, user: User) {
         if (conflictingBuilding.type == BuildingType.VILLAGE || conflictingBuilding.type == BuildingType.CASTLE) {
+            val oldUserId = conflictingBuilding.user!!
             buildingRepository.updateOwner(conflictingBuilding.id!!, user.id!!)
             eventRepository.save(Event().apply {
                 this.user1 = user
@@ -180,7 +181,7 @@ class UnitService @Inject constructor(
                 this.x = conflictingBuilding.x!!
                 this.y = conflictingBuilding.y!!
             })
-            // TODO: if was last village or castle --> game over
+            handleGameOver(oldUserId)
         }
         if (conflictingBuilding.type == BuildingType.FARM || conflictingBuilding.type == BuildingType.BREWERY) {
             buildingRepository.delete(conflictingBuilding)
@@ -191,6 +192,22 @@ class UnitService @Inject constructor(
                 this.y = conflictingBuilding.y!!
             })
         }
+    }
+
+    private fun handleGameOver(user: User) {
+        if (buildingRepository.countVillagesByUser(user.id!!) > 0) {
+            return
+        }
+        buildingRepository.deleteAllByUser(user.id!!)
+        unitRepository.deleteAllByUser(user.id!!)
+        userRepository.setBeerTo(user.id!!, START_BEER);
+        eventRepository.save(Event().apply {
+            this.user1 = user
+            this.type = EventType.GAME_OVER
+            x = 0
+            y = 0
+        })
+
     }
 
     private fun handleFight(unit1: Unit, unit2: Unit): Unit {

@@ -59,4 +59,8 @@ class BuildingRepository : PanacheRepository<Building> {
     fun findBuildingByTypeAndUser(userId: Int, buildingType: BuildingType): Building? {
         return find("user.id = ?1 and type = ?2", userId, buildingType).firstResult()
     }
+
+    fun deleteAllByUser(userId: Int) {
+        delete("user.id = ?1", userId)
+    }
 }

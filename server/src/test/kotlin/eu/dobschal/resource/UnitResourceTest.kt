@@ -972,9 +972,16 @@ class UnitResourceTest : BaseResourceTest() {
             type = BuildingType.CASTLE
         }
         buildingRepository.save(castle)
+        val village = Building().apply {
+            x = 3
+            y = 50
+            user = user2
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         assert(unitRepository.listAll().size == 2)
-        assert(buildingRepository.listAll().size == 1)
+        assert(buildingRepository.listAll().size == 2)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
@@ -986,13 +993,71 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 1)
         assert(unitRepository.listAll().first().type == UnitType.SWORDSMAN)
         assert(eventRepository.listAll().size == 3)
-        assert(buildingRepository.listAll().size == 1)
-        assert(buildingRepository.listAll().first().user?.id == user1?.id)
+        assert(buildingRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().last().user?.id == user1?.id)
     }
 
     @Test
-    fun `If loosing the last village, destroy all other buildings (expect castles) and give user START BEER`() {
-        TODO();
+    fun `If loosing the last village, destroy all other buildings and give user START BEER`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.HORSEMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 3
+            y = 5
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val village = Building().apply {
+            x = 3
+            y = 4
+            user = user2
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        userRepository.setBeerTo(user2!!.id!!, 10)
+
+        assert(unitRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user2!!.id!!)!!.beer == 10)
+
+        val request = MoveUnitRequestDto(3, 4, unit.id!!)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SWORDSMAN)
+        assert(eventRepository.listAll().size == 3)
+        assert(buildingRepository.listAll().size == 1)
+        assert(buildingRepository.listAll().first().user?.id == user1?.id)
+        assert(userRepository.findById(user2!!.id!!)!!.beer == START_BEER)
+        assert(buildingRepository.listAll().first().type == BuildingType.VILLAGE)
+        assert(eventRepository.listAll().last().type == EventType.GAME_OVER)
     }
 
 }

@@ -106,6 +106,7 @@ export const de = {
       BUILDING_CONQUERED: "Du hast ein Gebäude bei {x}, {y} erobert.",
       BUILDING_DESTROYED: "Du hast ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "Du hast einem {unitType} bei {x}, {y} verloren.",
+      GAME_OVER: "Du hast dein letztes Dorf verloren.",
     },
     other: {
       UNIT_MOVED: "{playerName} hat einen {unitType} nach {x}, {y} bewegt.",
@@ -115,6 +116,7 @@ export const de = {
       BUILDING_CONQUERED: "{playerName} hat ein Gebäude bei {x}, {y} erobert.",
       BUILDING_DESTROYED: "{playerName} hat ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "{playerName} hat einem {unitType} bei {x}, {y} verloren.",
+      GAME_OVER: "{playerName} hat sein letztes Dorf verloren.",
     },
   },
   tutorialAction: {
