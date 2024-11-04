@@ -1,12 +1,16 @@
 <template>
-  <p>
+  <p v-if="!isDisabled">
     {{
       t("breweryAction.breweryOf", {
         playerName: buildingsStore.activeBuilding?.user.username,
         beer: buildingsStore.breweryBeerProductionPerHour,
         beerToCollect: beerToCollect,
+        breweryBeerStorage: buildingsStore.breweryBeerStorage,
       })
     }}
+  </p>
+  <p v-else>
+    {{ t("breweryAction.noFarmNextTo") }}
   </p>
   <CButton
     v-if="isOwnBuilding && unitAtPosition"
@@ -52,6 +56,18 @@ const authStore = useAuthStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
+
+const isDisabled = computed(() => {
+  if (!buildingsStore.activeBuilding) return true;
+
+  return (
+    buildingsStore.findFarmNextTo(
+      buildingsStore.activeBuilding.x,
+      buildingsStore.activeBuilding.y,
+      buildingsStore.activeBuilding.user.id,
+    ) === undefined
+  );
+});
 
 const beerToCollect = computed(() => {
   if (!buildingsStore.activeBuilding) return 0;

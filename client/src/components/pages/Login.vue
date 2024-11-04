@@ -2,6 +2,9 @@
   <Page>
     <h1>Castles <small>of Beer and Dragons</small></h1>
     <p v-html="t('registration.intro')"></p>
+    <router-link class="link-to-wiki" :to="OpenWikiPageRoute.path">
+      > {{ t("login.aboutTheGame") }}
+    </router-link>
     <h2>
       <CText path="login.title" />
     </h2>
@@ -40,7 +43,11 @@ import CButton from "@/components/partials/general/CButton.vue";
 import { UserGateway } from "@/gateways/UserGateway.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import router from "@/core/router.ts";
-import { MainPageRoute, RegistrationPageRoute } from "@/routes.ts";
+import {
+  MainPageRoute,
+  OpenWikiPageRoute,
+  RegistrationPageRoute,
+} from "@/routes.ts";
 import { useI18n } from "vue-i18n";
 
 const authStore = useAuthStore();
@@ -50,9 +57,7 @@ const hasError = ref(false);
 const isLoading = ref(false);
 const { t } = useI18n();
 
-const hasInput = computed(
-  () => username.value.length > 0 && password.value.length > 0,
-);
+const hasInput = computed(() => username.value.length > 0);
 
 async function submitForm(): Promise<void> {
   isLoading.value = true;
@@ -79,5 +84,12 @@ async function submitForm(): Promise<void> {
 
 form {
   margin-bottom: 2rem;
+}
+
+.link-to-wiki {
+  display: block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  color: black;
 }
 </style>

@@ -14,7 +14,6 @@ export const useEventsStore = defineStore("event", () => {
     events.value = await EventGateway.instance.getEvents(
       mapStore.currentMapRange,
     );
-    console.info(`Got ${events.value.length} events`);
   }
 
   function findLatestEventByPositionAndType(

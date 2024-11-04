@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { handleFatalError, parseServerDateString } from "@/core/util.ts";
+import { handleFatalError, NOW, parseServerDateString } from "@/core/util.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { ref } from "vue";
 import { UnitEntity } from "@/types/model/UnitEntity.ts";
@@ -63,7 +63,32 @@ export const useUnitsStore = defineStore("units", () => {
     }
   }
 
+  function nextMoveIn(unit: UnitEntity): string {
+    const latestMoves = eventsStore.events.filter(
+      (event) =>
+        event.unit?.id === unit.id &&
+        event.type === EventType.UNIT_MOVED &&
+        Date.now() - parseServerDateString(event.createdAt).getTime() < 3600000,
+    );
+    const movesLimit = movesPerHourLimit(unit);
+    const movesRemaining = movesLimit - latestMoves.length;
+
+    if (movesRemaining > 0) return "";
+
+    const moveTime = parseServerDateString(
+      latestMoves[latestMoves.length - 1].createdAt,
+    );
+    const diffInSeconds = Math.floor(
+      (NOW.value - moveTime.getTime() - 3600000) / -1000,
+    );
+    const actualSeconds = diffInSeconds % 60;
+    const actualMinutes = Math.floor(diffInSeconds / 60) % 60;
+
+    return `${actualMinutes}m ${actualSeconds}sec`;
+  }
+
   return {
+    nextMoveIn,
     movesPerHourLimit,
     movesLastHour,
     loadUnits,

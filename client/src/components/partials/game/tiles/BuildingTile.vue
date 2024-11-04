@@ -162,6 +162,7 @@ const isOwnBuilding = computed(() => {
 
 const bannerStyle = computed(() => {
   return {
+    padding: Math.floor(mapStore.mapTileSize / 10) + "px",
     fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
   };
 });
@@ -221,6 +222,7 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     padding: 5px;
     z-index: 2;
     font-size: 0.75rem;
+    line-height: 1;
     transform: rotate(45deg) translateX(23%) translateY(-160%);
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
   }

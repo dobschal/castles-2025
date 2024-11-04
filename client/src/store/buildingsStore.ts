@@ -93,8 +93,6 @@ export const useBuildingsStore = defineStore("buildings", () => {
       return 0;
     }
 
-    // TODO: Actually that fails because we might not have the correct event in the store...
-
     const event = eventsStore.findLatestEventByPositionAndType(
       building.x,
       building.y,
@@ -121,5 +119,6 @@ export const useBuildingsStore = defineStore("buildings", () => {
     startVillage,
     activeBuilding,
     findFarmNextTo,
+    breweryBeerStorage,
   };
 });

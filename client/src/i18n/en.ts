@@ -32,6 +32,7 @@ export const en = {
     tooManyMoves: "The unit has reached its limit of moves for this hour.",
     notYourBuilding: "You can only destroy your own buildings.",
     lastVillage: "You cannot destroy your last village.",
+    noFarm: "No farm nearby!",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -54,6 +55,7 @@ export const en = {
     error: "An error occurred during login. Please check your input.",
     action: "Login",
     toRegistration: "To registration",
+    aboutTheGame: "More about the game",
   },
   startVillageAction: {
     text: "Please choose a location for your first village.",
@@ -69,7 +71,8 @@ export const en = {
   },
   breweryAction: {
     breweryOf:
-      "Brewery of {playerName} that produces {beer} beer per hour. {beerToCollect} beer can be collected.",
+      "Brewery of {playerName} that produces {beer} beer per hour and stores maximal {breweryBeerStorage} beer. {beerToCollect} beer can be collected.",
+    noFarmNextTo: "No farm next to this brewery! No beer is produced.",
   },
   unitAction: {
     unitOf: "Unit of {playerName} at {x}, {y}",

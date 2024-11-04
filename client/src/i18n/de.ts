@@ -33,6 +33,7 @@ export const de = {
       "Die Einheit hat ihr Limit an Zügen für diese Stunde erreicht.",
     notYourBuilding: "Du kannst nur deine eigenen Gebäude zerstören.",
     lastVillage: "Du kannst dein letztes Dorf nicht zerstören.",
+    noFarm: "Keine Farm in der Nähe!",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -56,6 +57,7 @@ export const de = {
       "Fehler bei der Anmeldung aufgetreten. Bitte überprüfe deine Eingaben.",
     action: "Anmelden",
     toRegistration: "Zur Registrierung",
+    aboutTheGame: "Mehr über das Spiel",
   },
   startVillageAction: {
     text: "Bitte wähle einen Standort für dein erstes Dorf.",
@@ -71,7 +73,9 @@ export const de = {
   },
   breweryAction: {
     breweryOf:
-      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert. Aktuell sind {beerToCollect} Bier verfügbar.",
+      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert und maximal {breweryBeerStorage} Bier speichert. Aktuell sind {beerToCollect} Bier verfügbar.",
+    noFarmNextTo:
+      "Diese Brauerei hat keine Farm in der Nähe und produziert daher kein Bier.",
   },
   unitAction: {
     unitOf: "Einheit von {playerName} in {x}, {y}",

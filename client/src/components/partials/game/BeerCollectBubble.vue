@@ -1,6 +1,7 @@
 <template>
   <div
     class="bubble"
+    :class="{ disabled: isDisabled }"
     :style="bubbleStyle"
     @click="collectBeer"
     @mousedown.stop
@@ -25,6 +26,16 @@ const mapStore = useMapStore();
 const props = defineProps<{
   building: BuildingEntity;
 }>();
+
+const isDisabled = computed(() => {
+  return (
+    buildingsStore.findFarmNextTo(
+      props.building.x,
+      props.building.y,
+      props.building.user.id,
+    ) === undefined
+  );
+});
 
 async function collectBeer(): Promise<void> {
   try {
@@ -78,6 +89,10 @@ const arrowStyle = computed(() => {
   display: flex;
   animation: bounce 1s infinite;
   will-change: transform;
+
+  &.disabled {
+    opacity: 0.5;
+  }
 
   &:hover {
     animation: none;
