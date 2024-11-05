@@ -46,11 +46,13 @@ class PriceService @Inject constructor(
             val prices = mutableListOf<Int>()
             for (i in 0..1000) {
                 val basePrice = when (type) {
+                    BuildingType.CITY -> CITY_BASE_PRICE
                     BuildingType.VILLAGE -> VILLAGE_BASE_PRICE
                     BuildingType.CASTLE -> CASTLE_BASE_PRICE
                     BuildingType.BREWERY -> BREWERY_BASE_PRICE
                     BuildingType.FARM -> FARM_BASE_PRICE
                 }
+                // TODO: Handle cities and villages correctly
                 val price = basePrice * 2.0.pow(i)
                 prices.add(price.toInt())
             }
@@ -86,6 +88,8 @@ class PriceService @Inject constructor(
             BuildingType.CASTLE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CASTLE }]
             BuildingType.BREWERY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.BREWERY }]
             BuildingType.FARM -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.FARM }]
+            BuildingType.CITY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CITY }]
+            // TODO: Fix this
         }
     }
 

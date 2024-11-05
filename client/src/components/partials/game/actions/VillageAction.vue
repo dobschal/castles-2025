@@ -28,6 +28,10 @@
     {{ t("villageAction.createWorker") }}
     <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
   </CButton>
+  <CButton v-if="isOwnBuilding" class="small with-icon" @click="upgradeToCity">
+    {{ t("villageAction.upgradeToCity") }}
+    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
+  </CButton>
   <CButton v-if="isOwnBuilding" class="small" @click="destroy">
     {{ t("destroyBuilding.button") }}
   </CButton>
@@ -54,6 +58,7 @@ import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vu
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -61,6 +66,7 @@ const authStore = useAuthStore();
 const unitsStore = useUnitsStore();
 const pricesStore = usePricesStore();
 const tutorialStore = useTutorialStore();
+const eventsStore = useEventsStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
@@ -130,6 +136,10 @@ onBeforeUnmount(() => {
   }
 });
 
+function upgradeToCity(): void {
+  console.log("YEAH");
+}
+
 async function destroy(): Promise<void> {
   DIALOG.dispatch({
     questionKey: "destroyBuilding.question",
@@ -140,6 +150,7 @@ async function destroy(): Promise<void> {
           buildingsStore.activeBuilding.x,
           buildingsStore.activeBuilding.y,
         );
+        eventsStore.ownActionHappened = true;
         close();
       } catch (error) {
         handleFatalError(error);
@@ -159,6 +170,7 @@ async function createWorker(): Promise<void> {
       y: buildingsStore.activeBuilding!.y,
       type: UnitType.WORKER,
     });
+    eventsStore.ownActionHappened = true;
     close();
 
     if (tutorialStore.tutorial?.type === TutorialType.FIRST_WORKER) {

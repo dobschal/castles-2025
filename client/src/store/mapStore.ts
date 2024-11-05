@@ -106,7 +106,6 @@ export const useMapStore = defineStore("map", () => {
   }
 
   function goToPosition({ x, y }: PointDto): void {
-    console.log("Go to position: ", x, y);
     const offset = getOffset(windowWidth.value, windowHeight.value, x, y);
     offsetX.value = offset.offsetX;
     offsetY.value = offset.offsetY;
@@ -115,7 +114,6 @@ export const useMapStore = defineStore("map", () => {
 
   async function loadMap(): Promise<void> {
     await loadMapQueue.add(async () => {
-      console.log("Load map...");
       try {
         const response = await MapGateway.instance.getMapTiles(
           currentMapRange.value,

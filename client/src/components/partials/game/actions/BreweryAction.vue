@@ -47,12 +47,14 @@ import { useAuthStore } from "@/store/authStore.ts";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const pricesStore = usePricesStore();
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
 const authStore = useAuthStore();
+const eventsStore = useEventsStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
@@ -143,6 +145,7 @@ async function destroy(): Promise<void> {
           buildingsStore.activeBuilding.x,
           buildingsStore.activeBuilding.y,
         );
+        eventsStore.ownActionHappened = true;
         close();
       } catch (error) {
         handleFatalError(error);

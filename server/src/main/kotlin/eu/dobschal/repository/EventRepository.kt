@@ -30,14 +30,14 @@ class EventRepository @Inject constructor() : PanacheRepository<Event> {
         persist(event)
     }
 
-    fun findEventsBetween(x1: Int, x2: Int, y1: Int, y2: Int): List<EventDto> {
+    fun findEventsBetween(x1: Int, x2: Int, y1: Int, y2: Int, lastEventId: Int?): List<EventDto> {
         val result = find(
             "#Event.findEventsBetween",
             x1,
             x2,
             y1,
             y2,
-            thresholdId
+            lastEventId ?: thresholdId
         )
             .project(EventDto::class.java)
             .list()

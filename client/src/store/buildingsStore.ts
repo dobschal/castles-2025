@@ -34,9 +34,12 @@ export const useBuildingsStore = defineStore("buildings", () => {
   async function loadStartVillage(): Promise<void> {
     try {
       startVillage.value = await BuildingGateway.instance.getStartVillage();
-      console.info("Start village: ", startVillage.value);
     } catch (error) {
       if (error instanceof Response && error.status === 404) {
+        mapStore.goToPosition({
+          x: Math.round(Math.random() * 200 - 100),
+          y: Math.round(Math.random() * 200 - 100),
+        });
         // Show the original map for two seconds and then
         // dispatch the start village action that grays out the map
         await delay(2000);

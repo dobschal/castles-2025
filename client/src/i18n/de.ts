@@ -67,6 +67,7 @@ export const de = {
     createWorker: "Arbeiter erstellen",
     moveUnit: "Einheit bewegen ({0}/{1})",
     villageOf: "Dorf von {playerName}",
+    upgradeToCity: "Zu Stadt ausbauen",
   },
   farmAction: {
     farmOf: "Farm von {playerName}",

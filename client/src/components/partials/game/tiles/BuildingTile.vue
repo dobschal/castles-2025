@@ -1,7 +1,7 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
     <p
-      v-if="building.type === BuildingType.VILLAGE"
+      v-if="[BuildingType.VILLAGE, BuildingType.CITY].includes(building.type)"
       class="banner"
       :style="bannerStyle"
     >
@@ -36,6 +36,26 @@
         v-else
         src="../../../../assets/tiles/village-top-layer-disabled-min.png"
         class="building-top-layer village"
+        alt="Building"
+      />
+    </template>
+    <template v-if="building.type === BuildingType.CITY">
+      <img
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/city-red.png"
+        class="building city"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/city-beige.png"
+        class="building city"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/city-disabled.png"
+        class="building city"
         alt="Building"
       />
     </template>
@@ -233,6 +253,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     left: 0;
     pointer-events: none;
     z-index: 1;
+
+    &.city {
+      width: 150%;
+      margin-left: -30%;
+      margin-top: -29%;
+    }
 
     &.village {
       width: 150%;

@@ -85,6 +85,7 @@ import { handleFatalError } from "@/core/util.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const unitsStore = useUnitsStore();
 const pricesStore = usePricesStore();
@@ -92,6 +93,7 @@ const mapStore = useMapStore();
 const buildingStore = useBuildingsStore();
 const authStore = useAuthStore();
 const tutorialStore = useTutorialStore();
+const eventsStore = useEventsStore();
 const isLoading = ref(false);
 
 const { t } = useI18n();
@@ -204,6 +206,7 @@ async function saveBuilding(type: BuildingType): Promise<void> {
       },
       type,
     );
+    eventsStore.ownActionHappened = true;
     close();
 
     if (

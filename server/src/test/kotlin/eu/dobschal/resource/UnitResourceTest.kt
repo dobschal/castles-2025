@@ -1060,4 +1060,34 @@ class UnitResourceTest : BaseResourceTest() {
         assert(eventRepository.listAll().last().type == EventType.GAME_OVER)
     }
 
+    @Test
+    fun `Per 2n + 1 villages I can convert a village into a city for the price of a village`() {
+        TODO();
+    }
+
+    @Test
+    fun `Having a city is increasing the price for the next village like I would have create another village`() {
+        TODO();
+    }
+
+    @Test
+    fun `Having a city is increasing the max beer limit like I would have create another village`() {
+        TODO();
+    }
+
+    @Test
+    fun `I can create a worker on a city too`() {
+        TODO();
+    }
+
+    @Test
+    fun `If I have only one city left, I cannot destroy it`() {
+        TODO();
+    }
+
+    @Test
+    fun `If I have only one city left and I lose it, I am game over`() {
+        TODO();
+    }
+
 }

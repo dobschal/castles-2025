@@ -48,12 +48,12 @@ const isLoading = ref(false);
 const cachedImageAssets: Array<HTMLImageElement> = [];
 const { t } = useI18n();
 const route = useRoute();
+let eventLoopTimeout: ReturnType<typeof setTimeout>;
 
 onMounted(async () => {
   isMounted = true;
   isLoading.value = true;
   mapStore.adjustMapTileSizeToScreen();
-  mapStore.updateCenterPosition();
   await Promise.all([
     loadAssets(),
     authStore.loadUser(),
@@ -63,7 +63,7 @@ onMounted(async () => {
     unitsStore.loadUnits(),
     keepLoadingEvents(),
   ]);
-  setTimeout(() => (isLoading.value = false), 500);
+  isLoading.value = false;
 
   // The promise here might be resolved very late if the user
   // needs to select the start village
@@ -76,7 +76,6 @@ onMounted(async () => {
       x: Number(route.query.x),
       y: Number(route.query.y),
     });
-    router.replace({ query: {} });
   } else {
     mapStore.goToPosition(buildingsStore.startVillage ?? { x: 0, y: 0 });
   }
@@ -93,7 +92,12 @@ onBeforeUnmount(() => {
 watch(
   () => mapStore.centerPosition,
   async () => {
-    console.log("Center position changed");
+    await router.replace({
+      query: {
+        x: mapStore.centerPosition.x,
+        y: mapStore.centerPosition.y,
+      },
+    });
     await Promise.all([
       mapStore.loadMap(),
       buildingsStore.loadBuildings(),
@@ -117,15 +121,30 @@ watch(
   { deep: true },
 );
 
+watch(
+  () => eventsStore.ownActionHappened,
+  () => {
+    if (eventsStore.ownActionHappened) {
+      eventsStore.ownActionHappened = false;
+      keepLoadingEvents();
+    }
+  },
+);
+
 async function keepLoadingEvents(): Promise<void> {
   try {
+    if (eventLoopTimeout) {
+      clearTimeout(eventLoopTimeout);
+    }
+
     await eventsStore.loadEvents();
-    setTimeout(() => {
-      if (isMounted) {
-        keepLoadingEvents();
-      }
-    }, 500);
+    eventLoopTimeout = setTimeout(() => {
+      console.info("Loading events again");
+
+      if (isMounted) keepLoadingEvents();
+    }, 1000);
   } catch (e) {
+    console.error("Error while loading events: ", e);
     DIALOG.dispatch({
       questionKey: "general.serverError",
       onYes: () => {

@@ -50,7 +50,7 @@ class BarbarianService @Inject constructor(
         val mapTiles = mapTileRepository.listAll()
         val units = unitRepository.findAllByUser(barbarianUser.id!!)
         for (unit in units) {
-            findMapTileToMoveTo(unit, unit.x!!, unit.y!!, mapTiles, units, barbarianUser).let { (x, y) ->
+            findMapTileToMoveTo(unit, unit.x!!, unit.y!!, mapTiles, units, barbarianUser)?.let { (x, y) ->
                 try {
                     val (conflictingBuilding, conflictingUnit) = unitService.getMoveConflictingBuildingsAndUnits(
                         x,
@@ -71,7 +71,7 @@ class BarbarianService @Inject constructor(
                 } catch (e: Exception) {
                     logger.error(e) { "Could not move barbarian unit from ${unit.x}, ${unit.y} to $x, $y" }
                 }
-            }
+            } ?: logger.info { "Could not find map tile to move barbarian unit from ${unit.x}, ${unit.y}" }
         }
     }
 
@@ -82,7 +82,7 @@ class BarbarianService @Inject constructor(
         mapTiles: List<MapTile>,
         units: List<Unit>,
         barbarianUser: User
-    ): Pair<Int, Int> {
+    ): Pair<Int, Int>? {
         val possibleTiles =
             mapTiles.filter {
                 val xDiff = abs(it.x!! - x)
@@ -97,6 +97,9 @@ class BarbarianService @Inject constructor(
                         && it.y != y
                         && !hasConflictingUnit
             }
+        if (possibleTiles.isEmpty()) {
+            return null
+        }
         return possibleTiles.random().let { Pair(it.x!!, it.y!!) }
     }
 

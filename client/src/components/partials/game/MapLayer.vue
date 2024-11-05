@@ -56,24 +56,24 @@ onMounted(async () => {
   window.addEventListener("resize", onWindowResize);
 
   if (!isTouchDevice()) {
-    window.addEventListener("mousedown", onMapMouseDown);
-    window.addEventListener("mousemove", onMapMouseMove);
-    window.addEventListener("mouseup", onMapMouseUp);
+    map.value!.addEventListener("mousedown", onMapMouseDown);
+    map.value!.addEventListener("mousemove", onMapMouseMove);
+    map.value!.addEventListener("mouseup", onMapMouseUp);
   } else {
-    window.addEventListener("touchstart", onTouchStart);
-    window.addEventListener("touchmove", onTouchMove);
-    window.addEventListener("touchend", onToucheEnd);
+    map.value!.addEventListener("touchstart", onTouchStart);
+    map.value!.addEventListener("touchmove", onTouchMove);
+    map.value!.addEventListener("touchend", onToucheEnd);
   }
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", onWindowResize);
-  window.removeEventListener("mousedown", onMapMouseDown);
-  window.removeEventListener("mousemove", onMapMouseMove);
-  window.removeEventListener("mouseup", onMapMouseUp);
-  window.removeEventListener("touchstart", onTouchStart);
-  window.removeEventListener("touchmove", onTouchMove);
-  window.removeEventListener("touchend", onToucheEnd);
+  map.value!.removeEventListener("resize", onWindowResize);
+  map.value!.removeEventListener("mousedown", onMapMouseDown);
+  map.value!.removeEventListener("mousemove", onMapMouseMove);
+  map.value!.removeEventListener("mouseup", onMapMouseUp);
+  map.value!.removeEventListener("touchstart", onTouchStart);
+  map.value!.removeEventListener("touchmove", onTouchMove);
+  map.value!.removeEventListener("touchend", onToucheEnd);
 });
 
 // endregion
@@ -101,6 +101,8 @@ function getMapTileStyle(mapTile: PointDto): MapTileStyle {
 function onWindowResize(): void {
   mapStore.windowWidth = window.innerWidth;
   mapStore.windowHeight = window.innerHeight;
+  mapStore.adjustMapTileSizeToScreen();
+  mapStore.updateCenterPosition();
 }
 
 function onMapMouseDown(event: MouseEvent): void {

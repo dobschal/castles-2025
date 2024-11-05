@@ -20,9 +20,11 @@ import { handleFatalError } from "@/core/util.ts";
 import { TOAST } from "@/events.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { computed } from "vue";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
+const eventsStore = useEventsStore();
 const props = defineProps<{
   building: BuildingEntity;
 }>();
@@ -44,6 +46,7 @@ async function collectBeer(): Promise<void> {
       props.building.id,
       amountOfBeer,
     );
+    eventsStore.ownActionHappened = true;
     TOAST.dispatch({ type: "success", messageKey: message });
   } catch (error) {
     handleFatalError(error);

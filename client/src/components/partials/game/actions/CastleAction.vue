@@ -70,12 +70,14 @@ import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
 const authStore = useAuthStore();
 const pricesStore = usePricesStore();
+const eventsStore = useEventsStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
@@ -166,6 +168,7 @@ async function destroy(): Promise<void> {
           buildingsStore.activeBuilding.x,
           buildingsStore.activeBuilding.y,
         );
+        eventsStore.ownActionHappened = true;
         close();
       } catch (error) {
         handleFatalError(error);
@@ -191,6 +194,7 @@ async function createUnit(type): Promise<void> {
       y: buildingsStore.activeBuilding!.y,
       type,
     });
+    eventsStore.ownActionHappened = true;
     close();
   } catch (error) {
     handleFatalError(error);
