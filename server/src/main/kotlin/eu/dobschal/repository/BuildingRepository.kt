@@ -48,6 +48,10 @@ class BuildingRepository : PanacheRepository<Building> {
         return countBuildingTypeByUser(userId, BuildingType.VILLAGE)
     }
 
+    fun countCitiesByUser(userId: Int): Int {
+        return countBuildingTypeByUser(userId, BuildingType.CITY)
+    }
+
     fun countCastlesByUser(userId: Int): Int {
         return countBuildingTypeByUser(userId, BuildingType.CASTLE)
     }

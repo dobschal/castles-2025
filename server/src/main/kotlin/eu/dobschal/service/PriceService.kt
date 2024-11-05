@@ -52,7 +52,6 @@ class PriceService @Inject constructor(
                     BuildingType.BREWERY -> BREWERY_BASE_PRICE
                     BuildingType.FARM -> FARM_BASE_PRICE
                 }
-                // TODO: Handle cities and villages correctly
                 val price = basePrice * 2.0.pow(i)
                 prices.add(price.toInt())
             }
@@ -84,12 +83,14 @@ class PriceService @Inject constructor(
     ): Int {
         val b = buildings ?: buildingRepository.findAllByUser(user.id!!)
         return when (type) {
-            BuildingType.VILLAGE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.VILLAGE }]
+
+            // When creating a city, the village is deleted. But still the village price should raise.
+            BuildingType.VILLAGE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.VILLAGE || it.type == BuildingType.CITY }]
+
+            BuildingType.CITY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CITY }]
             BuildingType.CASTLE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CASTLE }]
             BuildingType.BREWERY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.BREWERY }]
             BuildingType.FARM -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.FARM }]
-            BuildingType.CITY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CITY }]
-            // TODO: Fix this
         }
     }
 

@@ -12,6 +12,7 @@ import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
 import eu.dobschal.utils.BREWERY_BEER_PRODUCTION_PER_HOUR
 import eu.dobschal.utils.BREWERY_BEER_STORAGE
+import eu.dobschal.utils.VILLAGE_BASE_PRICE
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
@@ -20,6 +21,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.math.floor
 import kotlin.math.min
+import kotlin.math.pow
 
 @ApplicationScoped
 class BuildingService @Inject constructor(
@@ -60,13 +62,22 @@ class BuildingService @Inject constructor(
 
     fun getBuildings(x1: Int, x2: Int, y1: Int, y2: Int): BuildingsResponseDto {
         val buildings = buildingRepository.findBuildingsBetween(x1, x2, y1, y2)
+        val currentUser = userService.getCurrentUser()
         return BuildingsResponseDto(
             buildings,
             BREWERY_BEER_PRODUCTION_PER_HOUR,
             BREWERY_BEER_STORAGE,
-            priceService.getPriceForBuildingCreation(userService.getCurrentUserDto(), BuildingType.VILLAGE),
-            buildingRepository.countVillagesByUser(userService.getCurrentUserDto().id!!),
+            getTotalBeerStorage(currentUser.id!!),
+            buildingRepository.countVillagesByUser(currentUser.id!!),
         )
+    }
+
+    fun getTotalBeerStorage(userId: Int): Int {
+        val usersBuildings = buildingRepository.findAllByUser(userId)
+        val storageFactor = VILLAGE_BASE_PRICE;
+        val amountOfVillagesAndCities =
+            usersBuildings.count { it.type == BuildingType.VILLAGE || it.type == BuildingType.CITY }
+        return (storageFactor * 2.0.pow(amountOfVillagesAndCities)).toInt()
     }
 
     fun createBuilding(x: Int, y: Int, type: BuildingType): Building {
@@ -117,10 +128,11 @@ class BuildingService @Inject constructor(
             throw BadRequestException("serverError.notYourBuilding")
         }
 
-        if (building.type == BuildingType.VILLAGE) {
+        if (building.type == BuildingType.VILLAGE || building.type == BuildingType.CITY) {
             // if it's a village check if it's his last village
             val amountOfVillages = buildingRepository.countVillagesByUser(currentUser.id!!)
-            if (amountOfVillages < 2) {
+            val amountOfCities = buildingRepository.countCitiesByUser(currentUser.id!!)
+            if (amountOfVillages + amountOfCities < 2) {
                 throw BadRequestException("serverError.lastVillage")
             }
         }
@@ -188,7 +200,7 @@ class BuildingService @Inject constructor(
                 BREWERY_BEER_STORAGE,
                 floor((timeSinceLastCollection.toDouble() / 3600) * BREWERY_BEER_PRODUCTION_PER_HOUR.toDouble()).toInt()
             )
-        val beerLimit = priceService.getPriceForBuildingCreation(currentUser.toDto(), BuildingType.VILLAGE);
+        val beerLimit = getTotalBeerStorage(currentUser.id!!);
         if (beerProducedSinceLastCollection + currentUser.beer!! > beerLimit) {
             beerProducedSinceLastCollection = beerLimit - currentUser.beer!!
         }
@@ -201,6 +213,34 @@ class BuildingService @Inject constructor(
             this.y = building.y
         })
         return SuccessResponseDto("serverSuccess.beerCollected")
+    }
+
+    fun createCity(x: Int, y: Int, type: BuildingType): SuccessResponseDto {
+        val currentUser = userService.getCurrentUser()
+        if (type != BuildingType.CITY) {
+            throw BadRequestException("serverError.notACity")
+        }
+        val village = buildingRepository.findBuildingByXAndY(x, y) ?: throw NotFoundException("serverError.noVillage")
+        if (village.type != BuildingType.VILLAGE) {
+            throw BadRequestException("serverError.notAVillage")
+        }
+        if (village.user?.id != currentUser.id) {
+            throw BadRequestException("serverError.notYourBuilding")
+        }
+        val price = priceService.getPriceForBuildingCreation(currentUser.toDto(), type)
+        if (currentUser.beer!! < price) {
+            throw BadRequestException("serverError.notEnoughBeer")
+        }
+        buildingRepository.delete(village)
+        userRepository.deductBeerFromUser(currentUser.id!!, price)
+        persistBuilding(x, y, type, currentUser)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.BUILDING_CREATED
+            this.x = x
+            this.y = y
+        })
+        return SuccessResponseDto("serverSuccess.cityCreated")
     }
 
 

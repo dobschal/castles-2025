@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
-import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.request.BaseCoordinatesDto
+import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.service.BuildingService
 import eu.dobschal.utils.USER_ROLE
@@ -23,6 +23,12 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     @POST
     @Path("/start-village")
     fun createStartVillage(request: BaseCoordinatesDto) = buildingService.saveStartVillage(request.x, request.y)
+
+    @RolesAllowed(USER_ROLE)
+    @POST
+    @Path("/create-city")
+    fun createCity(request: CreateBuildingRequestDto) =
+        buildingService.createCity(request.x, request.y, request.type)
 
     @RolesAllowed(USER_ROLE)
     @POST
@@ -51,5 +57,5 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     @Path("/collect-beer")
     fun collectBeer(request: CollectBeerRequestDto) =
         buildingService.collectBeer(request.buildingId, request.amountOfBeer)
-    
+
 }

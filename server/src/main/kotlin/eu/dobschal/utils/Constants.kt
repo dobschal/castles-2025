@@ -18,7 +18,7 @@ const val SWORDSMAN_MOVE_PRICE = 10
 const val HORSEMAN_MOVE_PRICE = 15
 
 // Building Prices
-const val CITY_BASE_PRICE = 400
+const val CITY_BASE_PRICE = 3200 // possible to building after having 3 villages
 const val VILLAGE_BASE_PRICE = 400
 const val CASTLE_BASE_PRICE = 200
 const val FARM_BASE_PRICE = 50

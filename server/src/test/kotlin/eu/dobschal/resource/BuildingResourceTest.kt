@@ -2,8 +2,12 @@ package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.BaseCoordinatesDto
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
+import eu.dobschal.model.dto.request.CreateUnitRequestDto
+import eu.dobschal.model.dto.request.MoveUnitRequestDto
 import eu.dobschal.model.dto.response.BuildingsResponseDto
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
+import eu.dobschal.model.dto.response.PricesResponseDto
+import eu.dobschal.model.dto.response.UnitsResponseDto
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.MapTile
@@ -1252,6 +1256,370 @@ class BuildingResourceTest : BaseResourceTest() {
             .extract().`as`(BuildingsResponseDto::class.java)
         assert(response.buildings.size == 4)
     }
-    
+
+    @Test
+    fun `With two villages I cannot afford a city`() {
+        val village1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village1)
+        val village2 = Building().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village2)
+        val pricesResponse = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("/v1/prices")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(PricesResponseDto::class.java)
+        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=0&x2=3&y1=0&y2=3")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 2)
+        assert(response.totalBeerStorage < pricesResponse.buildingPrices[BuildingType.CITY]!!)
+        assert(response.totalBeerStorage == VILLAGE_BASE_PRICE * 2 * 2)
+    }
+
+    @Test
+    fun `With 3 villages I can afford a city`() {
+        val village1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village1)
+        val village2 = Building().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village2)
+        val village3 = Building().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village3)
+        val pricesResponse = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("/v1/prices")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(PricesResponseDto::class.java)
+        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 3)
+        assert(response.totalBeerStorage >= pricesResponse.buildingPrices[BuildingType.CITY]!!)
+        assert(response.totalBeerStorage == VILLAGE_BASE_PRICE * 2 * 2 * 2)
+    }
+
+    @Test
+    fun `Per 2n + 1 villages I can convert a village into a city for the price of a village`() {
+        val village1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village1)
+        userRepository.setBeerTo(user1!!.id!!, CITY_BASE_PRICE)
+        val request = CreateBuildingRequestDto(1, 1, BuildingType.CITY)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/create-city")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 1) // because the village is deleted
+        assert(buildingRepository.countBuildingTypeByUser(user1!!.id!!, BuildingType.CITY) == 1)
+
+    }
+
+    @Test
+    fun `Cannot upgrade without enough beer`() {
+        val village1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village1)
+        userRepository.setBeerTo(user1!!.id!!, CITY_BASE_PRICE - 1)
+        val request = CreateBuildingRequestDto(1, 1, BuildingType.CITY)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/create-city")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 1) // because the village is deleted
+        assert(buildingRepository.countBuildingTypeByUser(user1!!.id!!, BuildingType.VILLAGE) == 1)
+    }
+
+    @Test
+    fun `Cannot upgrade if there is no village`() {
+        val village1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(village1)
+        userRepository.setBeerTo(user1!!.id!!, CITY_BASE_PRICE - 1)
+        val request = CreateBuildingRequestDto(1, 1, BuildingType.CITY)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("$endpoint/create-city")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(buildingRepository.listAll().size == 1) // because the village is deleted
+        assert(buildingRepository.countBuildingTypeByUser(user1!!.id!!, BuildingType.CASTLE) == 1)
+    }
+
+    @Test
+    fun `Second city costs double the price`() {
+        val city1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city1)
+        val pricesResponse = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("/v1/prices")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(PricesResponseDto::class.java)
+        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE * 2)
+    }
+
+    @Test
+    fun `Having a city is increasing the price for the next village like I would have create another village`() {
+        val village = Building().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val city1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city1)
+        val pricesResponse = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("/v1/prices")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(PricesResponseDto::class.java)
+        assert(pricesResponse.buildingPrices[BuildingType.VILLAGE] == VILLAGE_BASE_PRICE * 2 * 2)
+    }
+
+    @Test
+    fun `Having a city is increasing the max beer limit like I would have create another village`() {
+        val village1 = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village1)
+        val village2 = Building().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village2)
+        val city = Building().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city)
+        val pricesResponse = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("/v1/prices")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(PricesResponseDto::class.java)
+        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE * 2)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(BuildingsResponseDto::class.java)
+        assert(response.buildings.size == 3)
+        assert(response.totalBeerStorage < pricesResponse.buildingPrices[BuildingType.CITY]!!)
+        assert(response.totalBeerStorage == VILLAGE_BASE_PRICE * 2 * 2 * 2)
+    }
+
+    @Test
+    fun `I can create a worker on a city too`() {
+        val city = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("/v1/units")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(Unit::class.java)
+        assert(response.type == UnitType.WORKER)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.WORKER)
+        val response2 = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get("/v1/units?x1=0&x2=4&y1=0&y2=4")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response2.units.size == 1)
+        assert(response2.units.first().type == UnitType.WORKER)
+    }
+
+    @Test
+    fun `If I have only one city left, I cannot destroy it`() {
+        val x = 14
+        val y = 14
+        val city = Building().apply {
+            this.x = x
+            this.y = y
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city)
+
+        val request = BaseCoordinatesDto(x, y)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .delete("/v1/buildings/")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+    }
+
+    @Test
+    fun `If I have only one city left and I lose it, I am game over`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.HORSEMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 3
+            y = 5
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val city = Building().apply {
+            x = 3
+            y = 4
+            user = user2
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city)
+        userRepository.setBeerTo(user2!!.id!!, 10)
+
+        assert(unitRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().size == 2)
+        assert(userRepository.findById(user2!!.id!!)!!.beer == 10)
+
+        val request = MoveUnitRequestDto(3, 4, unit.id!!)
+        val response = given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post("/v1/units/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SWORDSMAN)
+        assert(eventRepository.listAll().size == 3)
+        assert(buildingRepository.listAll().size == 1)
+        assert(buildingRepository.listAll().first().user?.id == user1?.id)
+        assert(userRepository.findById(user2!!.id!!)!!.beer == START_BEER)
+        assert(buildingRepository.listAll().first().type == BuildingType.CITY)
+        assert(eventRepository.listAll().last().type == EventType.GAME_OVER)
+    }
 
 }
