@@ -144,13 +144,8 @@ const isAllowedToBuild = computed(() => {
 const isAllowedToBuildBrewery = computed(() => {
   const price = pricesStore.getBuildPrice(BuildingType.FARM);
   const beer = authStore.user?.beer ?? 0;
-  const farmNearBy = buildingStore.findFarmNextTo(
-    unitsStore.activeUnit?.x ?? 0,
-    unitsStore.activeUnit?.y ?? 0,
-    authStore.user?.id ?? -1,
-  );
 
-  return isAllowedToBuild.value && farmNearBy && beer >= price;
+  return isAllowedToBuild.value && beer >= price;
 });
 
 const isAllowedToBuildCastle = computed(() => {

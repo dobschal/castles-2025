@@ -103,8 +103,8 @@ function onWindowResize(): void {
   mapStore.windowHeight = window.innerHeight;
 }
 
-function onMapMouseDown(): void {
-  if (mapStore.mapControlsDisabled) {
+function onMapMouseDown(event: MouseEvent): void {
+  if (mapStore.mapControlsDisabled || event.button !== 0) {
     return;
   }
 
