@@ -16,7 +16,11 @@ class BuildingRepository : PanacheRepository<Building> {
     }
 
     fun findUsersStartVillage(userId: Int): Building? {
-        return find("user.id = ?1 AND type = ?2 ORDER BY createdAt ASC", userId, BuildingType.VILLAGE).firstResult()
+        return find(
+            "user.id = ?1 AND type in ?2 ORDER BY createdAt ASC",
+            userId,
+            listOf(BuildingType.VILLAGE, BuildingType.CITY)
+        ).firstResult()
     }
 
     fun save(building: Building) {

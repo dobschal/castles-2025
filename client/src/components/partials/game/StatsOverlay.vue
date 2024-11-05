@@ -1,10 +1,19 @@
 <template>
   <div class="stats-overlay">
-    <BeerDisplay
-      size="lg"
-      :beer="authStore.user?.beer ?? 0"
-      :limit="buildingsStore.maxBeerStorage"
-    />
+    <div>
+      <BeerDisplay
+        size="lg"
+        :beer="authStore.user?.beer ?? 0"
+        :limit="buildingsStore.maxBeerStorage"
+      />
+    </div>
+    <div :class="{ disabled: buildingsStore.totalGoldStorage === 0 }">
+      <GoldDisplay
+        :gold="authStore.user?.gold ?? 0"
+        :limit="buildingsStore.totalGoldStorage"
+        size="lg"
+      />
+    </div>
   </div>
 </template>
 
@@ -12,6 +21,7 @@
 import { useAuthStore } from "@/store/authStore.ts";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
+import GoldDisplay from "@/components/partials/game/GoldDisplay.vue";
 
 const authStore = useAuthStore();
 const buildingsStore = useBuildingsStore();
@@ -22,12 +32,20 @@ const buildingsStore = useBuildingsStore();
   position: absolute;
   top: 5rem;
   left: 1rem;
-  padding: 10px;
-  font-size: 20px;
-  color: black;
-  background: antiquewhite;
-  box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
-  border: solid 3px rgb(117, 59, 22);
   z-index: 90;
+  display: flex;
+  gap: 1rem;
+
+  & > * {
+    padding: 10px;
+    color: black;
+    background: antiquewhite;
+    box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
+    border: solid 3px rgb(117, 59, 22);
+
+    &.disabled {
+      opacity: 0.5;
+    }
+  }
 }
 </style>

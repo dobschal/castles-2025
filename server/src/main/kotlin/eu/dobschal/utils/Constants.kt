@@ -34,3 +34,6 @@ const val SPEARMAN_MOVES_PER_HOUR = 1
 const val SWORDSMAN_MOVES_PER_HOUR = 2
 const val HORSEMAN_MOVES_PER_HOUR = 3
 
+// Gold
+const val GOLD_STORAGE_PER_CITY = 500
+

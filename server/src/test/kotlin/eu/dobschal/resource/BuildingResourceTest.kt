@@ -1622,4 +1622,9 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(eventRepository.listAll().last().type == EventType.GAME_OVER)
     }
 
+    @Test
+    fun `Per city the user gets a specific amount of gold storage`() {
+        TODO()
+    }
+
 }

@@ -7,5 +7,6 @@ data class BuildingsResponseDto(
     val breweryBeerProductionPerHour: Int,
     val breweryBeerStorage: Int,
     val totalBeerStorage: Int,
-    val amountOfVillages: Int
+    val amountOfVillages: Int,
+    val totalGoldStorage: Int
 )

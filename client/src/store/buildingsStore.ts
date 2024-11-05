@@ -30,6 +30,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const breweryBeerStorage = ref<number>(-1);
   const maxBeerStorage = ref<number>(-1);
   const amountOfOwnVillages = ref<number>(-1);
+  const totalGoldStorage = ref<number>(-1);
 
   async function loadStartVillage(): Promise<void> {
     try {
@@ -63,6 +64,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
         breweryBeerStorage.value = response.breweryBeerStorage;
         maxBeerStorage.value = response.totalBeerStorage;
         amountOfOwnVillages.value = response.amountOfVillages;
+        totalGoldStorage.value = response.totalGoldStorage;
       } catch (e) {
         handleFatalError(e);
       }
@@ -119,5 +121,6 @@ export const useBuildingsStore = defineStore("buildings", () => {
     activeBuilding,
     findFarmNextTo,
     breweryBeerStorage,
+    totalGoldStorage,
   };
 });

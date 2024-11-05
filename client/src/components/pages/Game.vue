@@ -139,8 +139,6 @@ async function keepLoadingEvents(): Promise<void> {
 
     await eventsStore.loadEvents();
     eventLoopTimeout = setTimeout(() => {
-      console.info("Loading events again");
-
       if (isMounted) keepLoadingEvents();
     }, 1000);
   } catch (e) {

@@ -5,6 +5,11 @@
       class="banner"
       :style="bannerStyle"
     >
+      <img
+        :src="'/avatars/avatar-' + (building.user.avatarId ?? 0) + '.png'"
+        alt="Avatar"
+        :style="bannerImageStyle"
+      />
       {{ building.user.username }}
     </p>
     <template v-if="building.type === BuildingType.VILLAGE">
@@ -56,6 +61,24 @@
         v-else
         src="../../../../assets/tiles/city-disabled.png"
         class="building city"
+        alt="Building"
+      />
+      <img
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/city-red-forground.png"
+        class="building-top-layer city"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/city-beige-forground.png"
+        class="building-top-layer city"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/city-disabled-forground.png"
+        class="building-top-layer city"
         alt="Building"
       />
     </template>
@@ -162,6 +185,7 @@ import BreweryAction from "@/components/partials/game/actions/BreweryAction.vue"
 import { MapTileState } from "@/types/enum/MapTileState.ts";
 import BeerCollectBubble from "@/components/partials/game/BeerCollectBubble.vue";
 import CastleAction from "@/components/partials/game/actions/CastleAction.vue";
+import CityAction from "@/components/partials/game/actions/CityAction.vue";
 
 const props = defineProps<{
   building: BuildingEntity;
@@ -178,6 +202,15 @@ const isDisabled = computed(() => {
 
 const isOwnBuilding = computed(() => {
   return props.building.user.id === authStore.user?.id;
+});
+
+const bannerImageStyle = computed(() => {
+  return {
+    width: Math.ceil(mapStore.mapTileSize / 3 + 1) + "px",
+    height: Math.ceil(mapStore.mapTileSize / 3 + 1) + "px",
+    left: Math.ceil(-mapStore.mapTileSize / 6) + "px",
+    borderWidth: Math.floor(mapStore.mapTileSize / 40) + "px",
+  };
 });
 
 const bannerStyle = computed(() => {
@@ -206,6 +239,9 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
   buildingsStore.activeBuilding = props.building;
   switch (props.building.type) {
+    case BuildingType.CITY:
+      ACTION.dispatch(CityAction);
+      break;
     case BuildingType.VILLAGE:
       ACTION.dispatch(VillageAction);
       break;
@@ -245,6 +281,18 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     line-height: 1;
     transform: rotate(45deg) translateX(23%) translateY(-160%);
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+
+    img {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 0, 0, 0.5);
+      transform: translateY(-50%);
+    }
   }
 
   img.building {
@@ -303,6 +351,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     left: 0;
     pointer-events: none;
     z-index: 4;
+
+    &.city {
+      width: 150%;
+      margin-left: -30%;
+      margin-top: -29%;
+    }
 
     &.village {
       width: 150%;

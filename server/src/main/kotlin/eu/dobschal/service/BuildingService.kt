@@ -12,6 +12,7 @@ import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
 import eu.dobschal.utils.BREWERY_BEER_PRODUCTION_PER_HOUR
 import eu.dobschal.utils.BREWERY_BEER_STORAGE
+import eu.dobschal.utils.GOLD_STORAGE_PER_CITY
 import eu.dobschal.utils.VILLAGE_BASE_PRICE
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -69,7 +70,16 @@ class BuildingService @Inject constructor(
             BREWERY_BEER_STORAGE,
             getTotalBeerStorage(currentUser.id!!),
             buildingRepository.countVillagesByUser(currentUser.id!!),
+            getTotalGoldStorage(currentUser.id!!),
         )
+    }
+
+    fun getTotalGoldStorage(userId: Int): Int {
+        val usersBuildings = buildingRepository.findAllByUser(userId)
+        val storageFactor = GOLD_STORAGE_PER_CITY;
+        val amountOfVillagesAndCities =
+            usersBuildings.count { it.type == BuildingType.CITY }
+        return storageFactor * amountOfVillagesAndCities
     }
 
     fun getTotalBeerStorage(userId: Int): Int {

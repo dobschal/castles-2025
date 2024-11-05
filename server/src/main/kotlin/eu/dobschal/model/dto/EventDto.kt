@@ -28,11 +28,13 @@ class EventDto(
         @ProjectedFieldName("user1.username") user1Username: String? = null,
         @ProjectedFieldName("user1.beer") user1Beer: Int? = null,
         @ProjectedFieldName("user1.createdAt") user1CreatedAt: LocalDateTime? = null,
+        @ProjectedFieldName("user1.gold") user1Gold: Int? = null,
         @ProjectedFieldName("user1.avatarId") user1AvatarId: Int? = null,
         @ProjectedFieldName("user2.id") user2Id: Int? = null,
         @ProjectedFieldName("user2.username") user2Username: String? = null,
         @ProjectedFieldName("user2.beer") user2Beer: Int? = null,
         @ProjectedFieldName("user2.createdAt") user2CreatedAt: LocalDateTime? = null,
+        @ProjectedFieldName("user2.gold") user2Gold: Int? = null,
         @ProjectedFieldName("user2.avatarId") user2AvatarId: Int? = null,
         @ProjectedFieldName("building.id") buildingId: Int? = null,
         @ProjectedFieldName("building.x") buildingX: Int? = null,
@@ -47,8 +49,8 @@ class EventDto(
         @ProjectedFieldName("unit.createdAt") unitCreatedAt: LocalDateTime? = null,
         createdAt: LocalDateTime? = null,
     ) : this(id, x, y, type, null, null, null, null, createdAt) {
-        user1 = UserDto(user1Id, user1Username, "", user1Beer, user1AvatarId, user1CreatedAt)
-        user2 = UserDto(user2Id, user2Username, "", user2Beer, user2AvatarId, user2CreatedAt)
+        user1 = UserDto(user1Id, user1Username, "", user1Beer, user1Gold, user1AvatarId, user1CreatedAt)
+        user2 = UserDto(user2Id, user2Username, "", user2Beer, user2Gold, user2AvatarId, user2CreatedAt)
         building = BuildingDto(buildingId, buildingX, buildingY, buildingType, buildingLevel, null, buildingCreatedAt)
         unit = UnitDto(unitId, unitX, unitY, unitType, null, unitCreatedAt)
     }

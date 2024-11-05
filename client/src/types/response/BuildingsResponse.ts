@@ -6,4 +6,5 @@ export interface BuildingsResponse {
   breweryBeerStorage: number;
   totalBeerStorage: number;
   amountOfVillages: number;
+  totalGoldStorage: number;
 }

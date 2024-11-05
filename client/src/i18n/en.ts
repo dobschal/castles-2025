@@ -198,4 +198,7 @@ export const en = {
     button: "Destroy building",
     question: "Do you really want to destroy this building?",
   },
+  cityAction: {
+    cityOf: "City of {playerName}",
+  },
 };

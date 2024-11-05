@@ -204,4 +204,7 @@ export const de = {
     button: "Gebäude zerstören",
     question: "Möchtest du dieses Gebäude wirklich zerstören?",
   },
+  cityAction: {
+    cityOf: "Stadt von {playerName}",
+  },
 };

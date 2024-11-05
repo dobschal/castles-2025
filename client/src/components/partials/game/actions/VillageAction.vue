@@ -28,9 +28,14 @@
     {{ t("villageAction.createWorker") }}
     <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
   </CButton>
-  <CButton v-if="isOwnBuilding" class="small with-icon" @click="upgradeToCity">
+  <CButton
+    v-if="isOwnBuilding"
+    :disabled="!isUpgradeAvailable"
+    class="small with-icon"
+    @click="upgradeToCity"
+  >
     {{ t("villageAction.upgradeToCity") }}
-    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
+    <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CITY)" />
   </CButton>
   <CButton v-if="isOwnBuilding" class="small" @click="destroy">
     {{ t("destroyBuilding.button") }}
@@ -59,6 +64,7 @@ import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -104,6 +110,13 @@ const isBuildingWorkerAvailable = computed(() => {
   return !unitAtPosition.value && beer >= price;
 });
 
+const isUpgradeAvailable = computed(() => {
+  const price = pricesStore.getBuildPrice(BuildingType.CITY);
+  const beer = authStore.user?.beer ?? 0;
+
+  return beer >= price;
+});
+
 onMounted(() => {
   if (!buildingsStore.activeBuilding) {
     return handleFatalError(new Error("No active building set"));
@@ -136,8 +149,18 @@ onBeforeUnmount(() => {
   }
 });
 
-function upgradeToCity(): void {
-  console.log("YEAH");
+async function upgradeToCity(): Promise<void> {
+  try {
+    if (!buildingsStore.activeBuilding) return;
+    await BuildingGateway.instance.createCity({
+      x: buildingsStore.activeBuilding.x,
+      y: buildingsStore.activeBuilding.y,
+    });
+    eventsStore.ownActionHappened = true;
+    close();
+  } catch (error) {
+    handleFatalError(error);
+  }
 }
 
 async function destroy(): Promise<void> {
