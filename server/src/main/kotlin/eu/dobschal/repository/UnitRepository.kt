@@ -48,7 +48,7 @@ class UnitRepository : PanacheRepository<Unit> {
     }
 
     fun countUnitsByUser(userId: Int): Int {
-        return count("user.id = ?1 and type != ?2", userId, UnitType.WORKER).toInt()
+        return count("user.id = ?1", userId).toInt()
     }
 
     fun findUnitByTypeAndUser(userId: Int, unitType: UnitType): Unit? {

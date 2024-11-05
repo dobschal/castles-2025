@@ -692,7 +692,7 @@ class UnitResourceTest : BaseResourceTest() {
             type = BuildingType.VILLAGE
         }
         buildingRepository.save(village)
-        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        val request = CreateUnitRequestDto(1, 1, UnitType.SPEARMAN)
         given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")

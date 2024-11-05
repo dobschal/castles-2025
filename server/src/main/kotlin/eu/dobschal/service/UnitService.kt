@@ -62,9 +62,11 @@ class UnitService @Inject constructor(
             throw BadRequestException("serverError.notEnoughBeer")
         }
 
-        buildingRepository.countCastlesByUser(user.id!!).let {
-            if (max(2, it * UNITS_PER_CASTLE) <= unitRepository.countUnitsByUser(user.id!!)) {
-                throw BadRequestException("serverError.tooManyUnits")
+        if (type != UnitType.WORKER) { // Workers are not limited
+            buildingRepository.countCastlesByUser(user.id!!).let {
+                if (max(2, it * UNITS_PER_CASTLE) <= unitRepository.countUnitsByUser(user.id!!)) {
+                    throw BadRequestException("serverError.tooManyUnits")
+                }
             }
         }
 
