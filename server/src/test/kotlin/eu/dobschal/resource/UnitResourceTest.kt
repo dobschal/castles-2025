@@ -675,14 +675,14 @@ class UnitResourceTest : BaseResourceTest() {
             x = 2
             y = 2
             user = user1
-            type = UnitType.WORKER
+            type = UnitType.HORSEMAN
         }
         unitRepository.save(unit1)
         val unit2 = Unit().apply {
             x = 3
             y = 2
             user = user1
-            type = UnitType.WORKER
+            type = UnitType.SPEARMAN
         }
         unitRepository.save(unit2)
         val village = Building().apply {

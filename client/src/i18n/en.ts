@@ -33,6 +33,7 @@ export const en = {
     notYourBuilding: "You can only destroy your own buildings.",
     lastVillage: "You cannot destroy your last village.",
     noFarm: "No farm nearby!",
+    tooManyUnits: "You have reached the limit of units. Build more castles.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",

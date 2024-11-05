@@ -34,6 +34,7 @@ export const de = {
     notYourBuilding: "Du kannst nur deine eigenen Gebäude zerstören.",
     lastVillage: "Du kannst dein letztes Dorf nicht zerstören.",
     noFarm: "Keine Farm in der Nähe!",
+    tooManyUnits: "Du hast das Limit an Einheiten erreicht. Baue mehr Burgen.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
