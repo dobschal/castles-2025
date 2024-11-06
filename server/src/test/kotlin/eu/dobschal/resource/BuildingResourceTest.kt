@@ -1673,7 +1673,26 @@ class BuildingResourceTest : BaseResourceTest() {
 
     @Test
     fun `Per city the user gets a specific amount of gold storage`() {
-        TODO()
+        val response = assertOkGetRequest("/v1/buildings", BuildingsResponseDto::class.java)
+        assert(response.totalGoldStorage == 0)
+        val city = Building().apply {
+            x = 5
+            y = 5
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city)
+        val response2 = assertOkGetRequest("/v1/buildings", BuildingsResponseDto::class.java)
+        assert(response2.totalGoldStorage == GOLD_STORAGE_PER_CITY)
+        val city2 = Building().apply {
+            x = 6
+            y = 6
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city2)
+        val response3 = assertOkGetRequest("/v1/buildings", BuildingsResponseDto::class.java)
+        assert(response3.totalGoldStorage == GOLD_STORAGE_PER_CITY * 2)
     }
 
 }

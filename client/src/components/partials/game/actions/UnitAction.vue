@@ -144,7 +144,7 @@ const isAllowedToBuild = computed(() => {
 });
 
 const isAllowedToBuildBrewery = computed(() => {
-  const price = pricesStore.getBuildPrice(BuildingType.FARM);
+  const price = pricesStore.getBuildPrice(BuildingType.BREWERY);
   const beer = authStore.user?.beer ?? 0;
 
   return isAllowedToBuild.value && beer >= price;

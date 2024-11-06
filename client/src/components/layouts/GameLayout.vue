@@ -30,20 +30,22 @@
   <section>
     <slot />
   </section>
-  <audio ref="audio" loop volume="0.2">
-    <source src="/sounds/background-music.mp3" type="audio/mpeg" />
-  </audio>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import router from "@/core/router.ts";
 import NavigationMenu from "@/components/partials/NavigationMenu.vue";
-import { Optional } from "@/types/core/Optional.ts";
+import { AudioPlayer } from "@/core/AudioPlayer.ts";
 
 const dropdownMenuVisible = ref(false);
-const audio = ref<Optional<HTMLAudioElement>>();
 const audioPaused = ref(true);
+const audioPlayer = new AudioPlayer(
+  "/sounds/background-music.mp3",
+  "audio/mpeg",
+  0.2,
+  true,
+);
 
 router.afterEach(() => {
   closeDropdownMenu();
@@ -58,15 +60,11 @@ function closeDropdownMenu(): void {
 }
 
 function toggleAudio(): void {
-  if (!audio.value) {
-    return;
-  }
-
-  if (audio.value.paused) {
-    audio.value.play();
+  if (audioPaused.value) {
+    audioPlayer.play();
     audioPaused.value = false;
   } else {
-    audio.value.pause();
+    audioPlayer.stop();
     audioPaused.value = true;
   }
 }
@@ -99,7 +97,7 @@ nav {
 
     img {
       height: 2rem;
-      margin-right: 0rem;
+      margin-right: 0;
       transform: translateY(0.35rem);
     }
   }

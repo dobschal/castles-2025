@@ -64,6 +64,29 @@ open class BaseResourceTest {
         user2 = userRepository.createUser("user2", hash("password"))
     }
 
+    fun <ResponseType> assertOkPostRequest(url: String, request: Any, responseType: Class<ResponseType>): ResponseType {
+        return given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(url)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(responseType)
+    }
+
+    fun <ResponseType> assertOkGetRequest(url: String, responseType: Class<ResponseType>): ResponseType {
+        return given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .`when`()
+            .get(url)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(responseType)
+    }
+
     private fun getJwt(username: String): String {
         val response = given()
             .body(UserCredentialsDto(username, "password"))

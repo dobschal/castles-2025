@@ -26,7 +26,7 @@
         <CText path="registration.toLogin" />
       </CButton>
     </form>
-    <p>
+    <p class="footer">
       <small>
         <CText path="registration.cookieInfo" />
         <br />
@@ -104,11 +104,13 @@ async function submitForm(): Promise<void> {
   color: red;
 }
 
-small {
-  font-size: 0.8rem;
-  line-height: 1.5;
-  display: block;
-  opacity: 0.5;
+.footer {
+  small {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    display: block;
+    opacity: 0.5;
+  }
 }
 
 form {
