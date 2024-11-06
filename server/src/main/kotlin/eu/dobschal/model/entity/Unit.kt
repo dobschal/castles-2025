@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 @NamedQueries(
     NamedQuery(
         name = "Unit.findAllByUser",
-        query = "select id, x, y, type, user.id, user.username, user.beer, user.avatarId, user.createdAt, createdAt from Unit u where u.user.id = ?1"
+        query = "select id, x, y, type, user.id, user.username, user.beer, user.gold, user.avatarId, user.createdAt, createdAt from Unit u where u.user.id = ?1"
     ),
     NamedQuery(
         name = "Unit.findUnitsBetween",
-        query = "select id, x, y, type, user.id, user.username, user.beer, user.avatarId, user.createdAt, createdAt from Unit u where u.x >= ?1 and u.x < ?2 and u.y >= ?3 and u.y < ?4"
+        query = "select id, x, y, type, user.id, user.username, user.beer, user.gold, user.avatarId, user.createdAt, createdAt from Unit u where u.x >= ?1 and u.x < ?2 and u.y >= ?3 and u.y < ?4"
     )
 )
 class Unit {

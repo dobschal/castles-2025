@@ -25,14 +25,23 @@ export const de = {
     SPEARMAN: "Speerträger",
     HORSEMAN: "Reiter",
   },
+  buildingType: {
+    VILLAGE: "Dorf",
+    CASTLE: "Burg",
+    FARM: "Farm",
+    BREWERY: "Brauerei",
+    CITY: "Stadt",
+  },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
     onlyOnePerVillage:
-      "Du kannst nur zwei Brauereien, eine Farm und eine Burg pro Dorf bauen.",
+      "Du kannst nur zwei Brauereien, eine Farm und eine Burg pro Dorf oder Stadt bauen.",
     tooManyMoves:
       "Die Einheit hat ihr Limit an Zügen für diese Stunde erreicht.",
     notYourBuilding: "Du kannst nur deine eigenen Gebäude zerstören.",
     lastVillage: "Du kannst dein letztes Dorf nicht zerstören.",
+    noFarm: "Keine Farm in der Nähe!",
+    tooManyUnits: "Du hast das Limit an Einheiten erreicht. Baue mehr Burgen.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -56,6 +65,7 @@ export const de = {
       "Fehler bei der Anmeldung aufgetreten. Bitte überprüfe deine Eingaben.",
     action: "Anmelden",
     toRegistration: "Zur Registrierung",
+    aboutTheGame: "Mehr über das Spiel",
   },
   startVillageAction: {
     text: "Bitte wähle einen Standort für dein erstes Dorf.",
@@ -65,13 +75,16 @@ export const de = {
     createWorker: "Arbeiter erstellen",
     moveUnit: "Einheit bewegen ({0}/{1})",
     villageOf: "Dorf von {playerName}",
+    upgradeToCity: "Zu Stadt ausbauen",
   },
   farmAction: {
     farmOf: "Farm von {playerName}",
   },
   breweryAction: {
     breweryOf:
-      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert.",
+      "Brauerei von {playerName} welche {beer} Bier pro Stunde produziert und maximal {breweryBeerStorage} Bier speichert. Aktuell sind {beerToCollect} Bier verfügbar.",
+    noFarmNextTo:
+      "Diese Brauerei hat keine Farm in der Nähe und produziert daher kein Bier.",
   },
   unitAction: {
     unitOf: "Einheit von {playerName} in {x}, {y}",
@@ -106,6 +119,7 @@ export const de = {
       BUILDING_CONQUERED: "Du hast ein Gebäude bei {x}, {y} erobert.",
       BUILDING_DESTROYED: "Du hast ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "Du hast einem {unitType} bei {x}, {y} verloren.",
+      GAME_OVER: "Du hast dein letztes Dorf verloren.",
     },
     other: {
       UNIT_MOVED: "{playerName} hat einen {unitType} nach {x}, {y} bewegt.",
@@ -115,6 +129,7 @@ export const de = {
       BUILDING_CONQUERED: "{playerName} hat ein Gebäude bei {x}, {y} erobert.",
       BUILDING_DESTROYED: "{playerName} hat ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "{playerName} hat einem {unitType} bei {x}, {y} verloren.",
+      GAME_OVER: "{playerName} hat sein letztes Dorf verloren.",
     },
   },
   tutorialAction: {
@@ -148,7 +163,7 @@ export const de = {
       "Es gibt verschiedene Gebäude im Spiel, die unterschiedliche Funktionen\n" +
       "      haben. Farm und Brauerei produzieren Bier, das für den Bau von Einheiten\n" +
       "      und Gebäuden gebraucht wird. Farm und Brauerei müssen direkt nebeneinander\n" +
-      "      sein. In Burgen könnt ihr Einheiten zur Verteidigung und zum Angriff\n" +
+      "      sein und man kann 2 Brauereien und eine Farm pro Dorf bauen. In Burgen könnt ihr Einheiten zur Verteidigung und zum Angriff\n" +
       "      erstellen. Dörfer können Arbeiter ausbilden und speichern euer Bier. Je\n" +
       "      mehr Dörfer ihr habt, desto mehr Bier könnt ihr speichern.\n" +
       "      Im Fall einer Eroberung werden Farm und Brauerei zerstört. Dörfer und\n" +
@@ -176,6 +191,12 @@ export const de = {
       "      Unterstützung! Drachen, Städte und vieles mehr sind geplant. Bleibt\n" +
       "      gespannt und schreibt mir gerne, wenn ihr Ideen oder Anregungen habt.\n" +
       "      Vielen Dank fürs Testen und Spielen! 🍻",
+    title6: "Kosten",
+    paragraph6:
+      "Kosten für Gebäude und Einheiten berechnen sich auf Basis von bereits erstellten Gebäuden und Einheiten." +
+      "Besitzt man z.B. bereits eine Brauerei, so kostet die nächste Brauerei mehr Bier. " +
+      "Gleiches gilt für Einheiten und Burgen. Beispiel: Man besitzt 3 Einheiten (Typ egal) und " +
+      "der Basispreis für einen Reiter beträgt 100 Bier. Der nächste Reiter würde 100 x 2 x 2 x 2 = 800 Bier kosten.",
   },
   users: {
     link: "Spieler",
@@ -190,5 +211,13 @@ export const de = {
   destroyBuilding: {
     button: "Gebäude zerstören",
     question: "Möchtest du dieses Gebäude wirklich zerstören?",
+  },
+  cityAction: {
+    cityOf: "Stadt von {playerName}",
+  },
+  unitsAndBuildings: {
+    link: "Einheiten & Gebäude",
+    description:
+      "Hier siehst du alle Einheiten und Gebäude von {playerName}. Klicke auf ein Gebäude oder eine Einheit um es auf der Karte anzuzeigen.",
   },
 };

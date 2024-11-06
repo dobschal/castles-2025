@@ -77,6 +77,9 @@
         alt="Unit"
       />
     </template>
+    <div class="countdown" :style="countdownStyle" v-if="nextMoveIn">
+      {{ nextMoveIn }}
+    </div>
   </div>
 </template>
 
@@ -91,14 +94,20 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
+import { useMapStore } from "@/store/mapStore.ts";
 
 const buildingsStore = useBuildingsStore();
 const unitsStore = useUnitsStore();
 const authStore = useAuthStore();
+const mapStore = useMapStore();
 const props = defineProps<{
   unit: UnitEntity;
   mapTile: MapTileDto;
 }>();
+
+const nextMoveIn = computed(() => {
+  return unitsStore.nextMoveIn(props.unit);
+});
 
 const isDisabled = computed(() => {
   return props.mapTile.state === MapTileState.FORBIDDEN;
@@ -112,6 +121,12 @@ const buildingOnPosition = computed(() => {
 
 const isOwnUnit = computed(() => {
   return props.unit.user.id === authStore.user?.id;
+});
+
+const countdownStyle = computed<Record<string, string>>(() => {
+  return {
+    fontSize: `${Math.floor(mapStore.mapTileSize / 8)}px`,
+  };
 });
 
 onMounted(() => {
@@ -130,8 +145,6 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   ) {
     return;
   }
-
-  console.log("UnitTile: onMapTileClicked", props.unit.id);
 
   unitsStore.activeUnit = props.unit;
   ACTION.dispatch(WorkerAction);
@@ -170,6 +183,20 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       margin-left: -5%;
       margin-top: -25%;
     }
+  }
+
+  .countdown {
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 1px 1px 1px black;
+    z-index: 50;
+    transform: rotate(45deg);
   }
 }
 </style>

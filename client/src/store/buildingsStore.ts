@@ -28,14 +28,19 @@ export const useBuildingsStore = defineStore("buildings", () => {
   const loadBuildingsQueue = new Queue(500, 3);
   const breweryBeerProductionPerHour = ref<number>(-1);
   const breweryBeerStorage = ref<number>(-1);
-  const villageLevel1BeerStorage = ref<number>(-1);
+  const maxBeerStorage = ref<number>(-1);
+  const amountOfOwnVillages = ref<number>(-1);
+  const totalGoldStorage = ref<number>(-1);
 
   async function loadStartVillage(): Promise<void> {
     try {
       startVillage.value = await BuildingGateway.instance.getStartVillage();
-      console.info("Start village: ", startVillage.value);
     } catch (error) {
       if (error instanceof Response && error.status === 404) {
+        mapStore.goToPosition({
+          x: Math.round(Math.random() * 200 - 100),
+          y: Math.round(Math.random() * 200 - 100),
+        });
         // Show the original map for two seconds and then
         // dispatch the start village action that grays out the map
         await delay(2000);
@@ -57,7 +62,9 @@ export const useBuildingsStore = defineStore("buildings", () => {
         breweryBeerProductionPerHour.value =
           response.breweryBeerProductionPerHour;
         breweryBeerStorage.value = response.breweryBeerStorage;
-        villageLevel1BeerStorage.value = response.villageLevel1BeerStorage;
+        maxBeerStorage.value = response.totalBeerStorage;
+        amountOfOwnVillages.value = response.amountOfVillages;
+        totalGoldStorage.value = response.totalGoldStorage;
       } catch (e) {
         handleFatalError(e);
       }
@@ -104,6 +111,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
   }
 
   return {
+    maxBeerStorage,
     breweryBeerProductionPerHour,
     calculateBeerToCollect,
     loadBuildings,
@@ -112,5 +120,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
     startVillage,
     activeBuilding,
     findFarmNextTo,
+    breweryBeerStorage,
+    totalGoldStorage,
   };
 });

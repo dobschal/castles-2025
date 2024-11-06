@@ -85,6 +85,7 @@ import { handleFatalError } from "@/core/util.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const unitsStore = useUnitsStore();
 const pricesStore = usePricesStore();
@@ -92,6 +93,7 @@ const mapStore = useMapStore();
 const buildingStore = useBuildingsStore();
 const authStore = useAuthStore();
 const tutorialStore = useTutorialStore();
+const eventsStore = useEventsStore();
 const isLoading = ref(false);
 
 const { t } = useI18n();
@@ -142,15 +144,10 @@ const isAllowedToBuild = computed(() => {
 });
 
 const isAllowedToBuildBrewery = computed(() => {
-  const price = pricesStore.getBuildPrice(BuildingType.FARM);
+  const price = pricesStore.getBuildPrice(BuildingType.BREWERY);
   const beer = authStore.user?.beer ?? 0;
-  const farmNearBy = buildingStore.findFarmNextTo(
-    unitsStore.activeUnit?.x ?? 0,
-    unitsStore.activeUnit?.y ?? 0,
-    authStore.user?.id ?? -1,
-  );
 
-  return isAllowedToBuild.value && farmNearBy && beer >= price;
+  return isAllowedToBuild.value && beer >= price;
 });
 
 const isAllowedToBuildCastle = computed(() => {
@@ -209,6 +206,7 @@ async function saveBuilding(type: BuildingType): Promise<void> {
       },
       type,
     );
+    eventsStore.ownActionHappened = true;
     close();
 
     if (

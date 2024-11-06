@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @NamedQueries(
     NamedQuery(
         name = "User.findByUsername",
-        query = "select id, username, password, beer, avatarId, createdAt from User u where u.username = ?1"
+        query = "select id, username, password, beer, gold, avatarId, createdAt from User u where u.username = ?1"
     )
 )
 class User {
@@ -27,6 +27,9 @@ class User {
     @Column(name = "beer", nullable = false)
     var beer: Int? = null
 
+    @Column(name = "gold", nullable = false)
+    var gold: Int? = null
+
     @Column(name = "avatar_id", nullable = false)
     var avatarId: Int? = null
 
@@ -38,6 +41,7 @@ class User {
         username,
         password,
         beer,
+        gold,
         avatarId,
         createdAt
     )

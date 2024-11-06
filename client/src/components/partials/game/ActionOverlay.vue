@@ -11,11 +11,18 @@ import { ACTION } from "@/events.ts";
 import { type Component, shallowRef, ShallowRef } from "vue";
 import { Optional } from "@/types/core/Optional.ts";
 import { useActionStore } from "@/store/actionStore.ts";
+import { AudioPlayer } from "@/core/AudioPlayer.ts";
 
 const component: ShallowRef<Optional<Component>> = shallowRef();
 let promise: Promise<void> | undefined;
 let resolve: (() => void) | undefined;
 const actionStore = useActionStore();
+const audioPlayer = new AudioPlayer(
+  "/sounds/mouse-click.wav",
+  "audio/wav",
+  0.75,
+  false,
+);
 
 // Actually we could have this managed via store only, but an event
 // is more flexible and can be used from anywhere. Also it handles
@@ -27,6 +34,7 @@ ACTION.on((c: Component) => {
     return;
   }
 
+  audioPlayer.play();
   actionStore.isActionActive = true;
   component.value = c;
   promise = new Promise((r) => {

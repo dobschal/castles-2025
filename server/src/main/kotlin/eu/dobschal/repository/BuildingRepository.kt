@@ -16,7 +16,11 @@ class BuildingRepository : PanacheRepository<Building> {
     }
 
     fun findUsersStartVillage(userId: Int): Building? {
-        return find("user.id = ?1 AND type = ?2 ORDER BY createdAt ASC", userId, BuildingType.VILLAGE).firstResult()
+        return find(
+            "user.id = ?1 AND type in ?2 ORDER BY createdAt ASC",
+            userId,
+            listOf(BuildingType.VILLAGE, BuildingType.CITY)
+        ).firstResult()
     }
 
     fun save(building: Building) {
@@ -48,6 +52,10 @@ class BuildingRepository : PanacheRepository<Building> {
         return countBuildingTypeByUser(userId, BuildingType.VILLAGE)
     }
 
+    fun countCitiesByUser(userId: Int): Int {
+        return countBuildingTypeByUser(userId, BuildingType.CITY)
+    }
+
     fun countCastlesByUser(userId: Int): Int {
         return countBuildingTypeByUser(userId, BuildingType.CASTLE)
     }
@@ -58,5 +66,9 @@ class BuildingRepository : PanacheRepository<Building> {
 
     fun findBuildingByTypeAndUser(userId: Int, buildingType: BuildingType): Building? {
         return find("user.id = ?1 and type = ?2", userId, buildingType).firstResult()
+    }
+
+    fun deleteAllByUser(userId: Int) {
+        delete("user.id = ?1", userId)
     }
 }

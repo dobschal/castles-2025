@@ -22,4 +22,11 @@ export class UnitGateway extends Gateway {
   async moveUnit(x: number, y: number, unitId: number): Promise<UnitEntity> {
     return this.request<UnitEntity>("POST", `/v1/units/move`, { x, y, unitId });
   }
+
+  async getUnitsByUser(userId: number): Promise<Array<UnitEntity>> {
+    return this.request<Array<UnitEntity>>(
+      "GET",
+      "/v1/units/by-user?user_id=" + userId,
+    );
+  }
 }

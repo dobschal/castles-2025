@@ -1,10 +1,15 @@
 <template>
   <div class="building-tile" :class="{ 'is-own-building': isOwnBuilding }">
     <p
-      v-if="building.type === BuildingType.VILLAGE"
+      v-if="[BuildingType.VILLAGE, BuildingType.CITY].includes(building.type)"
       class="banner"
       :style="bannerStyle"
     >
+      <img
+        :src="'/avatars/avatar-' + (building.user.avatarId ?? 0) + '.png'"
+        alt="Avatar"
+        :style="bannerImageStyle"
+      />
       {{ building.user.username }}
     </p>
     <template v-if="building.type === BuildingType.VILLAGE">
@@ -36,6 +41,44 @@
         v-else
         src="../../../../assets/tiles/village-top-layer-disabled-min.png"
         class="building-top-layer village"
+        alt="Building"
+      />
+    </template>
+    <template v-if="building.type === BuildingType.CITY">
+      <img
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/city-red.png"
+        class="building city"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/city-beige.png"
+        class="building city"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/city-disabled.png"
+        class="building city"
+        alt="Building"
+      />
+      <img
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/city-red-forground.png"
+        class="building-top-layer city"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/city-beige-forground.png"
+        class="building-top-layer city"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/city-disabled-forground.png"
+        class="building-top-layer city"
         alt="Building"
       />
     </template>
@@ -142,6 +185,7 @@ import BreweryAction from "@/components/partials/game/actions/BreweryAction.vue"
 import { MapTileState } from "@/types/enum/MapTileState.ts";
 import BeerCollectBubble from "@/components/partials/game/BeerCollectBubble.vue";
 import CastleAction from "@/components/partials/game/actions/CastleAction.vue";
+import CityAction from "@/components/partials/game/actions/CityAction.vue";
 
 const props = defineProps<{
   building: BuildingEntity;
@@ -160,9 +204,21 @@ const isOwnBuilding = computed(() => {
   return props.building.user.id === authStore.user?.id;
 });
 
-const bannerStyle = computed(() => {
+const bannerImageStyle = computed(() => {
   return {
-    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
+    width: Math.ceil(mapStore.mapTileSize / 3) + "px",
+    height: Math.ceil(mapStore.mapTileSize / 3) + "px",
+    left: Math.ceil(-mapStore.mapTileSize / 4) + "px",
+    borderWidth: Math.floor(mapStore.mapTileSize / 40) + "px",
+  };
+});
+
+const bannerStyle = computed(() => {
+  const padding = Math.floor(mapStore.mapTileSize / 20);
+
+  return {
+    padding: `${padding}px ${padding}px ${padding}px ${padding * 2.5}px`,
+    fontSize: Math.floor(mapStore.mapTileSize / 10) + "px",
   };
 });
 
@@ -185,6 +241,9 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
   buildingsStore.activeBuilding = props.building;
   switch (props.building.type) {
+    case BuildingType.CITY:
+      ACTION.dispatch(CityAction);
+      break;
     case BuildingType.VILLAGE:
       ACTION.dispatch(VillageAction);
       break;
@@ -213,16 +272,30 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   .banner {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: 100%;
+    width: fit-content;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
     text-align: center;
     padding: 5px;
     z-index: 2;
     font-size: 0.75rem;
-    transform: rotate(45deg) translateX(23%) translateY(-160%);
+    line-height: 1;
+    transform: rotate(45deg) translate(-35%, -35%);
+    transform-origin: 0 0;
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+
+    img {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 0, 0, 0.5);
+      transform: translateY(-50%);
+    }
   }
 
   img.building {
@@ -231,6 +304,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     left: 0;
     pointer-events: none;
     z-index: 1;
+
+    &.city {
+      width: 150%;
+      margin-left: -30%;
+      margin-top: -29%;
+    }
 
     &.village {
       width: 150%;
@@ -275,6 +354,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     left: 0;
     pointer-events: none;
     z-index: 4;
+
+    &.city {
+      width: 150%;
+      margin-left: -30%;
+      margin-top: -29%;
+    }
 
     &.village {
       width: 150%;

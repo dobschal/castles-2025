@@ -14,11 +14,13 @@ import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const unitsStore = useUnitsStore();
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const { t } = useI18n();
+const eventsStore = useEventsStore();
 
 const emit = defineEmits(["close-action"]);
 
@@ -83,6 +85,7 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 async function createStartVillage(mapTile: MapTileDto): Promise<void> {
   try {
     await BuildingGateway.instance.saveStartVillage(mapTile);
+    eventsStore.ownActionHappened = true;
     emit("close-action");
   } catch (error) {
     handleFatalError(error);

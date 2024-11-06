@@ -58,4 +58,8 @@ class UnitRepository : PanacheRepository<Unit> {
     fun findUnitByTypeInAndUser(userId: Int, unitTypes: List<UnitType>): Unit? {
         return find("user.id = ?1 and type in ?2", userId, unitTypes).firstResult()
     }
+
+    fun deleteAllByUser(userId: Int) {
+        delete("user.id = ?1", userId)
+    }
 }

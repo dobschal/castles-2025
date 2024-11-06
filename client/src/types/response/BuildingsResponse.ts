@@ -4,5 +4,7 @@ export interface BuildingsResponse {
   buildings: Array<BuildingEntity>;
   breweryBeerProductionPerHour: number;
   breweryBeerStorage: number;
-  villageLevel1BeerStorage: number;
+  totalBeerStorage: number;
+  amountOfVillages: number;
+  totalGoldStorage: number;
 }

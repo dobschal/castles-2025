@@ -12,6 +12,7 @@ import io.quarkus.scheduler.Scheduled
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import mu.KotlinLogging
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -28,7 +29,7 @@ class BarbarianService @Inject constructor(
 
     val logger = KotlinLogging.logger {}
 
-    @Scheduled(every = "30m")
+    @Scheduled(every = "45m")
     fun controlBarbarians() {
         logger.info { "Checking barbarians" }
         val t1 = System.currentTimeMillis()
@@ -36,7 +37,8 @@ class BarbarianService @Inject constructor(
             "barbarian",
             UUID.randomUUID().toString()
         )
-        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 1.75).toInt()
+        deleteOldBarbarianUnits(barbarianUser)
+        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 2).toInt()
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
@@ -46,11 +48,21 @@ class BarbarianService @Inject constructor(
         logger.info { "Barbarians checked in ${System.currentTimeMillis() - t1}ms" }
     }
 
+    private fun deleteOldBarbarianUnits(barbarianUser: User) {
+        val units = unitRepository.findAllByUser(barbarianUser.id!!)
+        for (unit in units) {
+            if (LocalDateTime.now().minusHours(24).isAfter(unit.createdAt)) {
+                unitRepository.deleteById(unit.id!!)
+                logger.info { "Deleted too old barbarian unit" }
+            }
+        }
+    }
+
     fun moveBarbarianUnits(barbarianUser: User) {
         val mapTiles = mapTileRepository.listAll()
         val units = unitRepository.findAllByUser(barbarianUser.id!!)
         for (unit in units) {
-            findMapTileToMoveTo(unit, unit.x!!, unit.y!!, mapTiles, units, barbarianUser).let { (x, y) ->
+            findMapTileToMoveTo(unit, unit.x!!, unit.y!!, mapTiles, units, barbarianUser)?.let { (x, y) ->
                 try {
                     val (conflictingBuilding, conflictingUnit) = unitService.getMoveConflictingBuildingsAndUnits(
                         x,
@@ -71,7 +83,7 @@ class BarbarianService @Inject constructor(
                 } catch (e: Exception) {
                     logger.error(e) { "Could not move barbarian unit from ${unit.x}, ${unit.y} to $x, $y" }
                 }
-            }
+            } ?: logger.info { "Could not find map tile to move barbarian unit from ${unit.x}, ${unit.y}" }
         }
     }
 
@@ -82,7 +94,7 @@ class BarbarianService @Inject constructor(
         mapTiles: List<MapTile>,
         units: List<Unit>,
         barbarianUser: User
-    ): Pair<Int, Int> {
+    ): Pair<Int, Int>? {
         val possibleTiles =
             mapTiles.filter {
                 val xDiff = abs(it.x!! - x)
@@ -97,6 +109,9 @@ class BarbarianService @Inject constructor(
                         && it.y != y
                         && !hasConflictingUnit
             }
+        if (possibleTiles.isEmpty()) {
+            return null
+        }
         return possibleTiles.random().let { Pair(it.x!!, it.y!!) }
     }
 
@@ -116,7 +131,8 @@ class BarbarianService @Inject constructor(
     }
 
     fun findEmptyMapTileForBarbarian(): Pair<Int, Int>? {
-        val margin = 10
+        val margin = 1
+        val minSpawnDistance = 3
         val buildings = buildingRepository.listAll()
         val units = unitRepository.listAll()
         val mapTiles = mapTileRepository.listAll()
@@ -124,10 +140,11 @@ class BarbarianService @Inject constructor(
         val lowestY = buildings.minByOrNull { it.y!! }?.y ?: -margin
         val highestX = buildings.maxByOrNull { it.x!! }?.x ?: margin
         val highestY = buildings.maxByOrNull { it.y!! }?.y ?: margin
-        for (i in 0 until 1000) {
+        for (i in 0 until 2000) {
             val x = kotlin.random.Random.nextInt(lowestX - margin, highestX + margin)
             val y = kotlin.random.Random.nextInt(lowestY - margin, highestY + margin)
-            val conflictingBuilding = buildings.any { abs(it.x!! - x) < 5 && abs(it.y!! - y) < 5 }
+            val conflictingBuilding =
+                buildings.any { abs(it.x!! - x) < minSpawnDistance && abs(it.y!! - y) < minSpawnDistance }
             val conflictingUnit = units.any { it.x == x && it.y == y }
             val mapTile = mapTiles.find { it.x == x && it.y == y }
             if (!conflictingBuilding && !conflictingUnit && mapTile?.type != MapTileType.WATER) {

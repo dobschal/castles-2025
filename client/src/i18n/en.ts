@@ -25,13 +25,22 @@ export const en = {
     SPEARMAN: "Spearman",
     HORSEMAN: "Horseman",
   },
+  buildingType: {
+    VILLAGE: "Village",
+    CASTLE: "Castle",
+    FARM: "Farm",
+    BREWERY: "Brewery",
+    CITY: "City",
+  },
   serverError: {
     notEnoughBeer: "Not enough beer available.",
     onlyOnePerVillage:
-      "You can only build two breweries, one farm and one castle per village.",
+      "You can only build two breweries, one farm and one castle per village or city.",
     tooManyMoves: "The unit has reached its limit of moves for this hour.",
     notYourBuilding: "You can only destroy your own buildings.",
     lastVillage: "You cannot destroy your last village.",
+    noFarm: "No farm nearby!",
+    tooManyUnits: "You have reached the limit of units. Build more castles.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -54,6 +63,7 @@ export const en = {
     error: "An error occurred during login. Please check your input.",
     action: "Login",
     toRegistration: "To registration",
+    aboutTheGame: "More about the game",
   },
   startVillageAction: {
     text: "Please choose a location for your first village.",
@@ -63,12 +73,15 @@ export const en = {
     createWorker: "Create worker",
     moveUnit: "Move unit ({0}/{1})",
     villageOf: "Village of {playerName}",
+    upgradeToCity: "Upgrade to city",
   },
   farmAction: {
     farmOf: "Farm of {playerName}",
   },
   breweryAction: {
-    breweryOf: "Brewery of {playerName} that produces {beer} beer per hour.",
+    breweryOf:
+      "Brewery of {playerName} that produces {beer} beer per hour and stores maximal {breweryBeerStorage} beer. {beerToCollect} beer can be collected.",
+    noFarmNextTo: "No farm next to this brewery! No beer is produced.",
   },
   unitAction: {
     unitOf: "Unit of {playerName} at {x}, {y}",
@@ -102,6 +115,7 @@ export const en = {
       BUILDING_CONQUERED: "You conquered a building at {x}, {y}.",
       BUILDING_DESTROYED: "You destroyed a building at {x}, {y}.",
       LOST_UNIT: "You lost a {unitType} at {x}, {y}.",
+      GAME_OVER: "You lost your last village.",
     },
     other: {
       UNIT_MOVED: "{playerName} moved a {unitType} to {x}, {y}.",
@@ -111,6 +125,7 @@ export const en = {
       BUILDING_CONQUERED: "{playerName} conquered a building at {x}, {y}.",
       BUILDING_DESTROYED: "{playerName} destroyed a building at {x}, {y}.",
       LOST_UNIT: "{playerName} lost a {unitType} at {x}, {y}.",
+      GAME_OVER: "{playerName} lost their last village.",
     },
   },
   tutorialAction: {
@@ -141,7 +156,7 @@ export const en = {
     paragraph2:
       "There are various buildings in the game that have different functions.\n" +
       "      Farm and brewery produce beer, which is needed for building units\n" +
-      "      and buildings. Farm and brewery must be directly next to each other.\n" +
+      "      and buildings. Farm and brewery must be directly next to each other and you can build two breweries and one farm per village.\n" +
       "      In castles, you can create units for defense and attack.\n" +
       "      Villages can train workers and store your beer. The more villages you have,\n" +
       "      the more beer you can store.\n" +
@@ -170,6 +185,12 @@ export const en = {
       "      support! Dragons, cities, and much more are planned. Stay\n" +
       "      tuned and feel free to write to me if you have ideas or suggestions.\n" +
       "      Thank you for testing and playing! 🍻",
+    title6: "Costs",
+    paragraph6:
+      "The costs for buildings and units are calculated based on already created buildings and units." +
+      "For example, if you already own a brewery, the next brewery will cost more beer. " +
+      "The same applies to units and castles. Example: You own 3 units (type does not matter) and " +
+      "the base price for a horseman is 100 beer. The next horseman would cost 100 x 2 x 2 x 2 = 800 beer.",
   },
   users: {
     link: "Players",
@@ -184,5 +205,13 @@ export const en = {
   destroyBuilding: {
     button: "Destroy building",
     question: "Do you really want to destroy this building?",
+  },
+  cityAction: {
+    cityOf: "City of {playerName}",
+  },
+  unitsAndBuildings: {
+    link: "Units & Buildings",
+    description:
+      "Here you can see all units and buildings of {playerName}. Click on it to see it on the map.",
   },
 };

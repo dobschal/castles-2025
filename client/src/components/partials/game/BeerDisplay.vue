@@ -1,12 +1,15 @@
 <template>
   <div class="beer-display" :class="size ?? 'md'">
-    <span>{{ beer }}</span> <img src="@/assets/beer-min.png" alt="Beer" />
+    <span>{{ beer }}</span>
+    <small v-if="limit"> / {{ limit }}</small>
+    <img src="@/assets/beer-min.png" alt="Beer" />
   </div>
 </template>
 
 <script lang="ts" setup>
 defineProps<{
   beer: number;
+  limit?: number;
   size?: "md" | "lg";
 }>();
 </script>
@@ -26,6 +29,11 @@ defineProps<{
 
   img {
     height: 100%;
+  }
+
+  small {
+    font-size: 0.8rem;
+    transform: translateY(0.1rem);
   }
 }
 </style>

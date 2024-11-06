@@ -63,4 +63,10 @@ class UserRepository : PanacheRepository<User> {
         return user
     }
 
+    fun setBeerTo(userId: Int, startBeer: Int) {
+        val user = findById(userId) ?: return
+        user.beer = startBeer
+        persist(user)
+    }
+
 }

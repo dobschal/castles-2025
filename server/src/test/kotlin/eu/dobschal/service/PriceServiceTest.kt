@@ -4,6 +4,7 @@ import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.entity.User
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
+import eu.dobschal.utils.WORKER_BASE_PRICE
 import eu.dobschal.utils.hash
 import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
@@ -63,7 +64,7 @@ class PriceServiceTest {
     @Test
     fun `test price calculation`() {
         val price1 = priceService.getPriceForUnitCreation(user1!!.toDto(), UnitType.WORKER)
-        assert(price1 == 50)
+        assert(price1 == WORKER_BASE_PRICE)
         val unit = Unit().apply {
             x = 1
             y = 1
@@ -72,7 +73,7 @@ class PriceServiceTest {
         }
         unitRepository.save(unit)
         val price2 = priceService.getPriceForUnitCreation(user1!!.toDto(), UnitType.WORKER)
-        assert(price2 == 100)
+        assert(price2 == WORKER_BASE_PRICE * 2)
         val unit2 = Unit().apply {
             x = 1
             y = 1
@@ -81,7 +82,7 @@ class PriceServiceTest {
         }
         unitRepository.save(unit2)
         val price3 = priceService.getPriceForUnitCreation(user1!!.toDto(), UnitType.WORKER)
-        assert(price3 == 200)
+        assert(price3 == WORKER_BASE_PRICE * 2 * 2)
 
     }
 }

@@ -24,10 +24,11 @@ class BuildingDto(
         @ProjectedFieldName("user.id") userId: Int? = null,
         @ProjectedFieldName("user.username") userUsername: String? = null,
         @ProjectedFieldName("user.beer") userBeer: Int? = null,
+        @ProjectedFieldName("user.gold") userGold: Int? = null,
         @ProjectedFieldName("user.avatarId") avatarId: Int? = null,
         @ProjectedFieldName("user.createdAt") userCreatedAt: LocalDateTime? = null,
         createdAt: LocalDateTime? = null
     ) : this(id, x, y, type, level, null, createdAt) {
-        user = UserDto(userId, userUsername, "", userBeer, avatarId, userCreatedAt)
+        user = UserDto(userId, userUsername, "", userBeer, userGold, avatarId, userCreatedAt)
     }
 }

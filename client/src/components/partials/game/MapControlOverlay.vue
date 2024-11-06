@@ -31,6 +31,7 @@ function showStartPosition(): void {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  user-select: none;
 
   :deep(button) {
     &.home {

@@ -6,7 +6,7 @@
       :style="getMapTileStyle(mapTile)"
       :map-tile="mapTile"
     />
-    <template v-if="eventsStore.showEventsOnMap && !actionStore.isActionActive">
+    <template v-if="authStore.showEventsOnMap && !actionStore.isActionActive">
       <EventTile
         :key="event.id"
         v-for="event in eventsStore.events"
@@ -27,6 +27,7 @@ import EventTile from "@/components/partials/game/tiles/EventTile.vue";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
 import { useActionStore } from "@/store/actionStore.ts";
+import { useAuthStore } from "@/store/authStore.ts";
 
 interface MapTileStyle {
   left: string;
@@ -39,6 +40,7 @@ interface MapTileStyle {
 // region variables
 
 const map = ref<Optional<HTMLElement>>();
+const authStore = useAuthStore();
 const mapStore = useMapStore();
 const eventsStore = useEventsStore();
 const actionStore = useActionStore();
@@ -54,24 +56,24 @@ onMounted(async () => {
   window.addEventListener("resize", onWindowResize);
 
   if (!isTouchDevice()) {
-    window.addEventListener("mousedown", onMapMouseDown);
-    window.addEventListener("mousemove", onMapMouseMove);
-    window.addEventListener("mouseup", onMapMouseUp);
+    map.value!.addEventListener("mousedown", onMapMouseDown);
+    map.value!.addEventListener("mousemove", onMapMouseMove);
+    map.value!.addEventListener("mouseup", onMapMouseUp);
   } else {
-    window.addEventListener("touchstart", onTouchStart);
-    window.addEventListener("touchmove", onTouchMove);
-    window.addEventListener("touchend", onToucheEnd);
+    map.value!.addEventListener("touchstart", onTouchStart);
+    map.value!.addEventListener("touchmove", onTouchMove);
+    map.value!.addEventListener("touchend", onToucheEnd);
   }
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", onWindowResize);
-  window.removeEventListener("mousedown", onMapMouseDown);
-  window.removeEventListener("mousemove", onMapMouseMove);
-  window.removeEventListener("mouseup", onMapMouseUp);
-  window.removeEventListener("touchstart", onTouchStart);
-  window.removeEventListener("touchmove", onTouchMove);
-  window.removeEventListener("touchend", onToucheEnd);
+  map.value!.removeEventListener("resize", onWindowResize);
+  map.value!.removeEventListener("mousedown", onMapMouseDown);
+  map.value!.removeEventListener("mousemove", onMapMouseMove);
+  map.value!.removeEventListener("mouseup", onMapMouseUp);
+  map.value!.removeEventListener("touchstart", onTouchStart);
+  map.value!.removeEventListener("touchmove", onTouchMove);
+  map.value!.removeEventListener("touchend", onToucheEnd);
 });
 
 // endregion
@@ -99,10 +101,12 @@ function getMapTileStyle(mapTile: PointDto): MapTileStyle {
 function onWindowResize(): void {
   mapStore.windowWidth = window.innerWidth;
   mapStore.windowHeight = window.innerHeight;
+  mapStore.adjustMapTileSizeToScreen();
+  mapStore.updateCenterPosition();
 }
 
-function onMapMouseDown(): void {
-  if (mapStore.mapControlsDisabled) {
+function onMapMouseDown(event: MouseEvent): void {
+  if (mapStore.mapControlsDisabled || event.button !== 0) {
     return;
   }
 
@@ -115,12 +119,15 @@ function onMapMouseMove(event: MouseEvent): void {
     return;
   }
 
-  mapStore.offsetX += event.movementX;
-  mapStore.offsetY += event.movementY;
+  setTimeout(() => {
+    mapStore.offsetX += event.movementX;
+    mapStore.offsetY += event.movementY;
+  });
 }
 
 function onMapMouseUp(): void {
   isDragging.value = false;
+  mapStore.updateCenterPosition();
 }
 
 function onTouchStart(event: TouchEvent): void {
@@ -148,6 +155,7 @@ function onTouchMove(event: TouchEvent): void {
 
 function onToucheEnd(): void {
   isDragging.value = false;
+  mapStore.updateCenterPosition();
 }
 
 // endregion

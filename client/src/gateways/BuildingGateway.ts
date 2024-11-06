@@ -18,10 +18,24 @@ export class BuildingGateway extends Gateway {
     return this.request<void>("POST", "/v1/buildings/start-village", data);
   }
 
+  async createCity(data: PointDto): Promise<BuildingEntity> {
+    return this.request<BuildingEntity>("POST", "/v1/buildings/create-city", {
+      ...data,
+      type: BuildingType.CITY,
+    });
+  }
+
   async getBuildings(data: TwoPointDto): Promise<BuildingsResponse> {
     return this.request<BuildingsResponse>(
       "GET",
       "/v1/buildings?" + this.objectToQueryString(data),
+    );
+  }
+
+  async getBuildingsByUser(userId: number): Promise<Array<BuildingEntity>> {
+    return this.request<Array<BuildingEntity>>(
+      "GET",
+      "/v1/buildings/by-user?user_id=" + userId,
     );
   }
 

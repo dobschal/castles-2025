@@ -49,17 +49,31 @@ export const WikiPageRoute: RouteRecordRaw = {
   meta: { title, layout: MainLayout },
 };
 
+export const OpenWikiPageRoute: RouteRecordRaw = {
+  path: "/wiki-open",
+  name: "OpenWikiPage",
+  component: () => import("@/components/pages/Wiki.vue"),
+  meta: { title, layout: LoginLayout },
+};
+
 export const UserListPageRoute: RouteRecordRaw = {
   path: "/users",
   name: "UserListPage",
-  component: () => import("@/components/pages/UserListPage.vue"),
+  component: () => import("@/components/pages/UserList.vue"),
+  meta: { title, layout: MainLayout, roles: ["user"] },
+};
+
+export const UnitsAndBuildingsListPageRoute: RouteRecordRaw = {
+  path: "/units-and-buildings",
+  name: "UnitsAndBuildingsListPage",
+  component: () => import("@/components/pages/UnitsAndBuildings.vue"),
   meta: { title, layout: MainLayout, roles: ["user"] },
 };
 
 export const UserProfilePageRoute: RouteRecordRaw = {
   path: "/user-profile",
   name: "UserProfilePage",
-  component: () => import("@/components/pages/UserProfilePage.vue"),
+  component: () => import("@/components/pages/UserProfile.vue"),
   meta: { title, layout: MainLayout, roles: ["user"] },
 };
 

@@ -31,4 +31,11 @@ class UnitResource @Inject constructor(private val unitService: UnitService) {
     @POST
     @Path("/move")
     fun moveUnit(request: MoveUnitRequestDto) = unitService.moveUnit(request.x, request.y, request.unitId)
+
+    @RolesAllowed(USER_ROLE)
+    @GET
+    @Path("/by-user")
+    fun getUnits(
+        @QueryParam("user_id") userId: Int
+    ) = unitService.getUsersUnits(userId)
 }

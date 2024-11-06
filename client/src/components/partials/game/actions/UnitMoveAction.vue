@@ -23,11 +23,13 @@ import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const unitsStore = useUnitsStore();
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const authStore = useAuthStore();
+const eventsStore = useEventsStore();
 const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
 
@@ -110,6 +112,7 @@ async function onMapTileClicked(mapTile: MapTileDto): Promise<void> {
       mapTile.y,
       activeMoveUnit.value!.id,
     );
+    eventsStore.ownActionHappened = true;
     close();
   } catch (e) {
     handleFatalError(e);

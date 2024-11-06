@@ -28,6 +28,15 @@
     {{ t("villageAction.createWorker") }}
     <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.WORKER)" />
   </CButton>
+  <CButton
+    v-if="isOwnBuilding"
+    :disabled="!isUpgradeAvailable"
+    class="small with-icon"
+    @click="upgradeToCity"
+  >
+    {{ t("villageAction.upgradeToCity") }}
+    <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CITY)" />
+  </CButton>
   <CButton v-if="isOwnBuilding" class="small" @click="destroy">
     {{ t("destroyBuilding.button") }}
   </CButton>
@@ -54,6 +63,8 @@ import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vu
 import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
+import { useEventsStore } from "@/store/eventsStore.ts";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -61,6 +72,7 @@ const authStore = useAuthStore();
 const unitsStore = useUnitsStore();
 const pricesStore = usePricesStore();
 const tutorialStore = useTutorialStore();
+const eventsStore = useEventsStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
@@ -98,6 +110,13 @@ const isBuildingWorkerAvailable = computed(() => {
   return !unitAtPosition.value && beer >= price;
 });
 
+const isUpgradeAvailable = computed(() => {
+  const price = pricesStore.getBuildPrice(BuildingType.CITY);
+  const beer = authStore.user?.beer ?? 0;
+
+  return beer >= price;
+});
+
 onMounted(() => {
   if (!buildingsStore.activeBuilding) {
     return handleFatalError(new Error("No active building set"));
@@ -130,6 +149,20 @@ onBeforeUnmount(() => {
   }
 });
 
+async function upgradeToCity(): Promise<void> {
+  try {
+    if (!buildingsStore.activeBuilding) return;
+    await BuildingGateway.instance.createCity({
+      x: buildingsStore.activeBuilding.x,
+      y: buildingsStore.activeBuilding.y,
+    });
+    eventsStore.ownActionHappened = true;
+    close();
+  } catch (error) {
+    handleFatalError(error);
+  }
+}
+
 async function destroy(): Promise<void> {
   DIALOG.dispatch({
     questionKey: "destroyBuilding.question",
@@ -140,6 +173,7 @@ async function destroy(): Promise<void> {
           buildingsStore.activeBuilding.x,
           buildingsStore.activeBuilding.y,
         );
+        eventsStore.ownActionHappened = true;
         close();
       } catch (error) {
         handleFatalError(error);
@@ -159,6 +193,7 @@ async function createWorker(): Promise<void> {
       y: buildingsStore.activeBuilding!.y,
       type: UnitType.WORKER,
     });
+    eventsStore.ownActionHappened = true;
     close();
 
     if (tutorialStore.tutorial?.type === TutorialType.FIRST_WORKER) {

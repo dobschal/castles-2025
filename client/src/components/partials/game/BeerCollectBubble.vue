@@ -1,6 +1,7 @@
 <template>
   <div
     class="bubble"
+    :class="{ disabled: isDisabled }"
     :style="bubbleStyle"
     @click="collectBeer"
     @mousedown.stop
@@ -19,12 +20,24 @@ import { handleFatalError } from "@/core/util.ts";
 import { TOAST } from "@/events.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { computed } from "vue";
+import { useEventsStore } from "@/store/eventsStore.ts";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
+const eventsStore = useEventsStore();
 const props = defineProps<{
   building: BuildingEntity;
 }>();
+
+const isDisabled = computed(() => {
+  return (
+    buildingsStore.findFarmNextTo(
+      props.building.x,
+      props.building.y,
+      props.building.user.id,
+    ) === undefined
+  );
+});
 
 async function collectBeer(): Promise<void> {
   try {
@@ -33,6 +46,7 @@ async function collectBeer(): Promise<void> {
       props.building.id,
       amountOfBeer,
     );
+    eventsStore.ownActionHappened = true;
     TOAST.dispatch({ type: "success", messageKey: message });
   } catch (error) {
     handleFatalError(error);
@@ -43,6 +57,7 @@ const bubbleStyle = computed(() => {
   return {
     width: `${mapStore.mapTileSize / 2.5}px`,
     height: `${mapStore.mapTileSize / 2.5}px`,
+    top: `-${mapStore.mapTileSize / 2.5}px`,
   };
 });
 
@@ -57,26 +72,31 @@ const arrowStyle = computed(() => {
 <style lang="scss" scoped>
 @keyframes bounce {
   0% {
-    transform: rotate(45deg) translateY(-200%) translateX(110%);
+    transform: rotate(45deg);
   }
   50% {
-    transform: rotate(45deg) translateY(calc(-200% - 10px)) translateX(110%);
+    transform: rotate(45deg) translateY(10px);
   }
   100% {
-    transform: rotate(45deg) translateY(-200%) translateX(110%);
+    transform: rotate(45deg);
   }
 }
 
 .bubble {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 100%;
   z-index: 1;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.8);
-  transform: rotate(45deg) translateY(-200%) translateX(110%);
+  transform: rotate(45deg);
   display: flex;
   animation: bounce 1s infinite;
+  will-change: transform;
+
+  &.disabled {
+    opacity: 0.5;
+  }
 
   &:hover {
     animation: none;

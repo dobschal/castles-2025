@@ -26,7 +26,6 @@ import EventsOverlay from "@/components/partials/game/EventsOverlay.vue";
 import { useActionStore } from "@/store/actionStore.ts";
 import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
-import { Optional } from "@/types/core/Optional.ts";
 import { useI18n } from "vue-i18n";
 import { DIALOG } from "@/events.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
@@ -45,11 +44,11 @@ const actionStore = useActionStore();
 const pricesStore = usePricesStore();
 const tutorialStore = useTutorialStore();
 let isMounted = false;
-let loadTimeout: Optional<ReturnType<typeof setTimeout>>;
 const isLoading = ref(false);
 const cachedImageAssets: Array<HTMLImageElement> = [];
 const { t } = useI18n();
 const route = useRoute();
+let eventLoopTimeout: ReturnType<typeof setTimeout>;
 
 onMounted(async () => {
   isMounted = true;
@@ -64,7 +63,7 @@ onMounted(async () => {
     unitsStore.loadUnits(),
     keepLoadingEvents(),
   ]);
-  setTimeout(() => (isLoading.value = false), 500);
+  isLoading.value = false;
 
   // The promise here might be resolved very late if the user
   // needs to select the start village
@@ -77,7 +76,6 @@ onMounted(async () => {
       x: Number(route.query.x),
       y: Number(route.query.y),
     });
-    router.replace({ query: {} });
   } else {
     mapStore.goToPosition(buildingsStore.startVillage ?? { x: 0, y: 0 });
   }
@@ -93,18 +91,18 @@ onBeforeUnmount(() => {
 
 watch(
   () => mapStore.centerPosition,
-  () => {
-    if (loadTimeout) {
-      clearTimeout(loadTimeout);
-    }
-
-    loadTimeout = setTimeout(async () => {
-      await Promise.all([
-        mapStore.loadMap(),
-        buildingsStore.loadBuildings(),
-        unitsStore.loadUnits(),
-      ]);
-    }, 200);
+  async () => {
+    await router.replace({
+      query: {
+        x: mapStore.centerPosition.x,
+        y: mapStore.centerPosition.y,
+      },
+    });
+    await Promise.all([
+      mapStore.loadMap(),
+      buildingsStore.loadBuildings(),
+      unitsStore.loadUnits(),
+    ]);
   },
 );
 
@@ -123,15 +121,28 @@ watch(
   { deep: true },
 );
 
+watch(
+  () => eventsStore.ownActionHappened,
+  () => {
+    if (eventsStore.ownActionHappened) {
+      eventsStore.ownActionHappened = false;
+      keepLoadingEvents();
+    }
+  },
+);
+
 async function keepLoadingEvents(): Promise<void> {
   try {
+    if (eventLoopTimeout) {
+      clearTimeout(eventLoopTimeout);
+    }
+
     await eventsStore.loadEvents();
-    setTimeout(() => {
-      if (isMounted) {
-        keepLoadingEvents();
-      }
-    }, 500);
+    eventLoopTimeout = setTimeout(() => {
+      if (isMounted) keepLoadingEvents();
+    }, 1000);
   } catch (e) {
+    console.error("Error while loading events: ", e);
     DIALOG.dispatch({
       questionKey: "general.serverError",
       onYes: () => {

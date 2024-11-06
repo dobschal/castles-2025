@@ -2,9 +2,9 @@
   <div v-if="isOpen" class="events-overlay">
     <p
       class="show-on-map-toggle"
-      @click="eventsStore.showEventsOnMap = !eventsStore.showEventsOnMap"
+      @click="authStore.showEventsOnMap = !authStore.showEventsOnMap"
     >
-      <span class="checkbox" :class="{ active: eventsStore.showEventsOnMap }">
+      <span class="checkbox" :class="{ active: authStore.showEventsOnMap }">
         ✓
       </span>
       {{ t("events.showOnMap") }}

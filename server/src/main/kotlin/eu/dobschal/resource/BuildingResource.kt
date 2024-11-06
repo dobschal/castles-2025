@@ -1,7 +1,7 @@
 package eu.dobschal.resource
 
-import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.request.BaseCoordinatesDto
+import eu.dobschal.model.dto.request.CreateBuildingRequestDto
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.service.BuildingService
 import eu.dobschal.utils.USER_ROLE
@@ -26,6 +26,12 @@ class BuildingResource @Inject constructor(private val buildingService: Building
 
     @RolesAllowed(USER_ROLE)
     @POST
+    @Path("/create-city")
+    fun createCity(request: CreateBuildingRequestDto) =
+        buildingService.createCity(request.x, request.y, request.type)
+
+    @RolesAllowed(USER_ROLE)
+    @POST
     @Path("/")
     fun createBuilding(request: CreateBuildingRequestDto) =
         buildingService.createBuilding(request.x, request.y, request.type)
@@ -47,9 +53,16 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     ) = buildingService.getBuildings(x1, x2, y1, y2)
 
     @RolesAllowed(USER_ROLE)
+    @GET
+    @Path("/by-user")
+    fun getUsersBuildings(
+        @QueryParam("user_id") userId: Int
+    ) = buildingService.getUsersBuildings(userId)
+
+    @RolesAllowed(USER_ROLE)
     @POST
     @Path("/collect-beer")
     fun collectBeer(request: CollectBeerRequestDto) =
         buildingService.collectBeer(request.buildingId, request.amountOfBeer)
-    
+
 }

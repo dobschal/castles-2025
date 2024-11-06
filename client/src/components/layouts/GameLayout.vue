@@ -4,16 +4,25 @@
       <img src="@/assets/logo_white.svg" alt="Castles" />
       Castles
     </h1>
-    <button class="burger" @click="onBurgerButtonClick">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="2rem"
-        height="2rem"
-        viewBox="0 0 24 24"
-      >
-        <path fill="white" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-      </svg>
-    </button>
+    <div>
+      <button class="audio" @click="toggleAudio">
+        <img v-if="audioPaused" src="@/assets/audio-on.svg" alt="Audio" />
+        <img v-else src="@/assets/audio-off.svg" alt="Audio" />
+      </button>
+      <button class="burger" @click="onBurgerButtonClick">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="2rem"
+          height="2rem"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="white"
+            d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+          />
+        </svg>
+      </button>
+    </div>
   </nav>
   <div v-if="dropdownMenuVisible" class="dropdown-menu">
     <NavigationMenu @close="closeDropdownMenu" />
@@ -27,8 +36,16 @@
 import { ref } from "vue";
 import router from "@/core/router.ts";
 import NavigationMenu from "@/components/partials/NavigationMenu.vue";
+import { AudioPlayer } from "@/core/AudioPlayer.ts";
 
 const dropdownMenuVisible = ref(false);
+const audioPaused = ref(true);
+const audioPlayer = new AudioPlayer(
+  "/sounds/background-music.mp3",
+  "audio/mpeg",
+  0.2,
+  true,
+);
 
 router.afterEach(() => {
   closeDropdownMenu();
@@ -40,6 +57,16 @@ function onBurgerButtonClick(): void {
 
 function closeDropdownMenu(): void {
   dropdownMenuVisible.value = false;
+}
+
+function toggleAudio(): void {
+  if (audioPaused.value) {
+    audioPlayer.play();
+    audioPaused.value = false;
+  } else {
+    audioPlayer.stop();
+    audioPaused.value = true;
+  }
 }
 </script>
 
@@ -70,7 +97,7 @@ nav {
 
     img {
       height: 2rem;
-      margin-right: 0rem;
+      margin-right: 0;
       transform: translateY(0.35rem);
     }
   }
@@ -79,6 +106,17 @@ nav {
     background: transparent;
     border: none;
     cursor: pointer;
+  }
+
+  button.audio {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+
+    img {
+      width: 1.8rem;
+      margin-right: 0.6rem;
+    }
   }
 }
 
