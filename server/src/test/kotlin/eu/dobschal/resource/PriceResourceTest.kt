@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import WithDefaultUser
 import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.UnitType
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test
 @QuarkusTest
 class PriceResourceTest : BaseResourceTest() {
     @Test
+    @WithDefaultUser
     fun `Prices are correct with 1 unit`() {
         val unit = Unit().apply {
             x = 1
@@ -24,7 +26,6 @@ class PriceResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         assert(unitRepository.listAll().size == 1)
         val response = given()
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/prices")
             .then()
@@ -35,6 +36,7 @@ class PriceResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Prices are correct with 3 units`() {
         val unit1 = Unit().apply {
             x = 1
@@ -59,7 +61,6 @@ class PriceResourceTest : BaseResourceTest() {
         unitRepository.save(unit3)
         assert(unitRepository.listAll().size == 3)
         val response = given()
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/prices")
             .then()

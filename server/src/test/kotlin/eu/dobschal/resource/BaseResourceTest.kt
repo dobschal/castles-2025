@@ -40,8 +40,6 @@ open class BaseResourceTest {
 
     var user1: User? = null
     var user2: User? = null
-    var jwt1: String? = null
-    var jwt2: String? = null
 
     @AfterEach
     @Transactional
@@ -59,8 +57,6 @@ open class BaseResourceTest {
         setBaseHeader()
 
         createUsers()
-        jwt1 = getJwt(USER1)
-        jwt2 = getJwt(USER2)
     }
 
     @Transactional
@@ -81,7 +77,6 @@ open class BaseResourceTest {
     fun <ResponseType> assertOkPostRequest(url: String, request: Any, responseType: Class<ResponseType>): ResponseType {
         return given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(url)
@@ -92,8 +87,6 @@ open class BaseResourceTest {
 
     fun <ResponseType> assertOkGetRequest(url: String, responseType: Class<ResponseType>): ResponseType {
         return given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get(url)
             .then()
@@ -101,7 +94,7 @@ open class BaseResourceTest {
             .extract().`as`(responseType)
     }
 
-    private fun getJwt(username: String): String {
+    fun getJwt(username: String): String {
         val response = given()
             .body(UserCredentialsDto(username, "password"))
             .`when`()

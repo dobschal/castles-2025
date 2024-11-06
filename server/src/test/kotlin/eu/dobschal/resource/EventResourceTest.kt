@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import WithDefaultUser
 import eu.dobschal.model.dto.EventDto
 import eu.dobschal.model.dto.request.CreateUnitRequestDto
 import eu.dobschal.model.dto.request.MoveUnitRequestDto
@@ -25,6 +26,7 @@ import kotlin.assert
 class EventResourceTest : BaseResourceTest() {
 
     @Test
+    @WithDefaultUser
     fun `Event is added after unit move`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -41,7 +43,6 @@ class EventResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/units/move")
@@ -54,6 +55,7 @@ class EventResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Event is added after unit creation`() {
         val village = Building().apply {
             x = 1
@@ -64,7 +66,6 @@ class EventResourceTest : BaseResourceTest() {
         buildingRepository.save(village)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         given()
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/units")
@@ -77,6 +78,7 @@ class EventResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Event is added after start village creation`() {
         val mapTile = MapTile().apply {
             x = 1
@@ -86,7 +88,6 @@ class EventResourceTest : BaseResourceTest() {
         mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = BaseCoordinatesDto(1, 1)
         given()
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/buildings/start-village")
@@ -98,6 +99,7 @@ class EventResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Event API is returning events`() {
         val mapTile = MapTile().apply {
             x = 1
@@ -107,7 +109,6 @@ class EventResourceTest : BaseResourceTest() {
         mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = BaseCoordinatesDto(1, 1)
         given()
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/buildings/start-village")
@@ -117,7 +118,6 @@ class EventResourceTest : BaseResourceTest() {
         assert(eventRepository.listAll().first().y == 1)
         assert(eventRepository.listAll().first().type == EventType.BUILDING_CREATED)
         val response = given()
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/events?x1=0&y1=0&x2=4&y2=4")
             .then()
@@ -130,6 +130,7 @@ class EventResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Event API is not returning events that aren't in the requested range`() {
         val mapTile = MapTile().apply {
             x = 1
@@ -139,7 +140,6 @@ class EventResourceTest : BaseResourceTest() {
         mapTileRepository.saveMapTiles(setOf(mapTile))
         val request = BaseCoordinatesDto(1, 1)
         given()
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/buildings/start-village")
@@ -149,7 +149,6 @@ class EventResourceTest : BaseResourceTest() {
         assert(eventRepository.listAll().first().y == 1)
         assert(eventRepository.listAll().first().type == EventType.BUILDING_CREATED)
         val response = given()
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/events?x1=2&y1=2&x2=4&y2=4&ignore_event_ids=-1")
             .then()
