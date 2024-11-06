@@ -4,16 +4,25 @@
       <img src="@/assets/logo_white.svg" alt="Castles" />
       Castles
     </h1>
-    <button class="burger" @click="onBurgerButtonClick">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="2rem"
-        height="2rem"
-        viewBox="0 0 24 24"
-      >
-        <path fill="white" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-      </svg>
-    </button>
+    <div>
+      <button class="audio" @click="toggleAudio">
+        <img v-if="audioPaused" src="@/assets/audio-on.svg" alt="Audio" />
+        <img v-else src="@/assets/audio-off.svg" alt="Audio" />
+      </button>
+      <button class="burger" @click="onBurgerButtonClick">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="2rem"
+          height="2rem"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="white"
+            d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+          />
+        </svg>
+      </button>
+    </div>
   </nav>
   <div v-if="dropdownMenuVisible" class="dropdown-menu">
     <NavigationMenu @close="closeDropdownMenu" />
@@ -21,14 +30,20 @@
   <section>
     <slot />
   </section>
+  <audio ref="audio" loop>
+    <source src="/sounds/background-music.mp3" type="audio/mpeg" />
+  </audio>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import router from "@/core/router.ts";
 import NavigationMenu from "@/components/partials/NavigationMenu.vue";
+import { Optional } from "@/types/core/Optional.ts";
 
 const dropdownMenuVisible = ref(false);
+const audio = ref<Optional<HTMLAudioElement>>();
+const audioPaused = ref(true);
 
 router.afterEach(() => {
   closeDropdownMenu();
@@ -40,6 +55,20 @@ function onBurgerButtonClick(): void {
 
 function closeDropdownMenu(): void {
   dropdownMenuVisible.value = false;
+}
+
+function toggleAudio(): void {
+  if (!audio.value) {
+    return;
+  }
+
+  if (audio.value.paused) {
+    audio.value.play();
+    audioPaused.value = false;
+  } else {
+    audio.value.pause();
+    audioPaused.value = true;
+  }
 }
 </script>
 
@@ -79,6 +108,17 @@ nav {
     background: transparent;
     border: none;
     cursor: pointer;
+  }
+
+  button.audio {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+
+    img {
+      width: 1.8rem;
+      margin-right: 0.6rem;
+    }
   }
 }
 

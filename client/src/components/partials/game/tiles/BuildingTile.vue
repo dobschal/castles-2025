@@ -206,17 +206,19 @@ const isOwnBuilding = computed(() => {
 
 const bannerImageStyle = computed(() => {
   return {
-    width: Math.ceil(mapStore.mapTileSize / 3 + 1) + "px",
-    height: Math.ceil(mapStore.mapTileSize / 3 + 1) + "px",
-    left: Math.ceil(-mapStore.mapTileSize / 6) + "px",
+    width: Math.ceil(mapStore.mapTileSize / 3) + "px",
+    height: Math.ceil(mapStore.mapTileSize / 3) + "px",
+    left: Math.ceil(-mapStore.mapTileSize / 4) + "px",
     borderWidth: Math.floor(mapStore.mapTileSize / 40) + "px",
   };
 });
 
 const bannerStyle = computed(() => {
+  const padding = Math.floor(mapStore.mapTileSize / 20);
+
   return {
-    padding: Math.floor(mapStore.mapTileSize / 10) + "px",
-    fontSize: Math.floor(mapStore.mapTileSize / 7) + "px",
+    padding: `${padding}px ${padding}px ${padding}px ${padding * 2}px`,
+    fontSize: Math.floor(mapStore.mapTileSize / 10) + "px",
   };
 });
 
@@ -270,8 +272,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
   .banner {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: 100%;
+    width: fit-content;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
     text-align: center;
@@ -279,7 +281,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     z-index: 2;
     font-size: 0.75rem;
     line-height: 1;
-    transform: rotate(45deg) translateX(23%) translateY(-160%);
+    transform: rotate(45deg) translate(-35%, -35%);
+    transform-origin: 0 0;
     box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.8);
     pointer-events: none;
 

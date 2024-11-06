@@ -29,6 +29,18 @@
     <p>
       <small>
         <CText path="registration.cookieInfo" />
+        <br />
+        <br />
+        <i
+          >Background music is
+          <a href="https://maxkomusic.com/" target="_blank"
+            >"Majesty" by MaxKoMusic</a
+          >
+          (CC BY-SA 3.0) from
+          <a href="https://www.chosic.com/free-music/all/" target="_blank"
+            >Chosic</a
+          >.</i
+        >
       </small>
     </p>
   </Page>
@@ -92,7 +104,26 @@ async function submitForm(): Promise<void> {
   color: red;
 }
 
+small {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  display: block;
+  opacity: 0.5;
+}
+
 form {
   margin-bottom: 2rem;
+}
+
+.link-to-wiki {
+  display: block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  color: black;
+}
+
+a:link,
+a:visited {
+  color: black;
 }
 </style>
