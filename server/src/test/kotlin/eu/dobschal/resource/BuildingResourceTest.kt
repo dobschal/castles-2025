@@ -1623,6 +1623,55 @@ class BuildingResourceTest : BaseResourceTest() {
     }
 
     @Test
+    fun `I can build one farm and two breweries per city or village`() {
+        val mapTile = MapTile().apply {
+            x = 2
+            y = 2
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val village = Building().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val farm1 = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.FARM
+        }
+        buildingRepository.save(farm1)
+        val city = Building().apply {
+            x = 5
+            y = 5
+            user = user1
+            type = BuildingType.CITY
+        }
+        buildingRepository.save(city)
+        val worker = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(worker)
+        assert(buildingRepository.listAll().size == 3)
+        val request = CreateBuildingRequestDto(2, 2, BuildingType.FARM)
+        given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer $jwt1")
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(buildingRepository.listAll().size == 4)
+    }
+
+    @Test
     fun `Per city the user gets a specific amount of gold storage`() {
         TODO()
     }

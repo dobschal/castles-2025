@@ -217,7 +217,7 @@ const bannerStyle = computed(() => {
   const padding = Math.floor(mapStore.mapTileSize / 20);
 
   return {
-    padding: `${padding}px ${padding}px ${padding}px ${padding * 2}px`,
+    padding: `${padding}px ${padding}px ${padding}px ${padding * 2.5}px`,
     fontSize: Math.floor(mapStore.mapTileSize / 10) + "px",
   };
 });

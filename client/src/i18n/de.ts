@@ -35,7 +35,7 @@ export const de = {
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
     onlyOnePerVillage:
-      "Du kannst nur zwei Brauereien, eine Farm und eine Burg pro Dorf bauen.",
+      "Du kannst nur zwei Brauereien, eine Farm und eine Burg pro Dorf oder Stadt bauen.",
     tooManyMoves:
       "Die Einheit hat ihr Limit an Zügen für diese Stunde erreicht.",
     notYourBuilding: "Du kannst nur deine eigenen Gebäude zerstören.",
@@ -163,7 +163,7 @@ export const de = {
       "Es gibt verschiedene Gebäude im Spiel, die unterschiedliche Funktionen\n" +
       "      haben. Farm und Brauerei produzieren Bier, das für den Bau von Einheiten\n" +
       "      und Gebäuden gebraucht wird. Farm und Brauerei müssen direkt nebeneinander\n" +
-      "      sein. In Burgen könnt ihr Einheiten zur Verteidigung und zum Angriff\n" +
+      "      sein und man kann 2 Brauereien und eine Farm pro Dorf bauen. In Burgen könnt ihr Einheiten zur Verteidigung und zum Angriff\n" +
       "      erstellen. Dörfer können Arbeiter ausbilden und speichern euer Bier. Je\n" +
       "      mehr Dörfer ihr habt, desto mehr Bier könnt ihr speichern.\n" +
       "      Im Fall einer Eroberung werden Farm und Brauerei zerstört. Dörfer und\n" +

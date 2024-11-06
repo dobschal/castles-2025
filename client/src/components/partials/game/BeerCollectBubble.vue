@@ -57,6 +57,7 @@ const bubbleStyle = computed(() => {
   return {
     width: `${mapStore.mapTileSize / 2.5}px`,
     height: `${mapStore.mapTileSize / 2.5}px`,
+    top: `-${mapStore.mapTileSize / 2.5}px`,
   };
 });
 
@@ -71,24 +72,24 @@ const arrowStyle = computed(() => {
 <style lang="scss" scoped>
 @keyframes bounce {
   0% {
-    transform: rotate(45deg) translateY(-200%) translateX(110%);
+    transform: rotate(45deg);
   }
   50% {
-    transform: rotate(45deg) translateY(calc(-200% - 10px)) translateX(110%);
+    transform: rotate(45deg) translateY(10px);
   }
   100% {
-    transform: rotate(45deg) translateY(-200%) translateX(110%);
+    transform: rotate(45deg);
   }
 }
 
 .bubble {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 100%;
   z-index: 1;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.8);
-  transform: rotate(45deg) translateY(-200%) translateX(110%);
+  transform: rotate(45deg);
   display: flex;
   animation: bounce 1s infinite;
   will-change: transform;

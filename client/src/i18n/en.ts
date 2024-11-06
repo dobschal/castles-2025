@@ -35,7 +35,7 @@ export const en = {
   serverError: {
     notEnoughBeer: "Not enough beer available.",
     onlyOnePerVillage:
-      "You can only build two breweries, one farm and one castle per village.",
+      "You can only build two breweries, one farm and one castle per village or city.",
     tooManyMoves: "The unit has reached its limit of moves for this hour.",
     notYourBuilding: "You can only destroy your own buildings.",
     lastVillage: "You cannot destroy your last village.",
@@ -156,7 +156,7 @@ export const en = {
     paragraph2:
       "There are various buildings in the game that have different functions.\n" +
       "      Farm and brewery produce beer, which is needed for building units\n" +
-      "      and buildings. Farm and brewery must be directly next to each other.\n" +
+      "      and buildings. Farm and brewery must be directly next to each other and you can build two breweries and one farm per village.\n" +
       "      In castles, you can create units for defense and attack.\n" +
       "      Villages can train workers and store your beer. The more villages you have,\n" +
       "      the more beer you can store.\n" +
