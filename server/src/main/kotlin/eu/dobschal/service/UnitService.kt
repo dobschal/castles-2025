@@ -89,6 +89,22 @@ class UnitService @Inject constructor(
         return unit
     }
 
+    fun deleteUnit(unitId: Long) {
+        val user = userService.getCurrentUser()
+        val unit = unitRepository.findById(unitId) ?: throw NotFoundException("serverError.noUnit")
+        if (unit.user?.id != user.id) {
+            throw BadRequestException("serverError.wrongUnitOwner")
+        }
+        unitRepository.delete(unit)
+        eventRepository.save(Event().apply {
+            this.user1 = user
+            this.type = EventType.UNIT_DELETED
+            this.unit = unit
+            this.x = unit.x!!
+            this.y = unit.y!!
+        })
+    }
+
     fun moveUnit(x: Int, y: Int, unitId: Int): Unit {
         val user = userService.getCurrentUser()
         val unit = unitRepository.findById(unitId) ?: throw NotFoundException("serverError.noUnit")
