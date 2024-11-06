@@ -1,5 +1,6 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.BuildingDto
 import eu.dobschal.model.dto.response.BuildingsResponseDto
 import eu.dobschal.model.dto.response.SuccessResponseDto
 import eu.dobschal.model.entity.Building
@@ -251,6 +252,10 @@ class BuildingService @Inject constructor(
             this.y = y
         })
         return SuccessResponseDto("serverSuccess.cityCreated")
+    }
+
+    fun getUsersBuildings(userId: Int): List<BuildingDto> {
+        return buildingRepository.findAllByUser(userId)
     }
 
 

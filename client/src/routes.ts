@@ -63,6 +63,13 @@ export const UserListPageRoute: RouteRecordRaw = {
   meta: { title, layout: MainLayout, roles: ["user"] },
 };
 
+export const UnitsAndBuildingsListPageRoute: RouteRecordRaw = {
+  path: "/units-and-buildings",
+  name: "UnitsAndBuildingsListPage",
+  component: () => import("@/components/pages/UnitsAndBuildings.vue"),
+  meta: { title, layout: MainLayout, roles: ["user"] },
+};
+
 export const UserProfilePageRoute: RouteRecordRaw = {
   path: "/user-profile",
   name: "UserProfilePage",

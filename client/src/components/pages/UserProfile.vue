@@ -5,6 +5,9 @@
     <p @click="showPlayerOnMap" class="clickable">
       > {{ t("userProfile.showOnMap") }}
     </p>
+    <p @click="openUnitsAndBuildings" class="clickable">
+      > {{ t("unitsAndBuildings.link") }}
+    </p>
     <template v-if="isOwnUser">
       <p @click="toggleLanguage" class="clickable">
         >
@@ -88,6 +91,10 @@ async function setAvatarId(avatarId: number): Promise<void> {
   } catch (e) {
     handleFatalError(e);
   }
+}
+
+function openUnitsAndBuildings(): void {
+  router.push(`/units-and-buildings?user_id=${userId.value}`);
 }
 </script>
 

@@ -30,7 +30,7 @@
   <section>
     <slot />
   </section>
-  <audio ref="audio" loop>
+  <audio ref="audio" loop volume="0.2">
     <source src="/sounds/background-music.mp3" type="audio/mpeg" />
   </audio>
 </template>

@@ -25,6 +25,13 @@ export const de = {
     SPEARMAN: "Speerträger",
     HORSEMAN: "Reiter",
   },
+  buildingType: {
+    VILLAGE: "Dorf",
+    CASTLE: "Burg",
+    FARM: "Farm",
+    BREWERY: "Brauerei",
+    CITY: "Stadt",
+  },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
     onlyOnePerVillage:
@@ -207,5 +214,10 @@ export const de = {
   },
   cityAction: {
     cityOf: "Stadt von {playerName}",
+  },
+  unitsAndBuildings: {
+    link: "Einheiten & Gebäude",
+    description:
+      "Hier siehst du alle Einheiten und Gebäude von {playerName}. Klicke auf ein Gebäude oder eine Einheit um es auf der Karte anzuzeigen.",
   },
 };

@@ -1,5 +1,6 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.UnitDto
 import eu.dobschal.model.dto.response.UnitsResponseDto
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
@@ -242,5 +243,9 @@ class UnitService @Inject constructor(
             unit1.type == UnitType.SWORDSMAN && unit2.type == UnitType.HORSEMAN -> unit1 // Horseman wins against Swordsmen
             else -> unit2
         }
+    }
+
+    fun getUsersUnits(userId: Int): List<UnitDto> {
+        return unitRepository.findAllByUserAsDto(userId)
     }
 }

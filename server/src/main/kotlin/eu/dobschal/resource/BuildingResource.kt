@@ -53,6 +53,13 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     ) = buildingService.getBuildings(x1, x2, y1, y2)
 
     @RolesAllowed(USER_ROLE)
+    @GET
+    @Path("/by-user")
+    fun getUsersBuildings(
+        @QueryParam("user_id") userId: Int
+    ) = buildingService.getUsersBuildings(userId)
+
+    @RolesAllowed(USER_ROLE)
     @POST
     @Path("/collect-beer")
     fun collectBeer(request: CollectBeerRequestDto) =

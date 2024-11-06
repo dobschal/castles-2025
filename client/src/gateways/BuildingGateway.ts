@@ -32,6 +32,13 @@ export class BuildingGateway extends Gateway {
     );
   }
 
+  async getBuildingsByUser(userId: number): Promise<Array<BuildingEntity>> {
+    return this.request<Array<BuildingEntity>>(
+      "GET",
+      "/v1/buildings/by-user?user_id=" + userId,
+    );
+  }
+
   async destroyBuilding(x: number, y: number): Promise<void> {
     return this.request<void>("DELETE", `/v1/buildings`, {
       x,
