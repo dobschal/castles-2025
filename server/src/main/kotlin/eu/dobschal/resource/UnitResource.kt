@@ -28,6 +28,11 @@ class UnitResource @Inject constructor(private val unitService: UnitService) {
     fun createUnit(request: CreateUnitRequestDto) = unitService.createUnit(request.x, request.y, request.type)
 
     @RolesAllowed(USER_ROLE)
+    @DELETE
+    @Path("/{unit_id}")
+    fun deleteUnit(@PathParam("unit_id") unitId: Long) = unitService.deleteUnit(unitId)
+
+    @RolesAllowed(USER_ROLE)
     @POST
     @Path("/move")
     fun moveUnit(request: MoveUnitRequestDto) = unitService.moveUnit(request.x, request.y, request.unitId)

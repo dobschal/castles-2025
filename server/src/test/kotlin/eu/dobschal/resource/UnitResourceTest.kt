@@ -1060,4 +1060,26 @@ class UnitResourceTest : BaseResourceTest() {
         assert(eventRepository.listAll().last().type == EventType.GAME_OVER)
     }
 
+    @Test
+    fun `Deleting own unit works`() {
+        val unit = Unit().apply {
+            x = 3
+            y = 5
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+
+        val userUnitsBefore = unitRepository.findAllByUser(user1?.id!!).size
+
+        given()
+            .header("Authorization", "Bearer $jwt1")
+            .delete("$endpoint/${unit.id}")
+            .then()
+            .statusCode(Response.Status.NO_CONTENT.statusCode)
+
+        val userUnitsAfter = unitRepository.findAllByUser(user1?.id!!).size
+        assert(userUnitsBefore - 1 == userUnitsAfter)
+    }
+
 }
