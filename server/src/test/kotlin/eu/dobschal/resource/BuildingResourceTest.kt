@@ -1427,7 +1427,7 @@ class BuildingResourceTest : BaseResourceTest() {
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(PricesResponseDto::class.java)
-        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE * 2)
+        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE * 3)
     }
 
     @Test
@@ -1488,7 +1488,7 @@ class BuildingResourceTest : BaseResourceTest() {
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(PricesResponseDto::class.java)
-        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE * 2)
+        assert(pricesResponse.buildingPrices[BuildingType.CITY] == CITY_BASE_PRICE * 3)
         val response = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")

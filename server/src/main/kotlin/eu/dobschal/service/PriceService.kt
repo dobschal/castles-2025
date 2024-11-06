@@ -52,7 +52,11 @@ class PriceService @Inject constructor(
                     BuildingType.BREWERY -> BREWERY_BASE_PRICE
                     BuildingType.FARM -> FARM_BASE_PRICE
                 }
-                val price = basePrice * 2.0.pow(i)
+                val factor = when (type) {
+                    BuildingType.CITY -> 3.0
+                    else -> 2.0
+                }
+                val price = basePrice * factor.pow(i)
                 prices.add(price.toInt())
             }
             prices
