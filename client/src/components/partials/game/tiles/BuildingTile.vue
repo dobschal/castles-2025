@@ -12,6 +12,26 @@
       />
       {{ building.user.username }}
     </p>
+    <template v-if="building.type === BuildingType.MARKET">
+      <img
+        v-if="!isDisabled && isOwnBuilding"
+        src="../../../../assets/tiles/market-red.png"
+        class="building market"
+        alt="Building"
+      />
+      <img
+        v-else-if="!isDisabled && !isOwnBuilding"
+        src="../../../../assets/tiles/market-beige.png"
+        class="building market"
+        alt="Building"
+      />
+      <img
+        v-else
+        src="../../../../assets/tiles/market-disabled.png"
+        class="building market"
+        alt="Building"
+      />
+    </template>
     <template v-if="building.type === BuildingType.VILLAGE">
       <img
         v-if="!isDisabled && isOwnBuilding"
@@ -186,6 +206,7 @@ import { MapTileState } from "@/types/enum/MapTileState.ts";
 import BeerCollectBubble from "@/components/partials/game/BeerCollectBubble.vue";
 import CastleAction from "@/components/partials/game/actions/CastleAction.vue";
 import CityAction from "@/components/partials/game/actions/CityAction.vue";
+import MarketAction from "@/components/partials/game/actions/MarketAction.vue";
 
 const props = defineProps<{
   building: BuildingEntity;
@@ -256,6 +277,9 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     case BuildingType.CASTLE:
       ACTION.dispatch(CastleAction);
       break;
+    case BuildingType.MARKET:
+      ACTION.dispatch(MarketAction);
+      break;
   }
 }
 </script>
@@ -304,6 +328,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     left: 0;
     pointer-events: none;
     z-index: 1;
+
+    &.market {
+      width: 130%;
+      margin-left: -10%;
+      margin-top: -30%;
+    }
 
     &.city {
       width: 150%;

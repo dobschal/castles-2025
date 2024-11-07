@@ -51,9 +51,11 @@ class PriceService @Inject constructor(
                     BuildingType.CASTLE -> CASTLE_BASE_PRICE
                     BuildingType.BREWERY -> BREWERY_BASE_PRICE
                     BuildingType.FARM -> FARM_BASE_PRICE
+                    BuildingType.MARKET -> MARKET_BASE_PRICE
                 }
                 val factor = when (type) {
                     BuildingType.CITY -> 3.0
+                    BuildingType.MARKET -> 3.0
                     else -> 2.0
                 }
                 val price = basePrice * factor.pow(i)
@@ -95,6 +97,7 @@ class PriceService @Inject constructor(
             BuildingType.CASTLE -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.CASTLE }]
             BuildingType.BREWERY -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.BREWERY }]
             BuildingType.FARM -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.FARM }]
+            BuildingType.MARKET -> buildingCreationPrices[type]!![b.count { it.type == BuildingType.MARKET }]
         }
     }
 

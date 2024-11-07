@@ -23,6 +23,7 @@ const val VILLAGE_BASE_PRICE = 400
 const val CASTLE_BASE_PRICE = 200
 const val FARM_BASE_PRICE = 50
 const val BREWERY_BASE_PRICE = 100
+const val MARKET_BASE_PRICE = 2100
 
 // Beer Production
 const val BREWERY_BEER_PRODUCTION_PER_HOUR = 100
