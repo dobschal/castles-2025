@@ -53,4 +53,4 @@ jobs:
         run: ssh hetzner 'cd /root/deployments/castles-2025 && git fetch && git reset --hard origin/main'
       
       - name: Pull image and restart
-        run: ssh hetzner 'cd /root/deployments/castles-2025 && docker-compose pull  && docker-compose up -d'
+        run: ssh hetzner 'cd /root/deployments/castles-2025 && docker compose pull  && docker compose up -d'
