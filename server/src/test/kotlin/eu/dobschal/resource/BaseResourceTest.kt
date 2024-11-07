@@ -5,7 +5,10 @@ import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.*
 import eu.dobschal.utils.hash
+import io.restassured.RestAssured
 import io.restassured.RestAssured.given
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.specification.RequestSpecification
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.MediaType
@@ -37,8 +40,6 @@ open class BaseResourceTest {
 
     var user1: User? = null
     var user2: User? = null
-    var jwt1: String? = null
-    var jwt2: String? = null
 
     @AfterEach
     @Transactional
@@ -53,21 +54,29 @@ open class BaseResourceTest {
 
     @BeforeEach
     fun beforeEach() {
+        setBaseHeader()
+
         createUsers()
-        jwt1 = getJwt("user1")
-        jwt2 = getJwt("user2")
     }
 
     @Transactional
     fun createUsers() {
-        user1 = userRepository.createUser("user1", hash("password"))
-        user2 = userRepository.createUser("user2", hash("password"))
+        user1 = userRepository.createUser(USER1, hash("password"))
+        user2 = userRepository.createUser(USER2, hash("password"))
+    }
+
+    private fun setBaseHeader() {
+        val requestSpec: RequestSpecification = RequestSpecBuilder()
+            .addHeader("Content-Type", MediaType.APPLICATION_JSON)
+            .build()
+
+        // Set it as the global request specification
+        RestAssured.requestSpecification = requestSpec
     }
 
     fun <ResponseType> assertOkPostRequest(url: String, request: Any, responseType: Class<ResponseType>): ResponseType {
         return given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(url)
@@ -78,8 +87,6 @@ open class BaseResourceTest {
 
     fun <ResponseType> assertOkGetRequest(url: String, responseType: Class<ResponseType>): ResponseType {
         return given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get(url)
             .then()
@@ -87,15 +94,19 @@ open class BaseResourceTest {
             .extract().`as`(responseType)
     }
 
-    private fun getJwt(username: String): String {
+    fun getJwt(username: String): String {
         val response = given()
             .body(UserCredentialsDto(username, "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("/v1/users/login")
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(JwtResponseDto::class.java)
         return response.jwt
+    }
+
+    companion object {
+        const val USER1 = "user1"
+        const val USER2 = "user2"
     }
 }

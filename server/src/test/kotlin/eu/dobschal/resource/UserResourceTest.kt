@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import WithDefaultUser
 import eu.dobschal.model.dto.UserCredentialsDto
 import eu.dobschal.model.dto.UserRankingDto
 import eu.dobschal.model.dto.response.JwtResponseDto
@@ -25,7 +26,6 @@ class UserResourceTest : BaseResourceTest() {
     fun `Login for none existing user fails`() {
         given()
             .body(UserCredentialsDto("non-existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
@@ -37,7 +37,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user", "wrong-password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
@@ -49,7 +48,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
@@ -61,7 +59,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/register")
             .then()
@@ -74,7 +71,6 @@ class UserResourceTest : BaseResourceTest() {
     fun `Registration without username or password fails`() {
         given()
             .body("{}")
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/register")
             .then()
@@ -88,7 +84,6 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         given()
             .body(UserCredentialsDto("existing-user-2", "password-2"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/register")
             .then()
@@ -100,7 +95,6 @@ class UserResourceTest : BaseResourceTest() {
     @Test
     fun `Secured route is not accessible without JWT`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .get("$endpoint/current")
             .then()
@@ -110,7 +104,6 @@ class UserResourceTest : BaseResourceTest() {
     @Test
     fun `Secured route is not accessible with wrong JWT`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer fnsdlgvndflkgdvn")
             .`when`()
             .get("$endpoint/current")
@@ -123,14 +116,12 @@ class UserResourceTest : BaseResourceTest() {
         userRepository.createUser("existing-user", hash("password"))
         val response = given()
             .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .`when`()
             .post("$endpoint/login")
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(JwtResponseDto::class.java)
         val user = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer ${response.jwt}")
             .`when`()
             .get("$endpoint/current")
@@ -141,6 +132,7 @@ class UserResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `GET users rankings returns list of all users with points`() {
         val castle = Building().apply {
             x = 3
@@ -173,8 +165,6 @@ class UserResourceTest : BaseResourceTest() {
         unitRepository.save(unit1)
 
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/ranking")
             .then()
@@ -189,6 +179,7 @@ class UserResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Ranking contains oldest village`() {
         val castle = Building().apply {
             x = 3
@@ -229,8 +220,6 @@ class UserResourceTest : BaseResourceTest() {
         unitRepository.save(unit1)
 
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/ranking")
             .then()
@@ -244,6 +233,7 @@ class UserResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `GET user ranking returns user with points`() {
         val castle = Building().apply {
             x = 3
@@ -275,8 +265,6 @@ class UserResourceTest : BaseResourceTest() {
         unitRepository.save(unit1)
 
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/${user2?.id}/ranking")
             .then()
@@ -286,17 +274,14 @@ class UserResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Can change avatar id`() {
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .put("$endpoint/${user1?.id}/avatar/2")
             .then()
             .statusCode(Response.Status.OK.statusCode)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/${user1?.id}/ranking")
             .then()
@@ -307,15 +292,15 @@ class UserResourceTest : BaseResourceTest() {
 
     @Test
     fun `Cannot change avatar id of other players`() {
+        val jwt1 = getJwt(USER1)
+        val jwt2 = getJwt(USER2)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt2")
             .`when`()
             .put("$endpoint/${user1?.id}/avatar/2")
             .then()
             .statusCode(Response.Status.UNAUTHORIZED.statusCode)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint/${user1?.id}/ranking")

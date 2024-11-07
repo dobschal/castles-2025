@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import WithDefaultUser
 import eu.dobschal.model.dto.request.CreateUnitRequestDto
 import eu.dobschal.model.dto.request.MoveUnitRequestDto
 import eu.dobschal.model.dto.response.ErrorResponseDto
@@ -29,6 +30,7 @@ class UnitResourceTest : BaseResourceTest() {
     private val endpoint = "/v1/units"
 
     @Test
+    @WithDefaultUser
     fun `Get units from x1, y1, x2,y2 returns right amount of correct units`() {
         val unit = Unit().apply {
             x = 1
@@ -39,8 +41,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         assert(unitRepository.listAll().size == 1)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint?x1=0&x2=2&y1=0&y2=2")
             .then()
@@ -50,6 +50,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Get units from x1, y1, x2,y2 without units in that area is returning an empty list`() {
         val unit = Unit().apply {
             x = 1
@@ -60,8 +61,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         assert(unitRepository.listAll().size == 1)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint?x1=2&x2=4&y1=2&y2=4")
             .then()
@@ -71,6 +70,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Create unit on wrong building fails`() {
         val castle = Building().apply {
             x = 1
@@ -81,8 +81,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(castle)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -93,6 +91,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Create unit adds correct unit to database and is return by get units`() {
         val village = Building().apply {
             x = 1
@@ -103,8 +102,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(village)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -115,8 +112,6 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 1)
         assert(unitRepository.listAll().first().type == UnitType.WORKER)
         val response2 = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
             .then()
@@ -128,6 +123,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Create unit on field with existing unit fails`() {
         val village = Building().apply {
             x = 1
@@ -146,8 +142,6 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 1)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -160,6 +154,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Create worker on village of opponent fails`() {
         val village = Building().apply {
             x = 1
@@ -171,8 +166,6 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 0)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -184,6 +177,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move unit to water should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -200,8 +194,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -211,6 +203,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move unit to PLAIN, FOREST or MOUNTAIN should work`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -227,8 +220,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -241,6 +232,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move unit to field with existing own unit should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -264,8 +256,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -274,6 +264,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move unit to field with existing non own unit should work (fight)`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -297,8 +288,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -307,6 +296,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move non owned unit should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -323,8 +313,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -333,6 +321,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move owned unit to same field should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -349,8 +338,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -359,6 +346,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move owned unit further than 1 field should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -375,8 +363,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -385,6 +371,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move unit without enough beer should fail`() {
         userRepository.deductBeerFromUser(user1!!.id!!, START_BEER - WORKER_MOVE_PRICE + 1)
         val mapTile = MapTile().apply {
@@ -402,8 +389,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -416,6 +401,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Create unit without enough beer should fail`() {
         userRepository.deductBeerFromUser(user1!!.id!!, START_BEER - WORKER_BASE_PRICE + 1)
         val village = Building().apply {
@@ -427,8 +413,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(village)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -436,8 +420,6 @@ class UnitResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.BAD_REQUEST.statusCode)
         assert(unitRepository.listAll().size == 0)
         val response2 = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("$endpoint?x1=0&x2=4&y1=0&y2=4")
             .then()
@@ -447,6 +429,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Create unit should deduct beer from user`() {
         val village = Building().apply {
             x = 1
@@ -457,8 +440,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(village)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -469,6 +450,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move unit should deduct beer from user`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -485,8 +467,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -498,6 +478,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move worker unit to opponent building should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -521,8 +502,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -535,6 +514,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move worker unit to own building should work`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -558,8 +538,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -572,6 +550,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Move worker unit to field with opponent unit should fail`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -595,8 +574,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -609,6 +586,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `A unit has a limited amount of moves per hour`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -656,8 +634,6 @@ class UnitResourceTest : BaseResourceTest() {
         })
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -670,6 +646,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `One can have 2 units only without a castle`() {
         val unit1 = Unit().apply {
             x = 2
@@ -694,8 +671,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(village)
         val request = CreateUnitRequestDto(1, 1, UnitType.SPEARMAN)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -706,6 +681,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Amount of units is limited by amount of castles and their level`() {
         val unit1 = Unit().apply {
             x = 2
@@ -737,8 +713,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(castle)
         val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -750,6 +724,7 @@ class UnitResourceTest : BaseResourceTest() {
 
 
     @Test
+    @WithDefaultUser
     fun `Fight units can only be build on castles`() {
         val castle = Building().apply {
             x = 1
@@ -761,8 +736,6 @@ class UnitResourceTest : BaseResourceTest() {
         val request = CreateUnitRequestDto(1, 1, UnitType.HORSEMAN)
         assert(unitRepository.listAll().size == 0)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post(endpoint)
@@ -778,8 +751,6 @@ class UnitResourceTest : BaseResourceTest() {
         buildingRepository.save(village)
         val request2 = CreateUnitRequestDto(1, 2, UnitType.HORSEMAN)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request2)
             .`when`()
             .post(endpoint)
@@ -789,6 +760,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Fight units can not move over each other if from same player`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -812,8 +784,6 @@ class UnitResourceTest : BaseResourceTest() {
         unitRepository.save(unit)
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -822,6 +792,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Fight units can move over other units (fight, one unit gets destroyed)`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -846,8 +817,6 @@ class UnitResourceTest : BaseResourceTest() {
         val request = MoveUnitRequestDto(3, 3, unit.id!!)
         assert(unitRepository.listAll().size == 2)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -860,6 +829,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Farms and Breweries are getting destroyed on conquer`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -892,8 +862,6 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 2)
         assert(buildingRepository.listAll().size == 1)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -906,6 +874,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Own Farms and Breweries are not getting destroyed`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -931,8 +900,6 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 1)
         assert(buildingRepository.listAll().size == 1)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -944,6 +911,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Castles and villages are getting conquered when other unit is moving onto`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -983,8 +951,6 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 2)
         assert(buildingRepository.listAll().size == 2)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -998,6 +964,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `If loosing the last village, destroy all other buildings and give user START BEER`() {
         val mapTile = MapTile().apply {
             x = 3
@@ -1042,7 +1009,6 @@ class UnitResourceTest : BaseResourceTest() {
         val request = MoveUnitRequestDto(3, 4, unit.id!!)
         val response = given()
             .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("$endpoint/move")
@@ -1058,6 +1024,28 @@ class UnitResourceTest : BaseResourceTest() {
         assert(userRepository.findById(user2!!.id!!)!!.beer == START_BEER)
         assert(buildingRepository.listAll().first().type == BuildingType.VILLAGE)
         assert(eventRepository.listAll().last().type == EventType.GAME_OVER)
+    }
+
+    @Test
+    fun `Deleting own unit works`() {
+        val unit = Unit().apply {
+            x = 3
+            y = 5
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+
+        val userUnitsBefore = unitRepository.findAllByUser(user1?.id!!).size
+
+        given()
+            .header("Authorization", "Bearer $jwt1")
+            .delete("$endpoint/${unit.id}")
+            .then()
+            .statusCode(Response.Status.NO_CONTENT.statusCode)
+
+        val userUnitsAfter = unitRepository.findAllByUser(user1?.id!!).size
+        assert(userUnitsBefore - 1 == userUnitsAfter)
     }
 
 }

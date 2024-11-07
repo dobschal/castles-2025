@@ -15,6 +15,7 @@ import io.smallrye.jwt.build.Jwt
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
+import jakarta.ws.rs.core.SecurityContext
 import mu.KotlinLogging
 import org.eclipse.microprofile.jwt.JsonWebToken
 
@@ -22,9 +23,9 @@ import org.eclipse.microprofile.jwt.JsonWebToken
 @ApplicationScoped
 class UserService @Inject constructor(
     private val userRepository: UserRepository,
-    private var jwt: JsonWebToken,
     private val buildingRepository: BuildingRepository,
-    private val unitRepository: UnitRepository
+    private val unitRepository: UnitRepository,
+    private val securityContext: SecurityContext
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -93,17 +94,22 @@ class UserService @Inject constructor(
     }
 
     fun getCurrentUserDto(): UserDto {
-        val username = jwt.name;
+        val username = getUserName()
         return userRepository.findByUsernameAsDto(username)
             ?.apply { password = "" }
             ?: throw UnauthorizedException("User not found")
     }
 
     fun getCurrentUser(): User {
-        val username = jwt.name;
+        val username = getUserName()
         return userRepository.findByUsername(username)
             ?.apply { password = "" }
             ?: throw UnauthorizedException("User not found")
+    }
+
+    fun getUserName(): String {
+        val principal = securityContext.userPrincipal
+        return principal.name
     }
 
     fun setAvatar(userId: Int, avatarId: Int): User {

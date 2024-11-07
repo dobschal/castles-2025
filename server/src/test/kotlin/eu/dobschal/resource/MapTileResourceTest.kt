@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import WithDefaultUser
 import eu.dobschal.model.dto.UserCredentialsDto
 import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.repository.MapTileRepository
@@ -9,7 +10,6 @@ import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
-import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import mu.KotlinLogging
 import org.junit.jupiter.api.AfterEach
@@ -36,12 +36,10 @@ class MapTileResourceTest {
     }
 
     @Test
+    @WithDefaultUser
     fun `Fetching map tiles is creating new ones at random`() {
-        val jwt = getJwt()
         assert(mapTileRepository.listAll().size == 0)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt")
             .`when`()
             .get("$endpoint?x1=0&x2=10&y1=0&y2=10")
             .then()
@@ -52,12 +50,10 @@ class MapTileResourceTest {
     }
 
     @Test
+    @WithDefaultUser
     fun `Fetching map tiles twice is returning the same tiles`() {
-        val jwt = getJwt()
         assert(mapTileRepository.listAll().size == 0)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt")
             .`when`()
             .get("$endpoint?x1=0&x2=10&y1=0&y2=10")
             .then()
@@ -66,8 +62,6 @@ class MapTileResourceTest {
         assert(response.size == 100)
         assert(mapTileRepository.listAll().size == 100)
         val response2 = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt")
             .`when`()
             .get("$endpoint?x1=0&x2=10&y1=0&y2=10")
             .then()
@@ -79,12 +73,10 @@ class MapTileResourceTest {
     }
 
     @Test
+    @WithDefaultUser
     fun `Fetching a tones of new map tiles is fast`() {
-        val jwt = getJwt()
         val t1 = System.currentTimeMillis()
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt")
             .`when`()
             .get("$endpoint?x1=0&x2=33&y1=0&y2=33")
             .then()
@@ -94,18 +86,5 @@ class MapTileResourceTest {
         assert(response.size == 1089)
         logger.info { "Fetching 1089 map tiles took ${t2 - t1}ms" }
         assert(t2 - t1 < 1000)
-    }
-
-    fun getJwt(): String {
-        userRepository.createUser("existing-user", hash("password"))
-        val response = given()
-            .body(UserCredentialsDto("existing-user", "password"))
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .`when`()
-            .post("/v1/users/login")
-            .then()
-            .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(JwtResponseDto::class.java)
-        return response.jwt
     }
 }

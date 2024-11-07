@@ -1,5 +1,6 @@
 package eu.dobschal.resource
 
+import WithDefaultUser
 import eu.dobschal.model.dto.request.SetTutorialStatusRequestDto
 import eu.dobschal.model.dto.response.ErrorResponseDto
 import eu.dobschal.model.entity.Tutorial
@@ -17,10 +18,9 @@ import org.junit.jupiter.api.Test
 class TutorialResourceTest : BaseResourceTest() {
 
     @Test
+    @WithDefaultUser
     fun `Getting next tutorial works`() {
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
             .then()
@@ -31,10 +31,9 @@ class TutorialResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Set tutorial status works`() {
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
             .then()
@@ -44,8 +43,6 @@ class TutorialResourceTest : BaseResourceTest() {
         assert(response.type == TutorialType.FIRST_WORKER)
         val request = SetTutorialStatusRequestDto(TutorialStatus.COMPLETED, response.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/tutorials")
@@ -55,10 +52,9 @@ class TutorialResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Get next tutorial works when one is solved`() {
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
             .then()
@@ -68,8 +64,6 @@ class TutorialResourceTest : BaseResourceTest() {
         assert(response.type == TutorialType.FIRST_WORKER)
         val request = SetTutorialStatusRequestDto(TutorialStatus.COMPLETED, response.id!!)
         given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .body(request)
             .`when`()
             .post("/v1/tutorials")
@@ -77,8 +71,6 @@ class TutorialResourceTest : BaseResourceTest() {
             .statusCode(Response.Status.OK.statusCode)
         assert(tutorialRepository.findById(response.id!!)?.status == TutorialStatus.COMPLETED)
         val response2 = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
             .then()
@@ -89,6 +81,7 @@ class TutorialResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Get next tutorial returning 404 if non existing anymore`() {
         TutorialType.entries.forEach {
             tutorialRepository.persist(Tutorial().apply {
@@ -98,8 +91,6 @@ class TutorialResourceTest : BaseResourceTest() {
             })
         }
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
             .then()
@@ -109,6 +100,7 @@ class TutorialResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Get next tutorial return status open, solved OR collected, user needs to collect it manually`() {
         val unit = Unit().apply {
             x = 1
@@ -118,8 +110,6 @@ class TutorialResourceTest : BaseResourceTest() {
         }
         unitRepository.save(unit)
         val response = given()
-            .header("Content-Type", MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer $jwt1")
             .`when`()
             .get("/v1/tutorials/next")
             .then()
