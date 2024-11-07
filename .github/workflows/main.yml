@@ -27,28 +27,22 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/castles-2025:latest
 
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/castles-2025:latest ./server
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/hetzner.key
+          chmod 600 ~/.ssh/hetzner.key
+          cat >>~/.ssh/config <<END
+          Host hetzner
+            HostName $SSH_HOST
+            User root
+            IdentityFile ~/.ssh/hetzner.key
+            StrictHostKeyChecking no
+            ServerAliveInterval 600
+          END
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOST }}
 
-      - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/castles-2025:latest
-
-#      - name: Configure SSH
-#        run: |
-#          mkdir -p ~/.ssh/
-#          echo "$SSH_KEY" > ~/.ssh/hetzner.key
-#          chmod 600 ~/.ssh/hetzner.key
-#          cat >>~/.ssh/config <<END
-#          Host hetzner
-#            HostName $SSH_HOST
-#            User root
-#            IdentityFile ~/.ssh/hetzner.key
-#            StrictHostKeyChecking no
-#            ServerAliveInterval 600
-#          END
-#        env:
-#          SSH_KEY: ${{ secrets.SSH_KEY }}
-#          SSH_HOST: ${{ secrets.HOST }}
-#
-#      - name: Pull image and restart
-#        run: ssh hetzner 'cd /root/deployments/castles-2025 && ./restart.sh'
+      - name: Pull image and restart
+        run: ssh hetzner 'cd /root/deployments/castles-2025 && ./restart.sh'

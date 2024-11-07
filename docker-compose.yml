@@ -12,9 +12,7 @@ services:
       - castles
 
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: dobschal/castles-2025:latest
     ports:
       - "4000:3000"
     networks:
