@@ -45,4 +45,4 @@ jobs:
             ${{ runner.os }}-gradle-wrapper-${{ secrets.cache_version }}-
 
       - name: Run Tests
-        run: ./gradlew check
+        run: ./server/gradlew check
