@@ -45,4 +45,5 @@ jobs:
             ${{ runner.os }}-gradle-wrapper-${{ secrets.cache_version }}-
 
       - name: Run Tests
-        run: ./server/gradlew check
+        working-directory: server
+        run: ./gradlew check
