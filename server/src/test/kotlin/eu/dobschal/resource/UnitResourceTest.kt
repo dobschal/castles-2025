@@ -1027,6 +1027,7 @@ class UnitResourceTest : BaseResourceTest() {
     }
 
     @Test
+    @WithDefaultUser
     fun `Deleting own unit works`() {
         val unit = Unit().apply {
             x = 3
@@ -1039,7 +1040,6 @@ class UnitResourceTest : BaseResourceTest() {
         val userUnitsBefore = unitRepository.findAllByUser(user1?.id!!).size
 
         given()
-            .header("Authorization", "Bearer $jwt1")
             .delete("$endpoint/${unit.id}")
             .then()
             .statusCode(Response.Status.NO_CONTENT.statusCode)
@@ -1047,5 +1047,30 @@ class UnitResourceTest : BaseResourceTest() {
         val userUnitsAfter = unitRepository.findAllByUser(user1?.id!!).size
         assert(userUnitsBefore - 1 == userUnitsAfter)
     }
+
+
+    @Test
+    @WithDefaultUser
+    fun `Deleting unit of other user fails`() {
+        val unit = Unit().apply {
+            x = 3
+            y = 5
+            user = user2
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+
+        val userUnitsBefore = unitRepository.findAllByUser(user2?.id!!).size
+
+        given()
+            .delete("$endpoint/${unit.id}")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+
+        val userUnitsAfter = unitRepository.findAllByUser(user2?.id!!).size
+        assert(userUnitsBefore == userUnitsAfter)
+    }
+
+
 
 }
