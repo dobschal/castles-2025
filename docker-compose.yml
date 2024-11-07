@@ -1,9 +1,7 @@
 services:
 
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: dobschal/castles-2025:client-latest
     environment:
       - API_URL=https://castles.dobschal.eu/api
     ports:
@@ -12,9 +10,7 @@ services:
       - castles
 
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: dobschal/castles-2025:server-latest
     ports:
       - "4000:3000"
     networks:
