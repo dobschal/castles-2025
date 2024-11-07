@@ -54,3 +54,7 @@ jobs:
       
       - name: Pull image and restart
         run: ssh hetzner 'cd /root/deployments/castles-2025 && docker compose pull  && docker compose up -d'
+      
+      - name: Delete old docker images
+        run: ssh hetzner 'docker system prune -f'
+        

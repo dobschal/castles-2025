@@ -13,8 +13,8 @@ concurrency: # only 1 job per branch should run, older runs should be canceled
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test project
+  test-server:
+    name: Test Server
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -47,3 +47,22 @@ jobs:
       - name: Run Tests
         working-directory: server
         run: ./gradlew check
+        
+  test-client:
+    name: Test Client
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
