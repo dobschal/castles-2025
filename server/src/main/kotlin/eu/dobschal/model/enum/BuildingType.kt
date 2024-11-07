@@ -5,5 +5,5 @@ enum class BuildingType {
     CITY,
     CASTLE,
     BREWERY,
-    FARM
+    FARM,
 }

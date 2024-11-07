@@ -1695,4 +1695,29 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(response3.totalGoldStorage == GOLD_STORAGE_PER_CITY * 2)
     }
 
+    @Test
+    fun `With a city I can upgrade a castle to level 2`() {
+        TODO();
+    }
+
+    @Test
+    fun `The castle upgrade prices are increasing x3 per castle level 2`() {
+        TODO();
+    }
+
+    @Test
+    fun `Without enough gold you cannot upgrade a castle`() {
+        TODO();
+    }
+
+    @Test
+    fun `You still can build old unit from castles level 2`() {
+        TODO();
+    }
+
+    @Test
+    fun `castle level 2 are increasing the unit limit`() {
+        TODO();
+    }
+
 }

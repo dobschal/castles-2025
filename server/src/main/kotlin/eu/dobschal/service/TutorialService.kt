@@ -74,7 +74,14 @@ class TutorialService @Inject constructor(
 
     fun checkIfTutorialCanBeCompleted(tutorialType: TutorialType, user: User): Boolean {
         return when (tutorialType) {
-            TutorialType.FIRST_WORKER -> unitRepository.findUnitByTypeAndUser(user.id!!, UnitType.WORKER) != null
+            TutorialType.FIRST_WORKER -> unitRepository.findUnitByTypeAndUser(
+                user.id!!,
+                UnitType.WORKER
+            ) != null || buildingRepository.findBuildingByTypeAndUser(
+                user.id!!,
+                BuildingType.FARM
+            ) != null // If the user has a farm, he had a worker too
+
             TutorialType.FIRST_FARM -> buildingRepository.findBuildingByTypeAndUser(
                 user.id!!,
                 BuildingType.FARM
