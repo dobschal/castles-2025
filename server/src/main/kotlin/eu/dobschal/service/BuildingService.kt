@@ -127,6 +127,12 @@ class BuildingService @Inject constructor(
                 throw BadRequestException("serverError.onlyOnePerVillage")
             }
         }
+        if (type == BuildingType.MARKET) {
+            val userHasCity = buildingRepository.countCitiesByUser(currentUser.id!!) > 0
+            if (!userHasCity) {
+                throw BadRequestException("serverError.noCity")
+            }
+        }
         unitRepository.deleteById(unit.id!!)
         userRepository.deductBeerFromUser(currentUser.id!!, price)
         return persistBuilding(x, y, type, currentUser)

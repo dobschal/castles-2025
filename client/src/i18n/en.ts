@@ -41,6 +41,7 @@ export const en = {
     lastVillage: "You cannot destroy your last village.",
     noFarm: "No farm nearby!",
     tooManyUnits: "You have reached the limit of units. Build more castles.",
+    noCity: "You need a city first.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -92,6 +93,7 @@ export const en = {
     buildBrewery: "Build brewery",
     buildCastle: "Build castle",
     buildVillage: "Build village",
+    buildMarket: "Build market",
   },
   castleAction: {
     castleOf: "Castle of {playerName}",
@@ -213,5 +215,8 @@ export const en = {
     link: "Units & Buildings",
     description:
       "Here you can see all units and buildings of {playerName}. Click on it to see it on the map.",
+  },
+  marketAction: {
+    marketOf: "Market of {playerName}",
   },
 };

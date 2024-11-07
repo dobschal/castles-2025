@@ -2,6 +2,7 @@ services:
 
   client:
     image: dobschal/castles-2025:client-latest
+    restart: always
     environment:
       - API_URL=https://castles.dobschal.eu/api
     ports:
@@ -11,8 +12,11 @@ services:
 
   server:
     image: dobschal/castles-2025:server-latest
+    restart: always
     ports:
       - "4000:3000"
+    depends_on:
+      - database
     networks:
       - castles
     environment:

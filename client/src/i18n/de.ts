@@ -42,6 +42,7 @@ export const de = {
     lastVillage: "Du kannst dein letztes Dorf nicht zerstören.",
     noFarm: "Keine Farm in der Nähe!",
     tooManyUnits: "Du hast das Limit an Einheiten erreicht. Baue mehr Burgen.",
+    noCity: "Du benötigt zunächst eine Stadt.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -96,6 +97,7 @@ export const de = {
     buildBrewery: "Brauerei bauen",
     buildCastle: "Burg bauen",
     buildVillage: "Dorf bauen",
+    buildMarket: "Markt bauen",
   },
   castleAction: {
     castleOf: "Burg von {playerName}",
@@ -219,5 +221,8 @@ export const de = {
     link: "Einheiten & Gebäude",
     description:
       "Hier siehst du alle Einheiten und Gebäude von {playerName}. Klicke auf ein Gebäude oder eine Einheit um es auf der Karte anzuzeigen.",
+  },
+  marketAction: {
+    marketOf: "Markt von {playerName}",
   },
 };

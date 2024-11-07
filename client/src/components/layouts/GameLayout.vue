@@ -6,7 +6,11 @@
     </h1>
     <div>
       <button class="audio" @click="toggleAudio">
-        <img v-if="audioPaused" src="@/assets/audio-on.svg" alt="Audio" />
+        <img
+          v-if="!authStore.audioPaused"
+          src="@/assets/audio-on.svg"
+          alt="Audio"
+        />
         <img v-else src="@/assets/audio-off.svg" alt="Audio" />
       </button>
       <button class="burger" @click="onBurgerButtonClick">
@@ -37,14 +41,16 @@ import { ref } from "vue";
 import router from "@/core/router.ts";
 import NavigationMenu from "@/components/partials/NavigationMenu.vue";
 import { AudioPlayer } from "@/core/AudioPlayer.ts";
+import { useAuthStore } from "@/store/authStore.ts";
 
+const authStore = useAuthStore();
 const dropdownMenuVisible = ref(false);
-const audioPaused = ref(true);
 const audioPlayer = new AudioPlayer(
   "/sounds/background-music.mp3",
   "audio/mpeg",
   0.2,
   true,
+  !authStore.audioPaused,
 );
 
 router.afterEach(() => {
@@ -60,12 +66,12 @@ function closeDropdownMenu(): void {
 }
 
 function toggleAudio(): void {
-  if (audioPaused.value) {
+  if (authStore.audioPaused) {
+    authStore.audioPaused = false;
     audioPlayer.play();
-    audioPaused.value = false;
   } else {
+    authStore.audioPaused = true;
     audioPlayer.stop();
-    audioPaused.value = true;
   }
 }
 </script>

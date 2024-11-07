@@ -1,7 +1,10 @@
 # Castles 2025
 
-This is the repository for the web browser game Castles (version 2025).
+This is the repository for the web browser game Castles of Beer and Dragons (version 2025).
 Client and server are in this repository. It supports Docker.
+
+![Tests](https://github.com/dobschal/castles-2025/actions/workflows/tests.yml/badge.svg)
+![Deployment](https://github.com/dobschal/castles-2025/actions/workflows/main.yml/badge.svg)
 
 ## Get Started
 
@@ -20,24 +23,26 @@ docker compose up database -d
 ### (Re-)Start Client and Server
 
 Run `docker compose up -d` to get the server and client running too.
+This is fetching the docker images from docker hub. Checkout the github workflows on how to build the docker images locally.
 
-You can also user the restart script. (!!!) But be careful that is make a Git checkout on the main branch and cleans the docker system after build.
-Use the `restart.sh` script to start the client and server application.
+## Deployment
 
-## Configuration
+Checkout the workflow/actions for the Github pipeline.
+It's building the docker images for the client and server on `main` branch and pushes them to docker hub `dobschal/castles-2025`. Then on the server the images are pulled via docker compose. Ensure that you are logged into the server.
 
 ### Docker Compose
 
 Check the `docker-compose.yml` file when you want to configure something like exposed ports.
 Each component has an own Dockerfile that contain further information. 
 
-### Nginx
+### SSL Certifitcates
 
 The SSL certificates are handled via Certbot. Just add a server config to the default nginx config and run the following command to setup the SSL certificates. (They should get renewed automatically)
 ```bash
 certbot --nginx
 ```
 
+### Nginx
 
 The nginx config should like:
 ```nginx

@@ -15,6 +15,7 @@ export const useAuthStore = defineStore(
     const token = ref("");
     const user = ref<Optional<UserEntity>>();
     const showEventsOnMap = ref(true);
+    const audioPaused = ref(false);
 
     const hasToken = computed(() => token.value !== "");
 
@@ -70,6 +71,7 @@ export const useAuthStore = defineStore(
       isTokenExpired,
       user,
       loadUser,
+      audioPaused,
     };
   },
 

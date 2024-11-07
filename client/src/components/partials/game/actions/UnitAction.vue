@@ -50,6 +50,14 @@
         {{ t("unitAction.buildVillage") }}
         <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.VILLAGE)" />
       </CButton>
+      <CButton
+        class="small with-icon"
+        @click="saveBuilding(BuildingType.MARKET)"
+        :disabled="!isAllowedToBuildMarket || isLoading"
+      >
+        {{ t("unitAction.buildMarket") }}
+        <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.MARKET)" />
+      </CButton>
     </template>
   </template>
   <p v-else>
@@ -150,6 +158,13 @@ const isAllowedToBuildBrewery = computed(() => {
   return isAllowedToBuild.value && beer >= price;
 });
 
+const isAllowedToBuildMarket = computed(() => {
+  const price = pricesStore.getBuildPrice(BuildingType.MARKET);
+  const beer = authStore.user?.beer ?? 0;
+
+  return isAllowedToBuild.value && beer >= price;
+});
+
 const isAllowedToBuildCastle = computed(() => {
   const price = pricesStore.getBuildPrice(BuildingType.CASTLE);
   const beer = authStore.user?.beer ?? 0;
@@ -226,3 +241,4 @@ async function saveBuilding(type: BuildingType): Promise<void> {
   }
 }
 </script>
+<script setup lang="ts"></script>
