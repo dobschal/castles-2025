@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle/caches
+            ~/server/.gradle/caches
           key: ${{ runner.os }}-gradle-cache-${{ secrets.cache_version }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-${{ secrets.cache_version }}-
@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle/wrapper
+            ~/server/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ secrets.cache_version }}-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradle-wrapper-${{ secrets.cache_version }}-
