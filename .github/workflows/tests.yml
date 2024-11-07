@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  # Triggers the workflow on push or pull request events but only for the main+develop branch
+  pull_request:
+    branches: [ main, develop ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency: # only 1 job per branch should run, older runs should be canceled
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: adopt
+
+      - name: Restore gradle caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-cache-${{ secrets.cache_version }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-cache-${{ secrets.cache_version }}-
+
+      - name: Restore gradle wrapper
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ secrets.cache_version }}-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-wrapper-${{ secrets.cache_version }}-
+
+      - name: Run Tests
+        run: ./gradlew check
