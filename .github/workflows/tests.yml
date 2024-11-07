@@ -47,7 +47,7 @@ jobs:
       - name: Run Tests
         working-directory: server
         run: ./gradlew check
-        
+
   test-client:
     name: Test Client
     runs-on: ubuntu-latest
@@ -63,6 +63,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run build
+      - name: Install dependencies
+        working-directory: client
+        run: npm ci
+      - name: Linting
+        working-directory: client
+        run: npm run lint
+      - name: Build client app
+        working-directory: client
+        run: npm run build
