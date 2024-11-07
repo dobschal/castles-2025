@@ -3,6 +3,8 @@ name: Docker Build and Push
 on:
   push:
     branches: [ main ]
+  pull_request: # just for testing until deployment works
+    branches: [ main, develop ] # just for testing until deployment works
   workflow_dispatch:
 
 jobs:
