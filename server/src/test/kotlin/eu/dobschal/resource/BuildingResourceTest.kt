@@ -1696,20 +1696,47 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(user.gold == 1)
     }
 
-//    @Test
-//    fun `I cannot exchange beer for gold when selecting too less beer`() {
-//        TODO();
-//    }
-//
-//    @Test
-//    fun `I cannot exchange beer for gold when not having enough beer in a market`() {
-//        TODO();
-//    }
-//
-//    @Test
-//    fun `I cannot exchange beer for gold when not having a market`() {
-//        TODO();
-//    }
+    @Test
+    @WithDefaultUser
+    fun `I cannot exchange beer for gold when selecting too less beer`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.MARKET
+        })
+        val response = assertBadPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(SELL_BEER_PRICE - 1)
+        )
+        assert(response.message == "serverError.notEnoughBeer")
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I cannot exchange beer for gold when not having enough beer in a market`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.MARKET
+        })
+        val response = assertBadPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(START_BEER + 1)
+        )
+        assert(response.message == "serverError.notEnoughBeer")
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I cannot exchange beer for gold when not having a market`() {
+        val response = assertBadPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(SELL_BEER_PRICE)
+        )
+        assert(response.message == "serverError.noMarket")
+    }
 
 //    @Test
 //    fun `With a city I can upgrade a castle to level 2`() {

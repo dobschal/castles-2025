@@ -275,6 +275,9 @@ class BuildingService @Inject constructor(
             throw BadRequestException("serverError.noMarket")
         }
         val gold = floor(amountOfBeer / SELL_BEER_PRICE.toDouble()).toInt()
+        if (gold == 0) {
+            throw BadRequestException("serverError.notEnoughBeer")
+        }
         userRepository.deductBeerFromUser(currentUser.id!!, amountOfBeer)
         userRepository.addGoldToUser(currentUser.id!!, gold)
         eventRepository.save(Event().apply {

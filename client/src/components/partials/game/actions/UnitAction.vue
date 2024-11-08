@@ -2,7 +2,7 @@
   <template v-if="isOwnUnit">
     <p>👉 {{ t("unitAction.chooseAction") }}</p>
     <CButton
-      v-if="unitsStore.activeUnit"
+      v-if="unitsStore.activeUnit && !areBuildingActionsVisible"
       class="small with-icon"
       @click="showMoveAction"
       :disabled="isLoading || movesLastHour >= movesPerHourLimit"
@@ -17,7 +17,20 @@
         :beer="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
       />
     </CButton>
-    <template v-if="unitsStore.activeUnit?.type === UnitType.WORKER">
+    <CButton
+      class="small with-icon"
+      v-if="!areBuildingActionsVisible"
+      @click="areBuildingActionsVisible = true"
+      :disabled="unitsStore.activeUnit?.type !== UnitType.WORKER || isLoading"
+    >
+      {{ t("unitAction.build") }}
+    </CButton>
+    <template
+      v-if="
+        unitsStore.activeUnit?.type === UnitType.WORKER &&
+        areBuildingActionsVisible
+      "
+    >
       <CButton
         class="small with-icon"
         @click="saveBuilding(BuildingType.FARM)"
@@ -69,7 +82,20 @@
       })
     }}
   </p>
-  <CButton class="small" @click="close" :disabled="isLoading">
+  <CButton
+    v-if="!areBuildingActionsVisible"
+    class="small"
+    @click="close"
+    :disabled="isLoading"
+  >
+    {{ t("general.cancel") }}
+  </CButton>
+  <CButton
+    v-else
+    class="small"
+    @click="areBuildingActionsVisible = false"
+    :disabled="isLoading"
+  >
     {{ t("general.cancel") }}
   </CButton>
 </template>
@@ -79,7 +105,7 @@ import { useI18n } from "vue-i18n";
 import CButton from "@/components/partials/general/CButton.vue";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useUnitsStore } from "@/store/unitsStore.ts";
-import { ACTION } from "@/events.ts";
+import { ACTION, MAP_TILE_CLICKED } from "@/events.ts";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
 import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
@@ -103,6 +129,7 @@ const authStore = useAuthStore();
 const tutorialStore = useTutorialStore();
 const eventsStore = useEventsStore();
 const isLoading = ref(false);
+const areBuildingActionsVisible = ref(false);
 
 const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
@@ -187,6 +214,7 @@ const isAllowedToBuildFarm = computed(() => {
 });
 
 onMounted(() => {
+  MAP_TILE_CLICKED.on(close);
   mapStore.goToPosition({
     x: unitsStore.activeUnit?.x ?? 0,
     y: unitsStore.activeUnit?.y ?? 0,
@@ -194,6 +222,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  MAP_TILE_CLICKED.off(close);
   unitsStore.activeUnit = undefined;
 });
 
@@ -241,4 +270,3 @@ async function saveBuilding(type: BuildingType): Promise<void> {
   }
 }
 </script>
-<script setup lang="ts"></script>

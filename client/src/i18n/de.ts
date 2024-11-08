@@ -98,6 +98,7 @@ export const de = {
     buildCastle: "Burg bauen",
     buildVillage: "Dorf bauen",
     buildMarket: "Markt bauen",
+    build: "Bauen...",
   },
   castleAction: {
     castleOf: "Burg von {playerName}",

@@ -94,6 +94,7 @@ export const en = {
     buildCastle: "Build castle",
     buildVillage: "Build village",
     buildMarket: "Build market",
+    build: "Build...",
   },
   castleAction: {
     castleOf: "Castle of {playerName}",
