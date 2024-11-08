@@ -37,4 +37,5 @@ const val HORSEMAN_MOVES_PER_HOUR = 3
 
 // Gold
 const val GOLD_STORAGE_PER_CITY = 500
+const val SELL_BEER_PRICE = 50 // 50 beer are 1 gold
 

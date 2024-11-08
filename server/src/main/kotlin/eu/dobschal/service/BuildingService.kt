@@ -265,5 +265,19 @@ class BuildingService @Inject constructor(
         return buildingRepository.findAllByUser(userId)
     }
 
+    fun sellBeer(amountOfBeer: Int): SuccessResponseDto {
+        val currentUser = userService.getCurrentUser()
+        if (amountOfBeer <= 0) {
+            throw BadRequestException("serverError.invalidAmountOfBeer")
+        }
+        if (currentUser.beer!! < amountOfBeer) {
+            throw BadRequestException("serverError.notEnoughBeer")
+        }
+        val price = amountOfBeer / 50
+        userRepository.deductBeerFromUser(currentUser.id!!, amountOfBeer)
+        userRepository.addGoldToUser(currentUser.id!!, price)
+        return SuccessResponseDto("serverSuccess.beerSold")
+    }
+
 
 }

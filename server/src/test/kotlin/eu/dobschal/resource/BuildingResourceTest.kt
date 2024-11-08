@@ -1633,6 +1633,31 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(response3.totalGoldStorage == GOLD_STORAGE_PER_CITY * 2)
     }
 
+    @Test
+    fun `A market can be build when owning a city`() {
+        TODO();
+    }
+
+    @Test
+    fun `A market cannot be build when not having a city`() {
+        TODO();
+    }
+
+    @Test
+    fun `I can exchange beer for gold in a market`() {
+        TODO();
+    }
+
+    @Test
+    fun `I cannot exchange beer for gold when not having enough beer in a market`() {
+        TODO();
+    }
+
+    @Test
+    fun `I cannot exchange beer for gold when not having a market`() {
+        TODO();
+    }
+
 //    @Test
 //    fun `With a city I can upgrade a castle to level 2`() {
 //        TODO();

@@ -111,7 +111,8 @@ class PriceService @Inject constructor(
         return PricesResponseDto(
             unitCreationPrices,
             unitMovePrices,
-            buildingsPrices
+            buildingsPrices,
+            SELL_BEER_PRICE
         )
 
     }
