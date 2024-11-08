@@ -11,10 +11,7 @@ import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
-import eu.dobschal.utils.BREWERY_BEER_PRODUCTION_PER_HOUR
-import eu.dobschal.utils.BREWERY_BEER_STORAGE
-import eu.dobschal.utils.GOLD_STORAGE_PER_CITY
-import eu.dobschal.utils.VILLAGE_BASE_PRICE
+import eu.dobschal.utils.*
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
@@ -273,9 +270,20 @@ class BuildingService @Inject constructor(
         if (currentUser.beer!! < amountOfBeer) {
             throw BadRequestException("serverError.notEnoughBeer")
         }
-        val price = amountOfBeer / 50
+        val userHasMarket = buildingRepository.findBuildingByUserAndType(currentUser.id!!, BuildingType.MARKET) != null
+        if (!userHasMarket) {
+            throw BadRequestException("serverError.noMarket")
+        }
+        val gold = floor(amountOfBeer / SELL_BEER_PRICE.toDouble()).toInt()
         userRepository.deductBeerFromUser(currentUser.id!!, amountOfBeer)
-        userRepository.addGoldToUser(currentUser.id!!, price)
+        userRepository.addGoldToUser(currentUser.id!!, gold)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.SOLD_BEER_FOR_GOLD
+            this.building = building
+            this.x = -1
+            this.y = -1
+        })
         return SuccessResponseDto("serverSuccess.beerSold")
     }
 

@@ -122,6 +122,7 @@ export const de = {
       BUILDING_DESTROYED: "Du hast ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "Du hast einem {unitType} bei {x}, {y} verloren.",
       GAME_OVER: "Du hast dein letztes Dorf verloren.",
+      SOLD_BEER_FOR_GOLD: "Du hast Bier für Gold verkauft.",
     },
     other: {
       UNIT_MOVED: "{playerName} hat einen {unitType} nach {x}, {y} bewegt.",
@@ -132,6 +133,7 @@ export const de = {
       BUILDING_DESTROYED: "{playerName} hat ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "{playerName} hat einem {unitType} bei {x}, {y} verloren.",
       GAME_OVER: "{playerName} hat sein letztes Dorf verloren.",
+      SOLD_BEER_FOR_GOLD: "{playerName} hat Bier für Gold verkauft.",
     },
   },
   tutorialAction: {

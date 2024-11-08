@@ -117,7 +117,8 @@ export const en = {
       BUILDING_CONQUERED: "You conquered a building at {x}, {y}.",
       BUILDING_DESTROYED: "You destroyed a building at {x}, {y}.",
       LOST_UNIT: "You lost a {unitType} at {x}, {y}.",
-      GAME_OVER: "You lost your last village.",
+      GAME_OVER: "You lost the last village!",
+      SOLD_BEER_FOR_GOLD: "You sold beer for gold.",
     },
     other: {
       UNIT_MOVED: "{playerName} moved a {unitType} to {x}, {y}.",
@@ -127,7 +128,8 @@ export const en = {
       BUILDING_CONQUERED: "{playerName} conquered a building at {x}, {y}.",
       BUILDING_DESTROYED: "{playerName} destroyed a building at {x}, {y}.",
       LOST_UNIT: "{playerName} lost a {unitType} at {x}, {y}.",
-      GAME_OVER: "{playerName} lost their last village.",
+      GAME_OVER: "{playerName} lost the last village!",
+      SOLD_BEER_FOR_GOLD: "{playerName} sold beer for gold.",
     },
   },
   tutorialAction: {

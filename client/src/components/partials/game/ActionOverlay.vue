@@ -75,7 +75,7 @@ function close(): void {
     color: black;
     padding: 1rem 1rem 0 1rem;
     font-size: 1.2rem;
-    background: antiquewhite;
+    background: #faebd7;
     box-shadow: 0.5rem 0.5rem 0.1rem 0 rgba(0, 0, 0, 0.5);
     border: solid 3px rgb(117, 59, 22);
     display: flex;
