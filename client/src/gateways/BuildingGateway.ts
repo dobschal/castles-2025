@@ -69,4 +69,10 @@ export class BuildingGateway extends Gateway {
       },
     );
   }
+
+  async sellBeer(amountOfBeer: number): Promise<void> {
+    return this.request<void>("POST", "/v1/buildings/sell-beer", {
+      amountOfBeer,
+    });
+  }
 }

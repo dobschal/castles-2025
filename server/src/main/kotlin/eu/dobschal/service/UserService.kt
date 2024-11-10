@@ -1,13 +1,17 @@
 package eu.dobschal.service
 
+import eu.dobschal.model.dto.BuildingDto
 import eu.dobschal.model.dto.UserDto
 import eu.dobschal.model.dto.UserRankingDto
 import eu.dobschal.model.dto.response.JwtResponseDto
+import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.entity.User
+import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.repository.BuildingRepository
 import eu.dobschal.repository.UnitRepository
 import eu.dobschal.repository.UserRepository
 import eu.dobschal.utils.JWT_ISSUER
+import eu.dobschal.utils.MAP_MAX
 import eu.dobschal.utils.USER_ROLE
 import eu.dobschal.utils.hash
 import io.quarkus.security.UnauthorizedException
@@ -17,7 +21,6 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.core.SecurityContext
 import mu.KotlinLogging
-import org.eclipse.microprofile.jwt.JsonWebToken
 
 
 @ApplicationScoped
@@ -30,16 +33,25 @@ class UserService @Inject constructor(
 
     private val logger = KotlinLogging.logger {}
 
+    fun calculatePoints(user: User, buildings: List<BuildingDto>, units: List<Unit>): Int {
+        val pointsForNonCities =
+            buildings.filter { it.type != BuildingType.CITY }.count { it.user?.username == user.username } * 2
+        val pointsForCities =
+            buildings.filter { it.type == BuildingType.CITY }.count { it.user?.username == user.username } * 4
+        val pointsForUnits = units.count { it.user?.username == user.username }
+        return pointsForNonCities + pointsForCities + pointsForUnits
+    }
+
     fun listAllRankings(): List<UserRankingDto> {
-        val buildings = buildingRepository.listAll()
+        val buildings = buildingRepository.findBuildingsBetween(-MAP_MAX, MAP_MAX, -MAP_MAX, MAP_MAX)
         val units = unitRepository.listAll()
         return userRepository.listAll().map { user ->
             val oldestBuildingOfUser =
-                buildings.filter { it.user?.username == user.username }.minByOrNull { it.createdAt }
+                buildings.filter { it.user?.username == user.username }.minByOrNull { it.createdAt!! }
             UserRankingDto(
                 user.id!!,
                 user.username,
-                buildings.count { it.user?.username == user.username } * 2 + units.count { it.user?.username == user.username },
+                calculatePoints(user, buildings, units),
                 user.avatarId ?: 0,
                 oldestBuildingOfUser?.x ?: 0,
                 oldestBuildingOfUser?.y ?: 0
@@ -55,7 +67,7 @@ class UserService @Inject constructor(
         return UserRankingDto(
             user.id!!,
             user.username,
-            buildings.count() * 2 + units.count(),
+            calculatePoints(user, buildings, units),
             user.avatarId ?: 0,
             buildings.minByOrNull { it.createdAt!! }?.x ?: 0,
             buildings.minByOrNull { it.createdAt!! }?.y ?: 0

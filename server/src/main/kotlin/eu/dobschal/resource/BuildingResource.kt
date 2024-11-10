@@ -2,6 +2,7 @@ package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.BaseCoordinatesDto
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
+import eu.dobschal.model.dto.request.SellBeerRequest
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.service.BuildingService
 import eu.dobschal.utils.USER_ROLE
@@ -64,5 +65,11 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     @Path("/collect-beer")
     fun collectBeer(request: CollectBeerRequestDto) =
         buildingService.collectBeer(request.buildingId, request.amountOfBeer)
+
+    @RolesAllowed(USER_ROLE)
+    @POST
+    @Path("/sell-beer")
+    fun sellBeer(request: SellBeerRequest) =
+        buildingService.sellBeer(request.amountOfBeer)
 
 }

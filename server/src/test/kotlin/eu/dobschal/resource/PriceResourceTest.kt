@@ -4,11 +4,11 @@ import WithDefaultUser
 import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.enum.UnitType
+import eu.dobschal.utils.SELL_BEER_PRICE
 import eu.dobschal.utils.SWORDSMAN_BASE_PRICE
 import eu.dobschal.utils.WORKER_BASE_PRICE
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
-import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.junit.jupiter.api.Test
 
@@ -60,14 +60,16 @@ class PriceResourceTest : BaseResourceTest() {
         }
         unitRepository.save(unit3)
         assert(unitRepository.listAll().size == 3)
-        val response = given()
-            .`when`()
-            .get("/v1/prices")
-            .then()
-            .statusCode(Response.Status.OK.statusCode)
-            .extract().`as`(PricesResponseDto::class.java)
+        val response = assertOkGetRequest("/v1/prices", PricesResponseDto::class.java)
         logger.info { response }
         assert(response.unitCreationPrices.get(UnitType.WORKER) == WORKER_BASE_PRICE * 2 * 2 * 2)
         assert(response.unitCreationPrices.get(UnitType.SWORDSMAN) == SWORDSMAN_BASE_PRICE * 2 * 2 * 2)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Gold price for beer is returned in prices response`() {
+        val response = assertOkGetRequest("/v1/prices", PricesResponseDto::class.java)
+        assert(response.sellBeerPrice == SELL_BEER_PRICE)
     }
 }

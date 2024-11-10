@@ -8,10 +8,18 @@
         })
       }}
     </p>
+    <h3>
+      {{ t("unitsAndBuildings.units") }}
+    </h3>
     <ul>
       <li v-for="unit in units" :key="unit.id" @click="showOnMap(unit)">
         {{ t("unitType." + unit.type) }} ({{ unit.x }} / {{ unit.y }})
       </li>
+    </ul>
+    <h3>
+      {{ t("unitsAndBuildings.buildings") }}
+    </h3>
+    <ul>
       <li
         v-for="building in buildings"
         :key="building.id"
@@ -76,13 +84,19 @@ async function loadBuildings(): Promise<void> {
   buildings.value = await BuildingGateway.instance.getBuildingsByUser(
     Number(route.query.user_id),
   );
+  buildings.value.sort((a, b) => a.type.localeCompare(b.type));
 }
 </script>
 
 <style lang="scss" scoped>
+h3 {
+  margin: 0;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
+  margin: 0 0 2rem 0;
 
   li {
     display: flex;

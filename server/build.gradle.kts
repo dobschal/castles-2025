@@ -57,7 +57,7 @@ dependencies {
 }
 
 group = "eu.dobschal"
-version = "24.10.1"
+version = "24.11.2"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11

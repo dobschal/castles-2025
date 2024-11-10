@@ -37,7 +37,7 @@
     {{ t("villageAction.upgradeToCity") }}
     <BeerDisplay :beer="pricesStore.getBuildPrice(BuildingType.CITY)" />
   </CButton>
-  <CButton v-if="isOwnBuilding" class="small" @click="destroy">
+  <CButton v-if="isOwnBuilding" class="small with-icon" @click="destroy">
     {{ t("destroyBuilding.button") }}
   </CButton>
   <CButton class="small" @click="close">

@@ -29,4 +29,8 @@ export class UnitGateway extends Gateway {
       "/v1/units/by-user?user_id=" + userId,
     );
   }
+
+  async destroyUnit(unitId: number): Promise<void> {
+    return this.request<void>("DELETE", `/v1/units/${unitId}`);
+  }
 }

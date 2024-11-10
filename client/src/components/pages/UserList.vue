@@ -4,16 +4,17 @@
     <p>{{ t("users.description") }}</p>
     <ul class="user-list">
       <li
-        v-for="user in users"
+        v-for="(user, index) in users"
         :key="user.username"
         @click="showPlayersProfile(user)"
       >
+        <span class="rank">{{ index + 1 }}.</span>
         <span class="avatar" :style="getAvatarStyle(user)"></span>
         <span class="username">
           <span v-if="authStore.user?.username === user.username">👉</span>
           {{ user.username }}
         </span>
-        <span class="stats"> {{ user.points }} points </span>
+        <span class="stats"> {{ user.points }} </span>
       </li>
     </ul>
   </Page>
@@ -64,6 +65,13 @@ function getAvatarStyle(user: UserRankingEntity): Record<string, string> {
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.33);
+    }
+
+    .rank {
+      margin-right: 0.75rem;
+      font-size: 1.5rem;
+      display: block;
+      width: 2rem;
     }
 
     .avatar {

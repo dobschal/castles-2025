@@ -6,22 +6,46 @@
       })
     }}
   </p>
-  <CButton
-    v-if="isOwnBuilding && unitAtPosition"
-    class="small with-icon"
-    @click="openMoveUnitActionOverlay"
-  >
-    {{
-      t("villageAction.moveUnit", [
-        movesPerHourLimit - movesLastHour,
-        movesPerHourLimit,
-      ])
-    }}
-    <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
-  </CButton>
-  <CButton v-if="isOwnBuilding" class="small" @click="destroy">
-    {{ t("destroyBuilding.button") }}
-  </CButton>
+  <template v-if="isOwnBuilding">
+    <CButton
+      v-if="unitAtPosition"
+      class="small with-icon"
+      @click="openMoveUnitActionOverlay"
+    >
+      {{
+        t("villageAction.moveUnit", [
+          movesPerHourLimit - movesLastHour,
+          movesPerHourLimit,
+        ])
+      }}
+      <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
+    </CButton>
+    <CButton
+      class="small with-icon"
+      @click="sellBeer(pricesStore.prices?.sellBeerPrice ?? 0)"
+    >
+      {{
+        t("marketAction.sellFor1Gold", {
+          price: pricesStore.prices?.sellBeerPrice,
+        })
+      }}
+      <BeerDisplay :beer="pricesStore.prices?.sellBeerPrice ?? 0" />
+    </CButton>
+    <CButton
+      class="small with-icon"
+      @click="sellBeer((pricesStore.prices?.sellBeerPrice ?? 0) * 10)"
+    >
+      {{
+        t("marketAction.sellFor10Gold", {
+          price: (pricesStore.prices?.sellBeerPrice ?? 0) * 10,
+        })
+      }}
+      <BeerDisplay :beer="(pricesStore.prices?.sellBeerPrice ?? 0) * 10" />
+    </CButton>
+    <CButton class="small with-icon" @click="destroy">
+      {{ t("destroyBuilding.button") }}
+    </CButton>
+  </template>
   <CButton class="small" @click="close">
     {{ t("general.close") }}
   </CButton>
@@ -110,6 +134,16 @@ onBeforeUnmount(() => {
     buildingsStore.activeBuilding = undefined;
   }
 });
+
+async function sellBeer(amount: number): Promise<void> {
+  try {
+    if (!buildingsStore.activeBuilding) return;
+    await BuildingGateway.instance.sellBeer(amount);
+    eventsStore.ownActionHappened = true;
+  } catch (error) {
+    handleFatalError(error);
+  }
+}
 
 async function destroy(): Promise<void> {
   DIALOG.dispatch({

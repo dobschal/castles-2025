@@ -77,17 +77,17 @@ class TutorialService @Inject constructor(
             TutorialType.FIRST_WORKER -> unitRepository.findUnitByTypeAndUser(
                 user.id!!,
                 UnitType.WORKER
-            ) != null || buildingRepository.findBuildingByTypeAndUser(
+            ) != null || buildingRepository.findBuildingByUserAndType(
                 user.id!!,
                 BuildingType.FARM
             ) != null // If the user has a farm, he had a worker too
 
-            TutorialType.FIRST_FARM -> buildingRepository.findBuildingByTypeAndUser(
+            TutorialType.FIRST_FARM -> buildingRepository.findBuildingByUserAndType(
                 user.id!!,
                 BuildingType.FARM
             ) != null
 
-            TutorialType.FIRST_BREWERY -> buildingRepository.findBuildingByTypeAndUser(
+            TutorialType.FIRST_BREWERY -> buildingRepository.findBuildingByUserAndType(
                 user.id!!,
                 BuildingType.BREWERY
             ) != null
@@ -97,7 +97,7 @@ class TutorialService @Inject constructor(
                 EventType.BEER_COLLECTED
             ) != null
 
-            TutorialType.FIRST_CASTLE -> buildingRepository.findBuildingByTypeAndUser(
+            TutorialType.FIRST_CASTLE -> buildingRepository.findBuildingByUserAndType(
                 user.id!!,
                 BuildingType.CASTLE
             ) != null

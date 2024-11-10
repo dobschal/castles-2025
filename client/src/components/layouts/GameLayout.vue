@@ -84,7 +84,7 @@ function toggleAudio(): void {
 }
 
 nav {
-  background: rgb(117, 59, 22);
+  background: #753b16;
   color: white;
   text-align: center;
   width: 100%;

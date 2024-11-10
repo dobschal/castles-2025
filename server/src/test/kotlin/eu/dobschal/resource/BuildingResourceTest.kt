@@ -1,14 +1,8 @@
 package eu.dobschal.resource
 
 import WithDefaultUser
-import eu.dobschal.model.dto.request.BaseCoordinatesDto
-import eu.dobschal.model.dto.request.CreateBuildingRequestDto
-import eu.dobschal.model.dto.request.CreateUnitRequestDto
-import eu.dobschal.model.dto.request.MoveUnitRequestDto
-import eu.dobschal.model.dto.response.BuildingsResponseDto
-import eu.dobschal.model.dto.response.CollectBeerRequestDto
-import eu.dobschal.model.dto.response.PricesResponseDto
-import eu.dobschal.model.dto.response.UnitsResponseDto
+import eu.dobschal.model.dto.request.*
+import eu.dobschal.model.dto.response.*
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.MapTile
@@ -1631,6 +1625,117 @@ class BuildingResourceTest : BaseResourceTest() {
         buildingRepository.save(city2)
         val response3 = assertOkGetRequest("/v1/buildings", BuildingsResponseDto::class.java)
         assert(response3.totalGoldStorage == GOLD_STORAGE_PER_CITY * 2)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `A market can be build when owning a city`() {
+        val x = 2
+        val y = 2
+        mapTileRepository.saveMapTiles(setOf(MapTile().apply {
+            this.x = x
+            this.y = y
+            type = MapTileType.PLAIN
+        }))
+        unitRepository.save(Unit().apply {
+            this.x = x
+            this.y = y
+            user = user1
+            type = UnitType.WORKER
+        })
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.CITY
+        })
+        userRepository.setBeerTo(user1!!.id!!, MARKET_BASE_PRICE)
+        val request = CreateBuildingRequestDto(x, y, BuildingType.MARKET)
+        assertOkPostRequest("/v1/buildings", request, Building::class.java)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `A market cannot be build when not having a city`() {
+        val x = 2
+        val y = 2
+        mapTileRepository.saveMapTiles(setOf(MapTile().apply {
+            this.x = x
+            this.y = y
+            type = MapTileType.PLAIN
+        }))
+        unitRepository.save(Unit().apply {
+            this.x = x
+            this.y = y
+            user = user1
+            type = UnitType.WORKER
+        })
+        userRepository.setBeerTo(user1!!.id!!, MARKET_BASE_PRICE)
+        val request = CreateBuildingRequestDto(x, y, BuildingType.MARKET)
+        val response = assertBadPostRequest("/v1/buildings", request)
+        assert(response.message == "serverError.noCity")
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I can exchange beer for gold in a market`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.MARKET
+        })
+        val response = assertOkPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(SELL_BEER_PRICE),
+            SuccessResponseDto::class.java
+        )
+        val user = userRepository.findById(user1!!.id!!)!!
+        assert(response.message == "serverSuccess.beerSold")
+        assert(user.beer == START_BEER - SELL_BEER_PRICE)
+        assert(user.gold == 1)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I cannot exchange beer for gold when selecting too less beer`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.MARKET
+        })
+        val response = assertBadPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(SELL_BEER_PRICE - 1)
+        )
+        assert(response.message == "serverError.notEnoughBeer")
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I cannot exchange beer for gold when not having enough beer in a market`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.MARKET
+        })
+        val response = assertBadPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(START_BEER + 1)
+        )
+        assert(response.message == "serverError.notEnoughBeer")
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I cannot exchange beer for gold when not having a market`() {
+        val response = assertBadPostRequest(
+            "/v1/buildings/sell-beer",
+            SellBeerRequest(SELL_BEER_PRICE)
+        )
+        assert(response.message == "serverError.noMarket")
     }
 
 //    @Test

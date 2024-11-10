@@ -35,6 +35,8 @@ class UserRepository : PanacheRepository<User> {
             this.username = username
             this.password = password
             this.beer = START_BEER
+            this.gold = 0
+            this.avatarId = 0
         }
         persist(user)
         return user
@@ -66,6 +68,12 @@ class UserRepository : PanacheRepository<User> {
     fun setBeerTo(userId: Int, startBeer: Int) {
         val user = findById(userId) ?: return
         user.beer = startBeer
+        persist(user)
+    }
+
+    fun addGoldToUser(userId: Int, amountOfGold: Int) {
+        val user = findById(userId) ?: return
+        user.gold = user.gold?.plus(amountOfGold)
         persist(user)
     }
 

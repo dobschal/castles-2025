@@ -9,5 +9,6 @@ enum class EventType {
     LOST_UNIT,
     BUILDING_CONQUERED,
     BUILDING_DESTROYED,
-    GAME_OVER
+    GAME_OVER,
+    SOLD_BEER_FOR_GOLD,
 }

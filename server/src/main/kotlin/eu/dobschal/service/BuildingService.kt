@@ -11,10 +11,7 @@ import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
-import eu.dobschal.utils.BREWERY_BEER_PRODUCTION_PER_HOUR
-import eu.dobschal.utils.BREWERY_BEER_STORAGE
-import eu.dobschal.utils.GOLD_STORAGE_PER_CITY
-import eu.dobschal.utils.VILLAGE_BASE_PRICE
+import eu.dobschal.utils.*
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
@@ -263,6 +260,32 @@ class BuildingService @Inject constructor(
 
     fun getUsersBuildings(userId: Int): List<BuildingDto> {
         return buildingRepository.findAllByUser(userId)
+    }
+
+    fun sellBeer(amountOfBeer: Int): SuccessResponseDto {
+        val currentUser = userService.getCurrentUser()
+        if (amountOfBeer <= 0) {
+            throw BadRequestException("serverError.invalidAmountOfBeer")
+        }
+        if (currentUser.beer!! < amountOfBeer) {
+            throw BadRequestException("serverError.notEnoughBeer")
+        }
+        val market = buildingRepository.findBuildingByUserAndType(currentUser.id!!, BuildingType.MARKET)
+            ?: throw BadRequestException("serverError.noMarket")
+        val gold = floor(amountOfBeer / SELL_BEER_PRICE.toDouble()).toInt()
+        if (gold == 0) {
+            throw BadRequestException("serverError.notEnoughBeer")
+        }
+        userRepository.deductBeerFromUser(currentUser.id!!, amountOfBeer)
+        userRepository.addGoldToUser(currentUser.id!!, gold)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.SOLD_BEER_FOR_GOLD
+            this.building = building
+            this.x = market.x
+            this.y = market.y
+        })
+        return SuccessResponseDto("serverSuccess.beerSold")
     }
 
 

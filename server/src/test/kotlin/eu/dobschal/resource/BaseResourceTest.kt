@@ -1,6 +1,7 @@
 package eu.dobschal.resource
 
 import eu.dobschal.model.dto.UserCredentialsDto
+import eu.dobschal.model.dto.response.ErrorResponseDto
 import eu.dobschal.model.dto.response.JwtResponseDto
 import eu.dobschal.model.entity.User
 import eu.dobschal.repository.*
@@ -83,6 +84,20 @@ open class BaseResourceTest {
             .then()
             .statusCode(Response.Status.OK.statusCode)
             .extract().`as`(responseType)
+    }
+
+    fun assertBadPostRequest(
+        url: String,
+        request: Any
+    ): ErrorResponseDto {
+        return given()
+            .header("Content-Type", MediaType.APPLICATION_JSON)
+            .body(request)
+            .`when`()
+            .post(url)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().`as`(ErrorResponseDto::class.java)
     }
 
     fun <ResponseType> assertOkGetRequest(url: String, responseType: Class<ResponseType>): ResponseType {

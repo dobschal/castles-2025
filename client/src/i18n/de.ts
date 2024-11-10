@@ -31,6 +31,7 @@ export const de = {
     FARM: "Farm",
     BREWERY: "Brauerei",
     CITY: "Stadt",
+    MARKET: "Markt",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
@@ -98,6 +99,9 @@ export const de = {
     buildCastle: "Burg bauen",
     buildVillage: "Dorf bauen",
     buildMarket: "Markt bauen",
+    build: "Bauen...",
+    delete: "Einheit zerstören",
+    deleteQuestion: "Möchtest du diese Einheit wirklich zerstören?",
   },
   castleAction: {
     castleOf: "Burg von {playerName}",
@@ -122,6 +126,7 @@ export const de = {
       BUILDING_DESTROYED: "Du hast ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "Du hast einem {unitType} bei {x}, {y} verloren.",
       GAME_OVER: "Du hast dein letztes Dorf verloren.",
+      SOLD_BEER_FOR_GOLD: "Du hast Bier für Gold verkauft.",
     },
     other: {
       UNIT_MOVED: "{playerName} hat einen {unitType} nach {x}, {y} bewegt.",
@@ -132,6 +137,7 @@ export const de = {
       BUILDING_DESTROYED: "{playerName} hat ein Gebäude bei {x}, {y} zerstört.",
       LOST_UNIT: "{playerName} hat einem {unitType} bei {x}, {y} verloren.",
       GAME_OVER: "{playerName} hat sein letztes Dorf verloren.",
+      SOLD_BEER_FOR_GOLD: "{playerName} hat Bier für Gold verkauft.",
     },
   },
   tutorialAction: {
@@ -218,11 +224,15 @@ export const de = {
     cityOf: "Stadt von {playerName}",
   },
   unitsAndBuildings: {
+    units: "Einheiten",
+    buildings: "Gebäude",
     link: "Einheiten & Gebäude",
     description:
       "Hier siehst du alle Einheiten und Gebäude von {playerName}. Klicke auf ein Gebäude oder eine Einheit um es auf der Karte anzuzeigen.",
   },
   marketAction: {
     marketOf: "Markt von {playerName}",
+    sellFor1Gold: "Bier für 1 Gold verkaufen",
+    sellFor10Gold: "Bier für 10 Gold verkaufen",
   },
 };

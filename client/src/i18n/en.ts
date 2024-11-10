@@ -31,6 +31,7 @@ export const en = {
     FARM: "Farm",
     BREWERY: "Brewery",
     CITY: "City",
+    MARKET: "Market",
   },
   serverError: {
     notEnoughBeer: "Not enough beer available.",
@@ -94,6 +95,9 @@ export const en = {
     buildCastle: "Build castle",
     buildVillage: "Build village",
     buildMarket: "Build market",
+    build: "Build...",
+    delete: "Destroy unit",
+    deleteQuestion: "Do you really want to destroy this unit?",
   },
   castleAction: {
     castleOf: "Castle of {playerName}",
@@ -117,7 +121,8 @@ export const en = {
       BUILDING_CONQUERED: "You conquered a building at {x}, {y}.",
       BUILDING_DESTROYED: "You destroyed a building at {x}, {y}.",
       LOST_UNIT: "You lost a {unitType} at {x}, {y}.",
-      GAME_OVER: "You lost your last village.",
+      GAME_OVER: "You lost the last village!",
+      SOLD_BEER_FOR_GOLD: "You sold beer for gold.",
     },
     other: {
       UNIT_MOVED: "{playerName} moved a {unitType} to {x}, {y}.",
@@ -127,7 +132,8 @@ export const en = {
       BUILDING_CONQUERED: "{playerName} conquered a building at {x}, {y}.",
       BUILDING_DESTROYED: "{playerName} destroyed a building at {x}, {y}.",
       LOST_UNIT: "{playerName} lost a {unitType} at {x}, {y}.",
-      GAME_OVER: "{playerName} lost their last village.",
+      GAME_OVER: "{playerName} lost the last village!",
+      SOLD_BEER_FOR_GOLD: "{playerName} sold beer for gold.",
     },
   },
   tutorialAction: {
@@ -212,11 +218,15 @@ export const en = {
     cityOf: "City of {playerName}",
   },
   unitsAndBuildings: {
+    units: "Units",
+    buildings: "Buildings",
     link: "Units & Buildings",
     description:
       "Here you can see all units and buildings of {playerName}. Click on it to see it on the map.",
   },
   marketAction: {
     marketOf: "Market of {playerName}",
+    sellFor1Gold: "Sell beer for 1 gold",
+    sellFor10Gold: "Sell beer for 10 gold",
   },
 };
