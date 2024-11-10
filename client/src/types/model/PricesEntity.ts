@@ -5,4 +5,5 @@ export interface PricesEntity {
   unitCreationPrices: Record<UnitType, number>;
   unitMovePrices: Record<UnitType, number>;
   buildingPrices: Record<BuildingType, number>;
+  sellBeerPrice: number;
 }

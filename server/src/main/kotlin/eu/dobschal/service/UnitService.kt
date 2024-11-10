@@ -1,6 +1,7 @@
 package eu.dobschal.service
 
 import eu.dobschal.model.dto.UnitDto
+import eu.dobschal.model.dto.response.SuccessResponseDto
 import eu.dobschal.model.dto.response.UnitsResponseDto
 import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
@@ -89,7 +90,7 @@ class UnitService @Inject constructor(
         return unit
     }
 
-    fun deleteUnit(unitId: Long) {
+    fun deleteUnit(unitId: Long): SuccessResponseDto {
         val user = userService.getCurrentUser()
         val unit = unitRepository.findById(unitId) ?: throw NotFoundException("serverError.noUnit")
         if (unit.user?.id != user.id) {
@@ -103,6 +104,7 @@ class UnitService @Inject constructor(
             this.x = unit.x!!
             this.y = unit.y!!
         })
+        return SuccessResponseDto("serverSuccess.unitDeleted")
     }
 
     fun moveUnit(x: Int, y: Int, unitId: Int): Unit {

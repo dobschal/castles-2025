@@ -95,6 +95,8 @@ export const en = {
     buildVillage: "Build village",
     buildMarket: "Build market",
     build: "Build...",
+    delete: "Destroy unit",
+    deleteQuestion: "Do you really want to destroy this unit?",
   },
   castleAction: {
     castleOf: "Castle of {playerName}",
@@ -221,5 +223,7 @@ export const en = {
   },
   marketAction: {
     marketOf: "Market of {playerName}",
+    sellFor1Gold: "Sell beer for 1 gold",
+    sellFor10Gold: "Sell beer for 10 gold",
   },
 };

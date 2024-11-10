@@ -99,6 +99,8 @@ export const de = {
     buildVillage: "Dorf bauen",
     buildMarket: "Markt bauen",
     build: "Bauen...",
+    delete: "Einheit zerstören",
+    deleteQuestion: "Möchtest du diese Einheit wirklich zerstören?",
   },
   castleAction: {
     castleOf: "Burg von {playerName}",
@@ -227,5 +229,7 @@ export const de = {
   },
   marketAction: {
     marketOf: "Markt von {playerName}",
+    sellFor1Gold: "Bier für 1 Gold verkaufen",
+    sellFor10Gold: "Bier für 10 Gold verkaufen",
   },
 };

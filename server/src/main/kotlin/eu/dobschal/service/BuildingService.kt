@@ -270,10 +270,8 @@ class BuildingService @Inject constructor(
         if (currentUser.beer!! < amountOfBeer) {
             throw BadRequestException("serverError.notEnoughBeer")
         }
-        val userHasMarket = buildingRepository.findBuildingByUserAndType(currentUser.id!!, BuildingType.MARKET) != null
-        if (!userHasMarket) {
-            throw BadRequestException("serverError.noMarket")
-        }
+        val market = buildingRepository.findBuildingByUserAndType(currentUser.id!!, BuildingType.MARKET)
+            ?: throw BadRequestException("serverError.noMarket")
         val gold = floor(amountOfBeer / SELL_BEER_PRICE.toDouble()).toInt()
         if (gold == 0) {
             throw BadRequestException("serverError.notEnoughBeer")
@@ -284,8 +282,8 @@ class BuildingService @Inject constructor(
             this.user1 = currentUser
             this.type = EventType.SOLD_BEER_FOR_GOLD
             this.building = building
-            this.x = -1
-            this.y = -1
+            this.x = market.x
+            this.y = market.y
         })
         return SuccessResponseDto("serverSuccess.beerSold")
     }
