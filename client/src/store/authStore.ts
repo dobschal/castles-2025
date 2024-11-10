@@ -58,7 +58,6 @@ export const useAuthStore = defineStore(
 
       try {
         user.value = await UserGateway.instance.getUser();
-        console.log("User loaded", user.value);
       } catch (error) {
         handleFatalError(error);
       }

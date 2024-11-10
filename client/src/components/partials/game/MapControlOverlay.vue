@@ -3,6 +3,7 @@
     <template v-if="ownVillages.length > 1">
       <CButton
         v-for="(village, index) in ownVillages"
+        :key="village.id"
         @click="showVillage(village)"
         class="small home"
       >

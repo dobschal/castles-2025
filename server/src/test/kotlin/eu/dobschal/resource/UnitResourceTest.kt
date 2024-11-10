@@ -1042,7 +1042,7 @@ class UnitResourceTest : BaseResourceTest() {
         given()
             .delete("$endpoint/${unit.id}")
             .then()
-            .statusCode(Response.Status.NO_CONTENT.statusCode)
+            .statusCode(Response.Status.OK.statusCode)
 
         val userUnitsAfter = unitRepository.findAllByUser(user1?.id!!).size
         assert(userUnitsBefore - 1 == userUnitsAfter)
@@ -1070,7 +1070,6 @@ class UnitResourceTest : BaseResourceTest() {
         val userUnitsAfter = unitRepository.findAllByUser(user2?.id!!).size
         assert(userUnitsBefore == userUnitsAfter)
     }
-
 
 
 }
