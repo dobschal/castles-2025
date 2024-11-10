@@ -31,6 +31,7 @@ export const de = {
     FARM: "Farm",
     BREWERY: "Brauerei",
     CITY: "Stadt",
+    MARKET: "Markt",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
@@ -223,6 +224,8 @@ export const de = {
     cityOf: "Stadt von {playerName}",
   },
   unitsAndBuildings: {
+    units: "Einheiten",
+    buildings: "Gebäude",
     link: "Einheiten & Gebäude",
     description:
       "Hier siehst du alle Einheiten und Gebäude von {playerName}. Klicke auf ein Gebäude oder eine Einheit um es auf der Karte anzuzeigen.",
