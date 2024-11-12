@@ -6,52 +6,69 @@
       })
     }}
   </p>
-  <CButton
-    v-if="isOwnBuilding && unitAtPosition"
-    class="small with-icon"
-    @click="openMoveUnitActionOverlay"
-  >
-    {{
-      t("villageAction.moveUnit", [
-        movesPerHourLimit - movesLastHour,
-        movesPerHourLimit,
-      ])
-    }}
-    <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
-  </CButton>
-  <CButton
-    v-if="isOwnBuilding"
-    class="small with-icon"
-    @click="createUnit(UnitType.SWORDSMAN)"
-    :disabled="!isBuildingSwordsmanAvailable"
-  >
-    {{ t("castleAction.createSwordsman") }}
-    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.SWORDSMAN)" />
-  </CButton>
-  <CButton
-    v-if="isOwnBuilding"
-    class="small with-icon"
-    @click="createUnit(UnitType.HORSEMAN)"
-    :disabled="!isBuildingHorsemanAvailable"
-  >
-    {{ t("castleAction.createHorseman") }}
-    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.HORSEMAN)" />
-  </CButton>
-  <CButton
-    v-if="isOwnBuilding"
-    class="small with-icon"
-    @click="createUnit(UnitType.SPEARMAN)"
-    :disabled="!isBuildingSpearmanAvailable"
-  >
-    {{ t("castleAction.createSpearman") }}
-    <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.SPEARMAN)" />
-  </CButton>
-  <CButton v-if="isOwnBuilding" class="small with-icon" @click="destroy">
-    {{ t("destroyBuilding.button") }}
-  </CButton>
-  <CButton class="small" @click="close">
-    {{ t("general.close") }}
-  </CButton>
+  <template v-if="isOwnBuilding">
+    <template v-if="unitMenuOpen">
+      <CButton
+        class="small with-icon"
+        @click="createUnit(UnitType.SWORDSMAN)"
+        :disabled="!isBuildingSwordsmanAvailable"
+      >
+        {{ t("castleAction.createSwordsman") }}
+        <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.SWORDSMAN)" />
+      </CButton>
+      <CButton
+        class="small with-icon"
+        @click="createUnit(UnitType.HORSEMAN)"
+        :disabled="!isBuildingHorsemanAvailable"
+      >
+        {{ t("castleAction.createHorseman") }}
+        <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.HORSEMAN)" />
+      </CButton>
+      <CButton
+        class="small with-icon"
+        @click="createUnit(UnitType.SPEARMAN)"
+        :disabled="!isBuildingSpearmanAvailable"
+      >
+        {{ t("castleAction.createSpearman") }}
+        <BeerDisplay :beer="pricesStore.getCreationPrice(UnitType.SPEARMAN)" />
+      </CButton>
+      <CButton class="small" @click="unitMenuOpen = false">
+        {{ t("general.close") }}
+      </CButton>
+    </template>
+    <template v-else>
+      <CButton
+        v-if="unitAtPosition"
+        class="small with-icon"
+        @click="openMoveUnitActionOverlay"
+      >
+        {{
+          t("villageAction.moveUnit", [
+            movesPerHourLimit - movesLastHour,
+            movesPerHourLimit,
+          ])
+        }}
+        <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
+      </CButton>
+      <CButton class="small with-icon" @click="unitMenuOpen = true">
+        {{ t("castleAction.units") }}
+      </CButton>
+      <CButton
+        v-if="buildingsStore.activeBuilding?.level === 1"
+        class="small with-icon"
+        @click="upgradeCastle"
+      >
+        {{ t("castleAction.upgrade") }}
+        <GoldDisplay :gold="levelUpPrice" />
+      </CButton>
+      <CButton class="small with-icon" @click="destroy">
+        {{ t("castleAction.destroy") }}
+      </CButton>
+      <CButton class="small" @click="close">
+        {{ t("general.close") }}
+      </CButton>
+    </template>
+  </template>
 </template>
 
 <script lang="ts" setup>
@@ -71,6 +88,8 @@ import { usePricesStore } from "@/store/pricesStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
+import GoldDisplay from "@/components/partials/game/GoldDisplay.vue";
+import { BuildingType } from "@/types/enum/BuildingType.ts";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -81,6 +100,7 @@ const eventsStore = useEventsStore();
 const emit = defineEmits(["close-action"]);
 const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
+const unitMenuOpen = ref(false);
 
 const isBuildingSwordsmanAvailable = computed(() => {
   return (
@@ -126,6 +146,10 @@ const isOwnBuilding = computed(() => {
   return buildingsStore.activeBuilding?.user.id === authStore.user?.id;
 });
 
+const levelUpPrice = computed(() => {
+  return pricesStore.prices?.buildingLevelUpPrices[BuildingType.CASTLE] ?? 0;
+});
+
 onMounted(() => {
   if (!buildingsStore.activeBuilding) {
     return handleFatalError(new Error("No active building set"));
@@ -157,6 +181,18 @@ onBeforeUnmount(() => {
     buildingsStore.activeBuilding = undefined;
   }
 });
+
+async function upgradeCastle(): Promise<void> {
+  try {
+    await BuildingGateway.instance.upgradeBuilding(
+      buildingsStore.activeBuilding!.id,
+    );
+    eventsStore.ownActionHappened = true;
+    close();
+  } catch (error) {
+    handleFatalError(error);
+  }
+}
 
 async function destroy(): Promise<void> {
   DIALOG.dispatch({

@@ -43,6 +43,7 @@ export const en = {
     noFarm: "No farm nearby!",
     tooManyUnits: "You have reached the limit of units. Build more castles.",
     noCity: "You need a city first.",
+    notEnoughGold: "Not enough gold available.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -104,6 +105,9 @@ export const en = {
     createSwordsman: "Create swordsman",
     createSpearman: "Create spearman",
     createHorseman: "Create horseman",
+    destroy: "Destroy castle",
+    units: "Units...",
+    upgrade: "Upgrade castle",
   },
   events: {
     showOnMap: "Show events on map?",

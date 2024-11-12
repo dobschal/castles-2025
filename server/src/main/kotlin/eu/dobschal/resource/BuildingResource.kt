@@ -2,6 +2,7 @@ package eu.dobschal.resource
 
 import eu.dobschal.model.dto.request.BaseCoordinatesDto
 import eu.dobschal.model.dto.request.CreateBuildingRequestDto
+import eu.dobschal.model.dto.request.LevelUpBuildingRequestDto
 import eu.dobschal.model.dto.request.SellBeerRequest
 import eu.dobschal.model.dto.response.CollectBeerRequestDto
 import eu.dobschal.service.BuildingService
@@ -30,6 +31,12 @@ class BuildingResource @Inject constructor(private val buildingService: Building
     @Path("/create-city")
     fun createCity(request: CreateBuildingRequestDto) =
         buildingService.createCity(request.x, request.y, request.type)
+
+    @RolesAllowed(USER_ROLE)
+    @POST
+    @Path("/level-up")
+    fun upgradeBuilding(request: LevelUpBuildingRequestDto) =
+        buildingService.levelUpBuilding(request.buildingId)
 
     @RolesAllowed(USER_ROLE)
     @POST

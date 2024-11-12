@@ -43,8 +43,8 @@ class BuildingRepository : PanacheRepository<Building> {
             .list()
     }
 
-    fun countBuildingTypeByUser(userId: Int, BuildingType: BuildingType): Int {
-        return count("user.id = ?1 AND type = ?2", userId, BuildingType).toInt()
+    fun countBuildingTypeByUser(userId: Int, BuildingType: BuildingType, level: Int = 1): Int {
+        return count("user.id = ?1 AND type = ?2 AND level = ?3", userId, BuildingType, level).toInt()
 
     }
 
@@ -56,8 +56,8 @@ class BuildingRepository : PanacheRepository<Building> {
         return countBuildingTypeByUser(userId, BuildingType.CITY)
     }
 
-    fun countCastlesByUser(userId: Int): Int {
-        return countBuildingTypeByUser(userId, BuildingType.CASTLE)
+    fun countCastlesByUser(userId: Int, level: Int = 1): Int {
+        return countBuildingTypeByUser(userId, BuildingType.CASTLE, level)
     }
 
     fun updateOwner(buildingId: Int, userId: Int) {
@@ -70,5 +70,9 @@ class BuildingRepository : PanacheRepository<Building> {
 
     fun deleteAllByUser(userId: Int) {
         delete("user.id = ?1", userId)
+    }
+
+    fun levelUp(buildingId: Int) {
+        update("level = level + 1 where id = ?1", buildingId)
     }
 }

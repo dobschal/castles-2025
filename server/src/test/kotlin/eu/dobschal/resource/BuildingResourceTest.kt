@@ -1,6 +1,7 @@
 package eu.dobschal.resource
 
 import WithDefaultUser
+import eu.dobschal.model.dto.UserRankingDto
 import eu.dobschal.model.dto.request.*
 import eu.dobschal.model.dto.response.*
 import eu.dobschal.model.entity.Building
@@ -1738,28 +1739,199 @@ class BuildingResourceTest : BaseResourceTest() {
         assert(response.message == "serverError.noMarket")
     }
 
-//    @Test
-//    fun `With a city I can upgrade a castle to level 2`() {
-//        TODO();
-//    }
-//    @Test
-//    fun `The castle upgrade prices are increasing x3 per castle level 2`() {
-//        TODO();
-//    }
-//
-//    @Test
-//    fun `Without enough gold you cannot upgrade a castle`() {
-//        TODO();
-//    }
-//
-//    @Test
-//    fun `You still can build old unit from castles level 2`() {
-//        TODO();
-//    }
-//
-//    @Test
-//    fun `castle level 2 are increasing the unit limit`() {
-//        TODO();
-//    }
+    @Test
+    @WithDefaultUser
+    fun `With a city I can upgrade a castle to level 2`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.CITY
+        })
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, CASTLE_LEVEL_UP_PRICE)
+        val response = assertOkPostRequest(
+            "/v1/buildings/level-up",
+            LevelUpBuildingRequestDto(castle.id!!),
+            SuccessResponseDto::class.java
+        )
+        assert(response.message == "serverSuccess.buildingLevelUp")
+        val updatedCastle = buildingRepository.findById(castle.id!!)
+        assert(updatedCastle?.level == 2)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `The castle upgrade prices are increasing x3 per castle level 2`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.CITY
+        })
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            level = 2
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        assertOkGetRequest("/v1/prices", PricesResponseDto::class.java).let {
+            assert(it.buildingLevelUpPrices[BuildingType.CASTLE] == CASTLE_LEVEL_UP_PRICE * 3)
+        }
+        userRepository.setGoldTo(user1!!.id!!, CASTLE_LEVEL_UP_PRICE * 3)
+        val response = assertBadPostRequest(
+            "/v1/buildings/level-up",
+            LevelUpBuildingRequestDto(castle.id!!),
+        )
+        assert(response.message == "serverError.levelUpNotPossible")
+        val updatedCastle = buildingRepository.findById(castle.id!!)
+        assert(updatedCastle?.level == 2)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Gold is deducted after upgrading castle`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.CITY
+        })
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, CASTLE_LEVEL_UP_PRICE)
+        assert(userRepository.findById(user1!!.id!!)!!.gold == CASTLE_LEVEL_UP_PRICE)
+        val response = assertOkPostRequest(
+            "/v1/buildings/level-up",
+            LevelUpBuildingRequestDto(castle.id!!),
+            SuccessResponseDto::class.java
+        )
+        assert(response.message == "serverSuccess.buildingLevelUp")
+        val updatedCastle = buildingRepository.findById(castle.id!!)
+        assert(updatedCastle?.level == 2)
+        assert(userRepository.findById(user1!!.id!!)!!.gold == 0)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Without enough gold you cannot upgrade a castle`() {
+        buildingRepository.save(Building().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = BuildingType.CITY
+        })
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, CASTLE_LEVEL_UP_PRICE - 1)
+        val response = assertBadPostRequest(
+            "/v1/buildings/level-up",
+            LevelUpBuildingRequestDto(castle.id!!)
+        )
+        assert(response.message == "serverError.notEnoughGold")
+        val updatedCastle = buildingRepository.findById(castle.id!!)
+        assert(updatedCastle?.level == 1)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `You still can build old unit from castles level 2`() {
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        assertOkPostRequest(
+            "/v1/units",
+            CreateUnitRequestDto(3, 3, UnitType.SPEARMAN),
+            Unit::class.java
+        )
+        assert(unitRepository.listAll().size == 1)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `castle level 2 are increasing the unit limit`() {
+        unitRepository.save(Unit().apply {
+            this.x = 4
+            this.y = 4
+            user = user1
+            type = UnitType.HORSEMAN
+        })
+        unitRepository.save(Unit().apply {
+            this.x = 5
+            this.y = 5
+            user = user1
+            type = UnitType.HORSEMAN
+        })
+        unitRepository.save(Unit().apply {
+            this.x = 6
+            this.y = 6
+            user = user1
+            type = UnitType.HORSEMAN
+        })
+        unitRepository.save(Unit().apply {
+            this.x = 7
+            this.y = 7
+            user = user1
+            type = UnitType.HORSEMAN
+        })
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            user = user1
+            type = BuildingType.CASTLE
+            level = 2
+        }
+        buildingRepository.save(castle)
+        userRepository.setBeerTo(user1!!.id!!, 99999999)
+        assertOkPostRequest(
+            "/v1/units",
+            CreateUnitRequestDto(3, 3, UnitType.SPEARMAN),
+            Unit::class.java
+        )
+        assert(unitRepository.listAll().size == 5)
+        assertBadPostRequest(
+            "/v1/units",
+            CreateUnitRequestDto(3, 3, UnitType.SPEARMAN)
+        )
+        assert(unitRepository.listAll().size == 5)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `castle level 2 gives more points in the ranking`() {
+        val castle = Building().apply {
+            this.x = 3
+            this.y = 3
+            user = user1
+            type = BuildingType.CASTLE
+            level = 2
+        }
+        buildingRepository.save(castle)
+        val response = assertOkGetRequest("/v1/users/ranking", Array<UserRankingDto>::class.java)
+        assert(response.size == 2)
+        assert(response.first { it.username == USER1 }.points == 4)
+    }
 
 }
