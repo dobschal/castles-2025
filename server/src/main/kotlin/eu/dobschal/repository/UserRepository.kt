@@ -77,4 +77,16 @@ class UserRepository : PanacheRepository<User> {
         persist(user)
     }
 
+    fun deductGoldFromUser(userId: Int, gold: Int) {
+        val user = findById(userId) ?: return
+        user.gold = user.gold?.minus(gold)
+        persist(user)
+    }
+
+    fun setGoldTo(userId: Int, gold: Int) {
+        val user = findById(userId) ?: return
+        user.gold = gold
+        persist(user)
+    }
+
 }

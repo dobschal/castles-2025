@@ -5,12 +5,16 @@
   <div v-if="isLoading" class="loading-indicator">
     <img src="@/assets/logo_black.svg" alt="Castles" />
     <p>{{ t("general.loading") }}</p>
+    <div class="bar">
+      <div :style="{ width: 100 * (assetsLoaded / assetsToLoad) + '%' }"></div>
+    </div>
   </div>
   <EventsOverlay v-if="!actionStore.isActionActive" />
   <ActionOverlay />
   <StatsOverlay />
   <TutorialOverlay />
   <ZoomOverlay v-if="!actionStore.isActionActive" />
+  <div ref="assetHolder" class="asset-holder"></div>
 </template>
 
 <script setup lang="ts">
@@ -33,8 +37,8 @@ import TutorialOverlay from "@/components/partials/game/TutorialOverlay.vue";
 import ZoomOverlay from "@/components/partials/game/MapControlOverlay.vue";
 import { useRoute } from "vue-router";
 import router from "@/core/router.ts";
+import { Optional } from "@/types/core/Optional.ts";
 
-const images = import.meta.glob("@/assets/tiles/*-min.png");
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
 const authStore = useAuthStore();
@@ -43,12 +47,18 @@ const eventsStore = useEventsStore();
 const actionStore = useActionStore();
 const pricesStore = usePricesStore();
 const tutorialStore = useTutorialStore();
+
 let isMounted = false;
 const isLoading = ref(false);
-const cachedImageAssets: Array<HTMLImageElement> = [];
 const { t } = useI18n();
 const route = useRoute();
 let eventLoopTimeout: ReturnType<typeof setTimeout>;
+
+const assetHolder = ref<Optional<HTMLDivElement>>();
+const images = import.meta.glob("@/assets/tiles/*-min.png");
+const cachedImageAssets: Array<HTMLImageElement> = [];
+const assetsToLoad = ref(0);
+const assetsLoaded = ref(0);
 
 onMounted(async () => {
   isMounted = true;
@@ -63,7 +73,9 @@ onMounted(async () => {
     unitsStore.loadUnits(),
     keepLoadingEvents(),
   ]);
-  isLoading.value = false;
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 500);
 
   // The promise here might be resolved very late if the user
   // needs to select the start village
@@ -155,6 +167,7 @@ async function keepLoadingEvents(): Promise<void> {
 async function loadAssets(): Promise<void> {
   const t1 = Date.now();
   const promises: Array<Promise<void>> = [];
+  assetsToLoad.value = Object.keys(images).length;
   for (const imagesKey in images) {
     const image = (await images[imagesKey]()) as { default: string };
     const url: string = image.default;
@@ -165,9 +178,11 @@ async function loadAssets(): Promise<void> {
         img.onload = () => {
           cachedImageAssets.push(img);
           resolve();
+          assetsLoaded.value++;
         };
 
         img.src = url;
+        assetHolder.value?.appendChild(img);
       }),
     );
   }
@@ -194,13 +209,18 @@ async function loadAssets(): Promise<void> {
   }
 }
 
+.asset-holder {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
 .loading-indicator {
   position: fixed;
   top: 50%;
   left: 50%;
   font-size: 1rem;
   color: black;
-  animation: pulsate 2s infinite;
   text-align: center;
   width: 4rem;
   margin-left: -2rem;
@@ -208,6 +228,25 @@ async function loadAssets(): Promise<void> {
 
   img {
     width: 100%;
+    animation: pulsate 2s infinite;
+  }
+
+  .bar {
+    width: 150%;
+    height: 10px;
+    background: #ccc;
+    border: solid 1px black;
+    padding: 1px;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin-left: -22%;
+
+    div {
+      height: 100%;
+      background: yellowgreen;
+      background: linear-gradient(to left, green 0%, yellowgreen 100%);
+      transition: width 0.5s ease-in-out;
+    }
   }
 }
 

@@ -65,10 +65,12 @@ class UnitService @Inject constructor(
         }
 
         if (type != UnitType.WORKER) { // Workers are not limited
-            buildingRepository.countCastlesByUser(user.id!!).let {
-                if (max(2, it * UNITS_PER_CASTLE) <= unitRepository.countUnitsByUser(user.id!!)) {
-                    throw BadRequestException("serverError.tooManyUnits")
-                }
+            val amountOfCastlesLvl1 = buildingRepository.countCastlesByUser(user.id!!, 1)
+            val amountOfCastlesLvl2 = buildingRepository.countCastlesByUser(user.id!!, 2)
+            val maxAmountOfUnits =
+                max(2, amountOfCastlesLvl1 * UNITS_PER_CASTLE_LVL_1 + amountOfCastlesLvl2 * UNITS_PER_CASTLE_LVL_2)
+            if (maxAmountOfUnits <= unitRepository.countUnitsByUser(user.id!!)) {
+                throw BadRequestException("serverError.tooManyUnits")
             }
         }
 

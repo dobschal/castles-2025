@@ -34,12 +34,16 @@ class UserService @Inject constructor(
     private val logger = KotlinLogging.logger {}
 
     fun calculatePoints(user: User, buildings: List<BuildingDto>, units: List<Unit>): Int {
-        val pointsForNonCities =
-            buildings.filter { it.type != BuildingType.CITY }.count { it.user?.username == user.username } * 2
-        val pointsForCities =
-            buildings.filter { it.type == BuildingType.CITY }.count { it.user?.username == user.username } * 4
+        var pointsForBuildings = 0;
+        buildings.filter { it.user?.id == user.id }.forEach {
+            if (it.type == BuildingType.CITY) {
+                pointsForBuildings += 4
+            } else if (it.type != BuildingType.CITY) {
+                pointsForBuildings += it.level?.times(2) ?: 0
+            }
+        }
         val pointsForUnits = units.count { it.user?.username == user.username }
-        return pointsForNonCities + pointsForCities + pointsForUnits
+        return pointsForBuildings + pointsForUnits
     }
 
     fun listAllRankings(): List<UserRankingDto> {

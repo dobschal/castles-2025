@@ -168,24 +168,64 @@
       <BeerCollectBubble v-if="beerToCollect > 0" :building="building" />
     </template>
     <template v-if="building.type === BuildingType.CASTLE">
-      <img
-        v-if="building.level === 1 && !isDisabled && isOwnBuilding"
-        src="../../../../assets/tiles/castle-level-1-red-roof-min.png"
-        class="building castle-level-1"
-        alt="Building"
-      />
-      <img
-        v-else-if="building.level === 1 && !isDisabled && !isOwnBuilding"
-        src="../../../../assets/tiles/castle-level-1-beige-roof-min.png"
-        class="building castle-level-1"
-        alt="Building"
-      />
-      <img
-        v-else-if="building.level === 1 && isDisabled"
-        src="../../../../assets/tiles/castle-level-1-disabled-min.png"
-        class="building castle-level-1"
-        alt="Building"
-      />
+      <template v-if="building.level === 1">
+        <img
+          v-if="!isDisabled && isOwnBuilding"
+          src="../../../../assets/tiles/castle-level-1-red-roof-min.png"
+          class="building castle-level-1"
+          alt="Building"
+        />
+        <img
+          v-else-if="!isDisabled && !isOwnBuilding"
+          src="../../../../assets/tiles/castle-level-1-beige-roof-min.png"
+          class="building castle-level-1"
+          alt="Building"
+        />
+        <img
+          v-else-if="isDisabled"
+          src="../../../../assets/tiles/castle-level-1-disabled-min.png"
+          class="building castle-level-1"
+          alt="Building"
+        />
+      </template>
+      <template v-if="building.level === 2">
+        <img
+          v-if="!isDisabled && isOwnBuilding"
+          src="../../../../assets/tiles/castle-level-2-red-roof.png"
+          class="building castle-level-2"
+          alt="Building"
+        />
+        <img
+          v-else-if="!isDisabled && !isOwnBuilding"
+          src="../../../../assets/tiles/castle-level-2-beige-roof.png"
+          class="building castle-level-2"
+          alt="Building"
+        />
+        <img
+          v-else-if="isDisabled"
+          src="../../../../assets/tiles/castle-level-2-disabled.png"
+          class="building castle-level-2"
+          alt="Building"
+        />
+        <img
+          v-if="!isDisabled && isOwnBuilding"
+          src="../../../../assets/tiles/castle-level-2-red-roof-foreground.png"
+          class="building-top-layer castle-level-2"
+          alt="Building"
+        />
+        <img
+          v-else-if="!isDisabled && !isOwnBuilding"
+          src="../../../../assets/tiles/castle-level-2-beige-roof-foreground.png"
+          class="building-top-layer castle-level-2"
+          alt="Building"
+        />
+        <img
+          v-else-if="isDisabled"
+          src="../../../../assets/tiles/castle-level-2-disabled-foreground.png"
+          class="building-top-layer castle-level-2"
+          alt="Building"
+        />
+      </template>
     </template>
   </div>
 </template>
@@ -367,14 +407,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
     &.castle-level-2 {
       width: 150%;
-      margin-left: -5%;
-      margin-top: -35%;
-    }
-
-    &.castle-level-3 {
-      width: 130%;
-      margin-left: 0;
-      margin-top: -30%;
+      margin-left: -20%;
+      margin-top: -40%;
     }
   }
 
@@ -407,6 +441,12 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       width: 150%;
       margin-left: -25%;
       margin-top: -26%;
+    }
+
+    &.castle-level-2 {
+      width: 150%;
+      margin-left: -20%;
+      margin-top: -40%;
     }
   }
 }

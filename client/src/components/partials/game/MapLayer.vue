@@ -94,7 +94,7 @@ function getMapTileStyle(mapTile: PointDto): MapTileStyle {
     height: mapStore.mapTileSize + "px",
     left: x + "px",
     top: y + "px",
-    zIndex: 999 - mapTile.x + mapTile.y * 10,
+    zIndex: 99 - mapTile.x + mapTile.y,
   };
 }
 

@@ -75,4 +75,10 @@ export class BuildingGateway extends Gateway {
       amountOfBeer,
     });
   }
+
+  async upgradeBuilding(buildingId: number): Promise<void> {
+    return this.request<void>("POST", "/v1/buildings/level-up", {
+      buildingId,
+    });
+  }
 }

@@ -44,6 +44,7 @@ export const de = {
     noFarm: "Keine Farm in der Nähe!",
     tooManyUnits: "Du hast das Limit an Einheiten erreicht. Baue mehr Burgen.",
     noCity: "Du benötigt zunächst eine Stadt.",
+    notEnoughGold: "Nicht genug Gold vorhanden.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -108,6 +109,9 @@ export const de = {
     createSwordsman: "Schwertkämpfer erstellen",
     createSpearman: "Speerkämpfer erstellen",
     createHorseman: "Reiter erstellen",
+    destroy: "Burg zerstören",
+    units: "Einheiten...",
+    upgrade: "Burg ausbauen",
   },
   events: {
     showOnMap: "Ereignisse auf Karte anzeigen?",

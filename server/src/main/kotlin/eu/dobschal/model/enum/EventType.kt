@@ -11,4 +11,5 @@ enum class EventType {
     BUILDING_DESTROYED,
     GAME_OVER,
     SOLD_BEER_FOR_GOLD,
+    BUILDING_LEVEL_UP
 }

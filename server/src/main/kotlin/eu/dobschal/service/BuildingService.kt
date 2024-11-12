@@ -288,5 +288,34 @@ class BuildingService @Inject constructor(
         return SuccessResponseDto("serverSuccess.beerSold")
     }
 
+    fun levelUpBuilding(buildingId: Int): SuccessResponseDto {
+        val building = buildingRepository.findById(buildingId) ?: throw NotFoundException("serverError.noBuilding")
+        val currentUser = userService.getCurrentUser()
+        if (building.user?.id != currentUser.id) {
+            throw BadRequestException("serverError.notYourBuilding")
+        }
+        if (building.level != 1 || building.type != BuildingType.CASTLE) { // Currently we only support castles to level 2 :D
+            throw BadRequestException("serverError.levelUpNotPossible")
+        }
+        if (buildingRepository.countBuildingTypeByUser(currentUser.id!!, BuildingType.CITY) == 0) {
+            throw BadRequestException("serverError.noCity")
+        }
+        val price =
+            priceService.getPriceForBuildingLevelUp(currentUser.toDto(), building.type, 2) // only level 2 supported yet
+        if (currentUser.gold!! < price) {
+            throw BadRequestException("serverError.notEnoughGold")
+        }
+        userRepository.deductGoldFromUser(currentUser.id!!, price)
+        buildingRepository.levelUp(building.id!!)
+        eventRepository.save(Event().apply {
+            this.user1 = currentUser
+            this.type = EventType.BUILDING_LEVEL_UP
+            this.building = building
+            this.x = building.x
+            this.y = building.y
+        })
+        return SuccessResponseDto("serverSuccess.buildingLevelUp")
+    }
+
 
 }

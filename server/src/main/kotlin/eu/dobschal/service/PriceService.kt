@@ -25,6 +25,7 @@ class PriceService @Inject constructor(
     private val logger = KotlinLogging.logger {}
     private lateinit var unitCreationPrices: Map<UnitType, List<Int>>
     private lateinit var buildingCreationPrices: Map<BuildingType, List<Int>>
+    private lateinit var buildingLevelUpPrices: Map<BuildingType, List<Int>>
 
     @Startup
     fun calculateAndCachePrices() {
@@ -58,6 +59,23 @@ class PriceService @Inject constructor(
                     BuildingType.MARKET -> 3.0
                     else -> 2.0
                 }
+                val price = basePrice * factor.pow(i)
+                prices.add(price.toInt())
+            }
+            prices
+        }
+        buildingLevelUpPrices = BuildingType.entries.associateWith { type ->
+            val prices = mutableListOf<Int>()
+            for (i in 0..1000) {
+                val basePrice = when (type) {
+                    BuildingType.CITY -> CITY_LEVEL_UP_PRICE
+                    BuildingType.VILLAGE -> VILLAGE_LEVEL_UP_PRICE
+                    BuildingType.CASTLE -> CASTLE_LEVEL_UP_PRICE
+                    BuildingType.BREWERY -> BREWERY_LEVEL_UP_PRICE
+                    BuildingType.FARM -> FARM_LEVEL_UP_PRICE
+                    BuildingType.MARKET -> MARKET_LEVEL_UP_PRICE
+                }
+                val factor = 3.0
                 val price = basePrice * factor.pow(i)
                 prices.add(price.toInt())
             }
@@ -101,6 +119,23 @@ class PriceService @Inject constructor(
         }
     }
 
+    fun getPriceForBuildingLevelUp(
+        user: UserDto,
+        type: BuildingType,
+        level: Int,
+        buildings: List<BuildingDto>? = null
+    ): Int {
+        val b = buildings ?: buildingRepository.findAllByUser(user.id!!)
+        return when (type) {
+            BuildingType.VILLAGE -> buildingLevelUpPrices[type]!![b.count { it.type == BuildingType.VILLAGE && it.level == level }]
+            BuildingType.CITY -> buildingLevelUpPrices[type]!![b.count { it.type == BuildingType.CITY && it.level == level }]
+            BuildingType.CASTLE -> buildingLevelUpPrices[type]!![b.count { it.type == BuildingType.CASTLE && it.level == level }]
+            BuildingType.BREWERY -> buildingLevelUpPrices[type]!![b.count { it.type == BuildingType.BREWERY && it.level == level }]
+            BuildingType.FARM -> buildingLevelUpPrices[type]!![b.count { it.type == BuildingType.FARM && it.level == level }]
+            BuildingType.MARKET -> buildingLevelUpPrices[type]!![b.count { it.type == BuildingType.MARKET && it.level == level }]
+        }
+    }
+
     fun getAllPrices(): PricesResponseDto {
         val user = userService.getCurrentUserDto()
         val buildings = buildingRepository.findAllByUser(user.id!!)
@@ -108,10 +143,13 @@ class PriceService @Inject constructor(
         val unitCreationPrices = UnitType.entries.associateWith { getPriceForUnitCreation(user, it, units) }
         val unitMovePrices = UnitType.entries.associateWith { getPriceForUnitMove(it) }
         val buildingsPrices = BuildingType.entries.associateWith { getPriceForBuildingCreation(user, it, buildings) }
+        val buildingLevelUpPrices =
+            BuildingType.entries.associateWith { getPriceForBuildingLevelUp(user, it, 2, buildings) }
         return PricesResponseDto(
             unitCreationPrices,
             unitMovePrices,
             buildingsPrices,
+            buildingLevelUpPrices,
             SELL_BEER_PRICE
         )
 

@@ -5,7 +5,8 @@ const val USER_ROLE = "user"
 const val MAP_MAX = 1000 // Maximum map size from -MAP_SIZE to MAP_SIZE in x and y direction
 const val START_BEER = 500
 
-const val UNITS_PER_CASTLE = 3
+const val UNITS_PER_CASTLE_LVL_1 = 3
+const val UNITS_PER_CASTLE_LVL_2 = 5
 
 // Unit Prices
 const val WORKER_BASE_PRICE = 50
@@ -24,6 +25,14 @@ const val CASTLE_BASE_PRICE = 200
 const val FARM_BASE_PRICE = 50
 const val BREWERY_BASE_PRICE = 100
 const val MARKET_BASE_PRICE = 2100
+
+// Building Levelup Prices in Gold!!!
+const val CITY_LEVEL_UP_PRICE = 0
+const val VILLAGE_LEVEL_UP_PRICE = 0
+const val CASTLE_LEVEL_UP_PRICE = 100
+const val FARM_LEVEL_UP_PRICE = 0
+const val BREWERY_LEVEL_UP_PRICE = 0
+const val MARKET_LEVEL_UP_PRICE = 0
 
 // Beer Production
 const val BREWERY_BEER_PRODUCTION_PER_HOUR = 100
