@@ -1,24 +1,34 @@
 <template>
   <div class="map" ref="map" :style="getMapStyle()">
-    <MapTile
-      v-for="mapTile in mapStore.mapTiles"
-      :key="mapTile.id"
-      :style="getMapTileStyle(mapTile)"
-      :map-tile="mapTile"
-    />
-    <template v-if="authStore.showEventsOnMap && !actionStore.isActionActive">
-      <EventTile
-        :key="event.id"
-        v-for="event in eventsStore.events"
-        :event="event"
-        :style="getMapTileStyle(event)"
+    <template v-if="isOverviewMap">
+      <OverviewMapTile
+        v-for="mapTile in mapStore.mapTiles"
+        :key="mapTile.id"
+        :style="getMapTileStyle(mapTile)"
+        :map-tile="mapTile"
       />
+    </template>
+    <template v-else>
+      <MapTile
+        v-for="mapTile in mapStore.mapTiles"
+        :key="mapTile.id"
+        :style="getMapTileStyle(mapTile)"
+        :map-tile="mapTile"
+      />
+      <template v-if="authStore.showEventsOnMap && !actionStore.isActionActive">
+        <EventTile
+          :key="event.id"
+          v-for="event in eventsStore.events"
+          :event="event"
+          :style="getMapTileStyle(event)"
+        />
+      </template>
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useMapStore } from "@/store/mapStore.ts";
 import MapTile from "@/components/partials/game/tiles/MapTile.vue";
 import { Optional } from "@/types/core/Optional.ts";
@@ -28,6 +38,7 @@ import { useEventsStore } from "@/store/eventsStore.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
 import { useActionStore } from "@/store/actionStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
+import OverviewMapTile from "@/components/partials/game/tiles/OverviewMapTile.vue";
 
 interface MapTileStyle {
   left: string;
@@ -48,6 +59,10 @@ const isDragging = ref(false);
 const mouseDownTime = ref(0);
 const touchDownTime = ref(0);
 const lastTouch = ref({ x: 0, y: 0 });
+
+const isOverviewMap = computed(() => {
+  return mapStore.mapTiles.length > 400;
+});
 
 // endregion
 // region hooks

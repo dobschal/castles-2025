@@ -371,8 +371,8 @@ function onMapTileClicked(mapTile: MapTileDto): void {
 
     &.market {
       width: 130%;
-      margin-left: -10%;
-      margin-top: -30%;
+      margin-left: -20%;
+      margin-top: -25%;
     }
 
     &.city {
@@ -406,9 +406,9 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     }
 
     &.castle-level-2 {
-      width: 150%;
-      margin-left: -20%;
-      margin-top: -40%;
+      width: 160%;
+      margin-left: -23%;
+      margin-top: -37%;
     }
   }
 
@@ -444,9 +444,9 @@ function onMapTileClicked(mapTile: MapTileDto): void {
     }
 
     &.castle-level-2 {
-      width: 150%;
-      margin-left: -20%;
-      margin-top: -40%;
+      width: 160%;
+      margin-left: -23%;
+      margin-top: -37%;
     }
   }
 }

@@ -31,7 +31,7 @@ export const de = {
     FARM: "Farm",
     BREWERY: "Brauerei",
     CITY: "Stadt",
-    MARKET: "Markt",
+    MARKET: "Biermarkt",
   },
   serverError: {
     notEnoughBeer: "Nicht genug Bier vorhanden.",
@@ -99,7 +99,7 @@ export const de = {
     buildBrewery: "Brauerei bauen",
     buildCastle: "Burg bauen",
     buildVillage: "Dorf bauen",
-    buildMarket: "Markt bauen",
+    buildMarket: "Biermarkt bauen",
     build: "Bauen...",
     delete: "Einheit zerstören",
     deleteQuestion: "Möchtest du diese Einheit wirklich zerstören?",
@@ -235,7 +235,7 @@ export const de = {
       "Hier siehst du alle Einheiten und Gebäude von {playerName}. Klicke auf ein Gebäude oder eine Einheit um es auf der Karte anzuzeigen.",
   },
   marketAction: {
-    marketOf: "Markt von {playerName}",
+    marketOf: "Biermarkt von {playerName}",
     sellFor1Gold: "Bier für 1 Gold verkaufen",
     sellFor10Gold: "Bier für 10 Gold verkaufen",
   },
