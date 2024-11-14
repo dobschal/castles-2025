@@ -207,7 +207,7 @@ export const en = {
   users: {
     link: "Players",
     description:
-      "Players sorted by points. Per building, 2 points is awarded. Per unit, 1 point is awarded.",
+      "Players sorted by points. The points are calculated based on the number of buildings and units.",
   },
   userProfile: {
     link: "Profile",

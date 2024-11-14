@@ -213,7 +213,7 @@ export const de = {
   users: {
     link: "Spieler",
     description:
-      "Spielerliste sortiert nach Punkten. Pro Gebäude gibt es 2 Punkte, pro Einheit 1 Punkt.",
+      "Spielerliste sortiert nach Punkten. Die Punkte werden anhand der Anzahl der Einheiten und Gebäuden berechnet.",
   },
   userProfile: {
     link: "Profil",
