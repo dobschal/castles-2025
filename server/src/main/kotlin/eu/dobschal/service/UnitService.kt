@@ -69,7 +69,7 @@ class UnitService @Inject constructor(
             val amountOfCastlesLvl2 = buildingRepository.countCastlesByUser(user.id!!, 2)
             val maxAmountOfUnits =
                 max(2, amountOfCastlesLvl1 * UNITS_PER_CASTLE_LVL_1 + amountOfCastlesLvl2 * UNITS_PER_CASTLE_LVL_2)
-            if (maxAmountOfUnits <= unitRepository.countUnitsByUser(user.id!!)) {
+            if (maxAmountOfUnits <= unitRepository.countUnitsByUser(user.id!!, listOf(UnitType.WORKER))) {
                 throw BadRequestException("serverError.tooManyUnits")
             }
         }
@@ -205,8 +205,7 @@ class UnitService @Inject constructor(
                 this.y = conflictingBuilding.y!!
             })
             handleGameOver(oldUserId)
-        }
-        if (conflictingBuilding.type == BuildingType.FARM || conflictingBuilding.type == BuildingType.BREWERY) {
+        } else {
             buildingRepository.delete(conflictingBuilding)
             eventRepository.save(Event().apply {
                 this.user1 = user

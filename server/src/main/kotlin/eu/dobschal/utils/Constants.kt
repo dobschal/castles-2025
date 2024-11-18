@@ -4,7 +4,7 @@ const val JWT_ISSUER = "https://castles.dobschal.eu"
 const val USER_ROLE = "user"
 const val MAP_MAX = 1000 // Maximum map size from -MAP_SIZE to MAP_SIZE in x and y direction
 const val START_BEER = 500
-
+const val UNIT_PRICE_FACTOR = 1.8
 const val UNITS_PER_CASTLE_LVL_1 = 3
 const val UNITS_PER_CASTLE_LVL_2 = 5
 

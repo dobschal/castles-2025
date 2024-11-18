@@ -47,8 +47,11 @@ class UnitRepository : PanacheRepository<Unit> {
         delete("id", id)
     }
 
-    fun countUnitsByUser(userId: Int): Int {
-        return count("user.id = ?1", userId).toInt()
+    fun countUnitsByUser(userId: Int, exceptTypes: List<UnitType> = emptyList()): Int {
+        if (exceptTypes.isEmpty()) {
+            return count("user.id = ?1", userId).toInt()
+        }
+        return count("user.id = ?1 AND type NOT IN ?2", userId, exceptTypes).toInt()
     }
 
     fun findUnitByTypeAndUser(userId: Int, unitType: UnitType): Unit? {

@@ -14,6 +14,7 @@ import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.utils.START_BEER
+import eu.dobschal.utils.UNIT_PRICE_FACTOR
 import eu.dobschal.utils.WORKER_BASE_PRICE
 import eu.dobschal.utils.WORKER_MOVE_PRICE
 import io.quarkus.test.junit.QuarkusTest
@@ -718,7 +719,7 @@ class UnitResourceTest : BaseResourceTest() {
             .post(endpoint)
             .then()
             .statusCode(Response.Status.OK.statusCode)
-        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER - WORKER_BASE_PRICE * 2 * 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER - (WORKER_BASE_PRICE * UNIT_PRICE_FACTOR * UNIT_PRICE_FACTOR).toInt())
         assert(unitRepository.listAll().size == 3)
     }
 
@@ -1071,11 +1072,107 @@ class UnitResourceTest : BaseResourceTest() {
         assert(userUnitsBefore == userUnitsAfter)
     }
 
-//    @Test
-//    @WithDefaultUser
-//    fun `If I have only workers and the limit is reached_ I can still create units_ So worker do not count`() {
-//        TODO()
-//    }
+    @Test
+    @WithDefaultUser
+    fun `Markets are getting destroyed on conquer`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val market = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.MARKET
+        }
+        buildingRepository.save(market)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        assert(unitRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SWORDSMAN)
+        assert(eventRepository.listAll().size == 3)
+        assert(buildingRepository.listAll().size == 0)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `The max unit limit does not count for units of type WORKER`() {
+        val unit1 = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit1)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit2)
+        val unit3 = Unit().apply {
+            x = 4
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit3)
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 4)
+        userRepository.setBeerTo(user1!!.id!!, 999999);
+        val request2 = CreateUnitRequestDto(4, 4, UnitType.SPEARMAN)
+        given()
+            .body(request2)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 5)
+    }
 
 
 }

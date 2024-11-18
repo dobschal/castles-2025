@@ -38,7 +38,7 @@ class PriceService @Inject constructor(
                 UnitType.HORSEMAN -> HORSEMAN_BASE_PRICE
             }
             for (i in 0..1000) { // If a user has more than 1000 units this will fail...
-                val price = basePrice * 2.0.pow(i)
+                val price = basePrice * (UNIT_PRICE_FACTOR).pow(i)
                 prices.add(price.toInt())
             }
             prices

@@ -39,7 +39,7 @@ class BarbarianService @Inject constructor(
         )
         deleteOldBarbarianUnits(barbarianUser)
         val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 2).toInt()
-        val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!)
+        val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!, listOf(UnitType.WORKER))
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
             createRandomBarbarianUnits(difference, barbarianUser)
