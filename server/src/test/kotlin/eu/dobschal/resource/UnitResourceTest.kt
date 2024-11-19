@@ -1345,14 +1345,14 @@ class UnitResourceTest : BaseResourceTest() {
                 type = UnitType.HORSEMAN
             }
             unitRepository.save(unit2)
-            val castle = Building().apply {
+            val village = Building().apply {
                 x = 4
                 y = 4
                 user = user2
                 type = BuildingType.VILLAGE
                 level = 1
             }
-            buildingRepository.save(castle)
+            buildingRepository.save(village)
             userRepository.setBeerTo(user1!!.id!!, 999)
             val request = MoveUnitRequestDto(4, 4, unit1.id!!)
             given()
@@ -1373,25 +1373,68 @@ class UnitResourceTest : BaseResourceTest() {
 
     @Test
     @WithDefaultUser
-    fun `Barbarians do not have dragons`() {
+    fun `One can build dragons and archers`() {
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+            level = 2
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, 999)
+        val request = CreateUnitRequestDto(4, 4, UnitType.DRAGON)
+        val response = given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.DRAGON)
+    }
 
+    @Test
+    @WithDefaultUser
+    fun `Barbarians do not have dragons`() {
+        TODO();
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Amount of units is affecting the dragon price too`() {
+        TODO();
     }
 
     @Test
     @WithDefaultUser
     fun `Dragons cannot move on buildings`() {
-
+        TODO();
     }
 
     @Test
     @WithDefaultUser
     fun `Dragons can be build in castles level 2 for gold instead of beer`() {
-
+        TODO();
     }
 
     @Test
     @WithDefaultUser
-    fun `Dragons win against all units except archers   `() {
+    fun `I cannot build a dragon on castle level 1`() {
+        TODO();
+    }
 
+    @Test
+    @WithDefaultUser
+    fun `Dragons win against all units except archers`() {
+        TODO();
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Moving a dragon or archer costs gold and not beer`() {
+        TODO();
     }
 }

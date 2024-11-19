@@ -5,6 +5,7 @@ import eu.dobschal.model.dto.UnitDto
 import eu.dobschal.model.dto.UserDto
 import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.Currency
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.BuildingRepository
 import eu.dobschal.repository.UnitRepository
@@ -157,5 +158,16 @@ class PriceService @Inject constructor(
             SELL_BEER_PRICE
         )
 
+    }
+
+    fun getUnitsCurrency(type: UnitType): Currency {
+        return when (type) {
+            UnitType.WORKER -> Currency.BEER
+            UnitType.SPEARMAN -> Currency.BEER
+            UnitType.SWORDSMAN -> Currency.BEER
+            UnitType.HORSEMAN -> Currency.BEER
+            UnitType.DRAGON -> Currency.GOLD
+            UnitType.ARCHER -> Currency.GOLD
+        }
     }
 }

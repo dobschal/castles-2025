@@ -7,10 +7,7 @@ import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.Event
 import eu.dobschal.model.entity.Unit
 import eu.dobschal.model.entity.User
-import eu.dobschal.model.enum.BuildingType
-import eu.dobschal.model.enum.EventType
-import eu.dobschal.model.enum.MapTileType
-import eu.dobschal.model.enum.UnitType
+import eu.dobschal.model.enum.*
 import eu.dobschal.repository.*
 import eu.dobschal.utils.*
 import jakarta.enterprise.context.ApplicationScoped
@@ -35,7 +32,9 @@ class UnitService @Inject constructor(
         UnitType.WORKER to listOf(BuildingType.VILLAGE, BuildingType.CITY),
         UnitType.HORSEMAN to listOf(BuildingType.CASTLE),
         UnitType.SPEARMAN to listOf(BuildingType.CASTLE),
-        UnitType.SWORDSMAN to listOf(BuildingType.CASTLE)
+        UnitType.SWORDSMAN to listOf(BuildingType.CASTLE),
+        UnitType.DRAGON to listOf(BuildingType.CASTLE),
+        UnitType.ARCHER to listOf(BuildingType.CASTLE)
     )
 
     fun getUnitsLimit(userId: Int): Int {
@@ -65,6 +64,9 @@ class UnitService @Inject constructor(
             if (it.user?.id != user.id) {
                 throw BadRequestException("serverError.wrongBuildingOwner")
             }
+            if ((type == UnitType.DRAGON || type == UnitType.ARCHER) && it.level!! < 2) {
+                throw BadRequestException("serverError.wrongBuildingLevel")
+            }
         } ?: throw BadRequestException("serverError.noBuilding")
 
         unitRepository.findUnitByXAndY(x, y)?.let {
@@ -72,8 +74,12 @@ class UnitService @Inject constructor(
         }
 
         val price = priceService.getPriceForUnitCreation(user.toDto(), type)
-        if (user.beer!! < price) {
+        val currency = priceService.getUnitsCurrency(type)
+        if (currency == Currency.BEER && user.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
+        }
+        if (currency == Currency.GOLD && user.gold!! < price) {
+            throw BadRequestException("serverError.notEnoughGold")
         }
 
         if (type != UnitType.WORKER) { // Workers are not limited
@@ -89,7 +95,11 @@ class UnitService @Inject constructor(
             this.user = user
         }
         unitRepository.save(unit)
-        userRepository.deductBeerFromUser(user.id!!, price)
+        if (currency == Currency.BEER) {
+            userRepository.deductBeerFromUser(user.id!!, price)
+        } else {
+            userRepository.deductGoldFromUser(user.id!!, price)
+        }
         eventRepository.save(Event().apply {
             this.user1 = user
             this.type = EventType.UNIT_CREATED
@@ -133,7 +143,10 @@ class UnitService @Inject constructor(
             throw BadRequestException("serverError.cannotMoveOnWaterTile")
         }
         val price = priceService.getPriceForUnitMove(unit.type)
-        if (user.beer!! < price) {
+        val currency = priceService.getUnitsCurrency(unit.type)
+        if (currency == Currency.GOLD && user.gold!! < price) {
+            throw BadRequestException("serverError.notEnoughGold")
+        } else if (user.beer!! < price) {
             throw BadRequestException("serverError.notEnoughBeer")
         }
         eventRepository.countEventsByUnitIdAndTypeLastHour(unit.id!!, EventType.UNIT_MOVED).let {
@@ -152,7 +165,11 @@ class UnitService @Inject constructor(
         unit.x = x
         unit.y = y
         unitRepository.updatePosition(unit.id!!, x, y)
-        userRepository.deductBeerFromUser(user.id!!, price)
+        if (currency == Currency.GOLD) {
+            userRepository.deductGoldFromUser(user.id!!, price)
+        } else {
+            userRepository.deductBeerFromUser(user.id!!, price)
+        }
         eventRepository.save(Event().apply {
             this.user1 = user
             this.type = EventType.UNIT_MOVED
