@@ -37,19 +37,7 @@
       </CButton>
     </template>
     <template v-else>
-      <CButton
-        v-if="unitAtPosition"
-        class="small with-icon"
-        @click="openMoveUnitActionOverlay"
-      >
-        {{
-          t("villageAction.moveUnit", [
-            movesPerHourLimit - movesLastHour,
-            movesPerHourLimit,
-          ])
-        }}
-        <BeerDisplay :beer="pricesStore.getMovePrice(unitAtPosition?.type)" />
-      </CButton>
+      <SelectUnitButton @close="close" :unit="unitAtPosition" />
       <CButton class="small with-icon" @click="unitMenuOpen = true">
         {{ t("castleAction.units") }}
       </CButton>
@@ -78,18 +66,18 @@ import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { handleFatalError } from "@/core/util.ts";
 import CButton from "@/components/partials/general/CButton.vue";
 import { useI18n } from "vue-i18n";
-import { ACTION, DIALOG, MAP_TILE_CLICKED } from "@/events.ts";
+import { DIALOG, MAP_TILE_CLICKED } from "@/events.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
-import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
 import { UnitType } from "@/types/enum/UnitType.ts";
-import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import BeerDisplay from "@/components/partials/game/displays/BeerDisplay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
-import GoldDisplay from "@/components/partials/game/GoldDisplay.vue";
+import GoldDisplay from "@/components/partials/game/displays/GoldDisplay.vue";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
+import SelectUnitButton from "@/components/partials/game/SelectUnitButton.vue";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
@@ -127,18 +115,6 @@ const unitAtPosition = computed(() => {
       unit.y === buildingsStore.activeBuilding!.y
     );
   });
-});
-
-const movesLastHour = computed(() => {
-  if (!unitAtPosition.value) return -1;
-
-  return unitsStore.movesLastHour(unitAtPosition.value);
-});
-
-const movesPerHourLimit = computed(() => {
-  if (!unitAtPosition.value) return -1;
-
-  return unitsStore.movesPerHourLimit(unitAtPosition.value);
 });
 
 const isOwnBuilding = computed(() => {
@@ -215,12 +191,6 @@ async function destroy(): Promise<void> {
 
 function close(): void {
   emit("close-action");
-}
-
-function openMoveUnitActionOverlay(): void {
-  close();
-  unitsStore.activeMoveUnit = unitAtPosition.value!;
-  ACTION.dispatch(UnitMoveAction);
 }
 
 async function createUnit(type): Promise<void> {

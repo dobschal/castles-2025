@@ -2,7 +2,7 @@
   <h2>Menu</h2>
   <ul>
     <li>
-      <router-link to="/">{{ t("general.toGame") }}</router-link>
+      <router-link to="/"> {{ t("general.toGame") }}</router-link>
     </li>
     <li>
       <router-link
@@ -20,6 +20,14 @@
       <router-link :to="WikiPageRoute.path">
         {{ t("wiki.link") }}
       </router-link>
+    </li>
+    <li>
+      <a
+        href="https://whatsapp.com/channel/0029Vavmqsc77qVZVlSsTL0Y"
+        target="_blank"
+      >
+        {{ t("login.whatsapp") }}
+      </a>
     </li>
     <li>
       <span class="link" @click="logout">{{ t("general.logout") }}</span>
@@ -67,7 +75,7 @@ ul {
     margin-bottom: 0.5rem;
 
     &:not(.without):before {
-      content: ">";
+      content: "👉";
       margin-right: 0.5rem;
     }
 

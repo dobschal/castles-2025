@@ -19,9 +19,10 @@
         />
       </CButton>
       <CButton
+        v-if="unitsStore.activeUnit?.type === UnitType.WORKER"
         class="small with-icon"
         @click="areBuildingActionsVisible = true"
-        :disabled="unitsStore.activeUnit?.type !== UnitType.WORKER || isLoading"
+        :disabled="isLoading"
       >
         {{ t("unitAction.build") }}
       </CButton>
@@ -111,7 +112,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { ACTION, DIALOG, MAP_TILE_CLICKED } from "@/events.ts";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
-import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import BeerDisplay from "@/components/partials/game/displays/BeerDisplay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { useMapStore } from "@/store/mapStore.ts";

@@ -38,8 +38,20 @@ class UnitService @Inject constructor(
         UnitType.SWORDSMAN to listOf(BuildingType.CASTLE)
     )
 
+    fun getUnitsLimit(userId: Int): Int {
+        val amountOfCastlesLvl1 = buildingRepository.countCastlesByUser(userId, 1)
+        val amountOfCastlesLvl2 = buildingRepository.countCastlesByUser(userId, 2)
+        return max(2, amountOfCastlesLvl1 * UNITS_PER_CASTLE_LVL_1 + amountOfCastlesLvl2 * UNITS_PER_CASTLE_LVL_2)
+    }
+
     fun getUnits(x1: Int, x2: Int, y1: Int, y2: Int): UnitsResponseDto {
-        return UnitsResponseDto(unitRepository.findUnitsBetween(x1, x2, y1, y2))
+        val unitsCount = unitRepository.countUnitsByUser(userService.getCurrentUser().id!!, listOf(UnitType.WORKER));
+        val unitsLimit = getUnitsLimit(userService.getCurrentUser().id!!)
+        return UnitsResponseDto(
+            units = unitRepository.findUnitsBetween(x1, x2, y1, y2),
+            unitsCount = unitsCount,
+            unitsLimit = unitsLimit
+        )
     }
 
     fun createUnit(x: Int, y: Int, type: UnitType): Unit {
@@ -65,11 +77,7 @@ class UnitService @Inject constructor(
         }
 
         if (type != UnitType.WORKER) { // Workers are not limited
-            val amountOfCastlesLvl1 = buildingRepository.countCastlesByUser(user.id!!, 1)
-            val amountOfCastlesLvl2 = buildingRepository.countCastlesByUser(user.id!!, 2)
-            val maxAmountOfUnits =
-                max(2, amountOfCastlesLvl1 * UNITS_PER_CASTLE_LVL_1 + amountOfCastlesLvl2 * UNITS_PER_CASTLE_LVL_2)
-            if (maxAmountOfUnits <= unitRepository.countUnitsByUser(user.id!!, listOf(UnitType.WORKER))) {
+            if (getUnitsLimit(user.id!!) <= unitRepository.countUnitsByUser(user.id!!, listOf(UnitType.WORKER))) {
                 throw BadRequestException("serverError.tooManyUnits")
             }
         }
@@ -134,6 +142,8 @@ class UnitService @Inject constructor(
                 UnitType.HORSEMAN -> HORSEMAN_MOVES_PER_HOUR
                 UnitType.SPEARMAN -> SPEARMAN_MOVES_PER_HOUR
                 UnitType.SWORDSMAN -> SWORDSMAN_MOVES_PER_HOUR
+                UnitType.ARCHER -> ARCHER_MOVES_PER_HOUR
+                UnitType.DRAGON -> DRAGON_MOVES_PER_HOUR
             }
             if (it >= maxMovesPerHours) {
                 throw BadRequestException("serverError.tooManyMoves")
@@ -161,13 +171,30 @@ class UnitService @Inject constructor(
         conflictingBuilding: Building?
     ): Boolean {
         if (conflictingUnit != null && conflictingUnit.user?.id != user.id) {
-            val lostFight = handleFight(conflictingUnit, unit) != unit
+            val lostFight = handleFight(conflictingUnit, unit, conflictingBuilding) != unit
             if (lostFight) {
                 return true
             }
         }
         if (conflictingBuilding != null && conflictingBuilding.user?.id != user.id) {
             handleConquerBuilding(conflictingBuilding, user)
+        }
+        return false
+    }
+
+    // Returns true if lost fight (attack) because of castle defense bonus
+    fun checkCastleDefense(conflictingBuilding: Building): Boolean {
+        if (conflictingBuilding.type != BuildingType.CASTLE) {
+            return false;
+        }
+        if (conflictingBuilding.level == 1) {
+            if (flipCoin() && flipCoin()) { // ~ 25% chance to lose
+                return true;
+            }
+        } else if (conflictingBuilding.level == 2) {
+            if (flipCoin()) { // 50% chance to lose
+                return true;
+            }
         }
         return false
     }
@@ -232,24 +259,26 @@ class UnitService @Inject constructor(
 
     }
 
-    private fun handleFight(unit1: Unit, unit2: Unit): Unit {
+    private fun handleFight(defendingUnit: Unit, attackingUnit: Unit, defendingBuildingType: Building?): Unit {
+        val lostCastleAttack = defendingBuildingType != null && checkCastleDefense(defendingBuildingType);
         val looserUnit = when {
-            unit1.type == unit2.type -> if (flipCoin()) unit2 else unit1
-            unit1.type == UnitType.WORKER -> unit1
-            unit2.type == UnitType.WORKER -> unit2
-            else -> determineLooser(unit1, unit2)
+            lostCastleAttack -> attackingUnit
+            defendingUnit.type == attackingUnit.type -> if (flipCoin()) attackingUnit else defendingUnit
+            defendingUnit.type == UnitType.WORKER -> defendingUnit
+            attackingUnit.type == UnitType.WORKER -> attackingUnit
+            else -> determineLooser(defendingUnit, attackingUnit)
         }
-        val winnerUnit = if (looserUnit == unit1) {
-            unit2
+        val winnerUnit = if (looserUnit == defendingUnit) {
+            attackingUnit
         } else {
-            unit1
+            defendingUnit
         }
         eventRepository.save(Event().apply {
             this.user1 = looserUnit.user
             this.user2 = winnerUnit.user
             this.type = EventType.LOST_UNIT
-            this.x = unit1.x!!
-            this.y = unit1.y!!
+            this.x = defendingUnit.x!!
+            this.y = defendingUnit.y!!
         })
         unitRepository.deleteById(looserUnit.id!!)
         return winnerUnit

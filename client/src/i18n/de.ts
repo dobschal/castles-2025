@@ -69,6 +69,7 @@ export const de = {
     action: "Anmelden",
     toRegistration: "Zur Registrierung",
     aboutTheGame: "Mehr über das Spiel",
+    whatsapp: "WhatsApp Channel",
   },
   startVillageAction: {
     text: "Bitte wähle einen Standort für dein erstes Dorf.",
@@ -79,6 +80,7 @@ export const de = {
     moveUnit: "Einheit bewegen ({0}/{1})",
     villageOf: "Dorf von {playerName}",
     upgradeToCity: "Zu Stadt ausbauen",
+    selectUnit: "Einheit auswählen",
   },
   farmAction: {
     farmOf: "Farm von {playerName}",

@@ -18,6 +18,12 @@ const val SPEARMAN_MOVE_PRICE = 10
 const val SWORDSMAN_MOVE_PRICE = 10
 const val HORSEMAN_MOVE_PRICE = 15
 
+// Unit Prices for special units, Gold
+const val DRAGON_MOVE_PRICE = 20
+const val DRAGON_BASE_PRICE = 1000
+const val ARCHER_MOVE_PRICE = 10
+const val ARCHER_BASE_PRICE = 200
+
 // Building Prices
 const val CITY_BASE_PRICE = 3200 // possible to building after having 3 villages
 const val VILLAGE_BASE_PRICE = 400
@@ -43,6 +49,8 @@ const val WORKER_MOVES_PER_HOUR = 5
 const val SPEARMAN_MOVES_PER_HOUR = 1
 const val SWORDSMAN_MOVES_PER_HOUR = 2
 const val HORSEMAN_MOVES_PER_HOUR = 3
+const val DRAGON_MOVES_PER_HOUR = 2
+const val ARCHER_MOVES_PER_HOUR = 2
 
 // Gold
 const val GOLD_STORAGE_PER_CITY = 500

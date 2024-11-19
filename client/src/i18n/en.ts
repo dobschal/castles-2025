@@ -67,6 +67,7 @@ export const en = {
     action: "Login",
     toRegistration: "To registration",
     aboutTheGame: "More about the game",
+    whatsapp: "WhatsApp Channel",
   },
   startVillageAction: {
     text: "Please choose a location for your first village.",
@@ -77,6 +78,7 @@ export const en = {
     moveUnit: "Move unit ({0}/{1})",
     villageOf: "Village of {playerName}",
     upgradeToCity: "Upgrade to city",
+    selectUnit: "Select unit",
   },
   farmAction: {
     farmOf: "Farm of {playerName}",
@@ -229,7 +231,7 @@ export const en = {
       "Here you can see all units and buildings of {playerName}. Click on it to see it on the map.",
   },
   marketAction: {
-    marketOf: "Market of {playerName}",
+    marketOf: "Beer Market of {playerName}",
     sellFor1Gold: "Sell beer for 1 gold",
     sellFor10Gold: "Sell beer for 10 gold",
   },

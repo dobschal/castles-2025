@@ -13,10 +13,7 @@ import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
-import eu.dobschal.utils.START_BEER
-import eu.dobschal.utils.UNIT_PRICE_FACTOR
-import eu.dobschal.utils.WORKER_BASE_PRICE
-import eu.dobschal.utils.WORKER_MOVE_PRICE
+import eu.dobschal.utils.*
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
@@ -1174,5 +1171,227 @@ class UnitResourceTest : BaseResourceTest() {
         assert(unitRepository.listAll().size == 5)
     }
 
+    @Test
+    @WithDefaultUser
+    fun `The get units endpoint returns the total amount of units and the current limit`() {
+        val unit1 = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit1)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit2)
+        val unit3 = Unit().apply {
+            x = 4
+            y = 2
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit3)
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val response = given()
+            .`when`()
+            .get("$endpoint?x1=0&x2=5&y1=0&y2=5")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response.units.size == 3)
+        assert(response.unitsCount == 1)
+        assert(response.unitsLimit == UNITS_PER_CASTLE_LVL_1)
+    }
 
+    @Test
+    @WithDefaultUser
+    fun `A castle level 1 gives 25% chance to not lose`() {
+        val mapTile = MapTile().apply {
+            x = 4
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        var countAttackWins = 0
+        val runs = 50
+        for (i in 0 until runs) {
+            val unit1 = Unit().apply {
+                x = 3
+                y = 3
+                user = user1
+                type = UnitType.SPEARMAN
+            }
+            unitRepository.save(unit1)
+            val unit2 = Unit().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = UnitType.HORSEMAN
+            }
+            unitRepository.save(unit2)
+            val castle = Building().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = BuildingType.CASTLE
+                level = 1
+            }
+            buildingRepository.save(castle)
+            userRepository.setBeerTo(user1!!.id!!, 999)
+            val request = MoveUnitRequestDto(4, 4, unit1.id!!)
+            given()
+                .body(request)
+                .`when`()
+                .post("$endpoint/move")
+                .then()
+                .statusCode(Response.Status.OK.statusCode)
+            assert(unitRepository.listAll().size == 1)
+            if (unitRepository.listAll().first().type == UnitType.SPEARMAN) {
+                countAttackWins++
+            }
+            unitRepository.deleteAll()
+            buildingRepository.deleteAll()
+        }
+        assert(countAttackWins < runs * 0.9)
+        assert(countAttackWins > runs * 0.6)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `A castle level 2 gives 50% chance to not lose`() {
+        val mapTile = MapTile().apply {
+            x = 4
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        var countAttackWins = 0
+        val runs = 50
+        for (i in 0 until runs) {
+            val unit1 = Unit().apply {
+                x = 3
+                y = 3
+                user = user1
+                type = UnitType.SPEARMAN
+            }
+            unitRepository.save(unit1)
+            val unit2 = Unit().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = UnitType.HORSEMAN
+            }
+            unitRepository.save(unit2)
+            val castle = Building().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = BuildingType.CASTLE
+                level = 2
+            }
+            buildingRepository.save(castle)
+            userRepository.setBeerTo(user1!!.id!!, 999)
+            val request = MoveUnitRequestDto(4, 4, unit1.id!!)
+            given()
+                .body(request)
+                .`when`()
+                .post("$endpoint/move")
+                .then()
+                .statusCode(Response.Status.OK.statusCode)
+            assert(unitRepository.listAll().size == 1)
+            if (unitRepository.listAll().first().type == UnitType.SPEARMAN) {
+                countAttackWins++
+            }
+            unitRepository.deleteAll()
+            buildingRepository.deleteAll()
+        }
+        assert(countAttackWins < runs * 0.65)
+        assert(countAttackWins > runs * 0.35)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Castle defense does not exist on other buildings`() {
+        val mapTile = MapTile().apply {
+            x = 4
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        var countAttackWins = 0
+        val runs = 10
+        for (i in 0 until runs) {
+            val unit1 = Unit().apply {
+                x = 3
+                y = 3
+                user = user1
+                type = UnitType.SPEARMAN
+            }
+            unitRepository.save(unit1)
+            val unit2 = Unit().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = UnitType.HORSEMAN
+            }
+            unitRepository.save(unit2)
+            val castle = Building().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = BuildingType.VILLAGE
+                level = 1
+            }
+            buildingRepository.save(castle)
+            userRepository.setBeerTo(user1!!.id!!, 999)
+            val request = MoveUnitRequestDto(4, 4, unit1.id!!)
+            given()
+                .body(request)
+                .`when`()
+                .post("$endpoint/move")
+                .then()
+                .statusCode(Response.Status.OK.statusCode)
+            assert(unitRepository.listAll().size == 1)
+            if (unitRepository.listAll().first().type == UnitType.SPEARMAN) {
+                countAttackWins++
+            }
+            unitRepository.deleteAll()
+            buildingRepository.deleteAll()
+        }
+        assert(countAttackWins == runs)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Barbarians do not have dragons`() {
+
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons cannot move on buildings`() {
+
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons can be build in castles level 2 for gold instead of beer`() {
+
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons win against all units except archers   `() {
+
+    }
 }

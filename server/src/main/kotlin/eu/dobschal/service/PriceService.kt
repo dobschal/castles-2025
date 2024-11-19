@@ -36,6 +36,8 @@ class PriceService @Inject constructor(
                 UnitType.SPEARMAN -> SPEARMAN_BASE_PRICE
                 UnitType.SWORDSMAN -> SWORDSMAN_BASE_PRICE
                 UnitType.HORSEMAN -> HORSEMAN_BASE_PRICE
+                UnitType.DRAGON -> DRAGON_BASE_PRICE
+                UnitType.ARCHER -> ARCHER_BASE_PRICE
             }
             for (i in 0..1000) { // If a user has more than 1000 units this will fail...
                 val price = basePrice * (UNIT_PRICE_FACTOR).pow(i)
@@ -97,6 +99,8 @@ class PriceService @Inject constructor(
             UnitType.SPEARMAN -> SPEARMAN_MOVE_PRICE
             UnitType.SWORDSMAN -> SWORDSMAN_MOVE_PRICE
             UnitType.HORSEMAN -> HORSEMAN_MOVE_PRICE
+            UnitType.DRAGON -> DRAGON_MOVE_PRICE
+            UnitType.ARCHER -> ARCHER_MOVE_PRICE
         }
     }
 
