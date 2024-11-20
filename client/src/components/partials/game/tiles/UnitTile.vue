@@ -77,6 +77,46 @@
         alt="Unit"
       />
     </template>
+    <template v-if="unit.type === UnitType.DRAGON">
+      <img
+        v-if="isDisabled"
+        src="../../../../assets/tiles/dragon-disabled.png"
+        class="dragon"
+        alt="Unit"
+      />
+      <img
+        v-else-if="isOwnUnit"
+        src="../../../../assets/tiles/dragon-red.png"
+        class="dragon"
+        alt="Unit"
+      />
+      <img
+        v-else-if="!isOwnUnit"
+        src="../../../../assets/tiles/dragon-beige.png"
+        class="dragon"
+        alt="Unit"
+      />
+    </template>
+    <template v-if="unit.type === UnitType.ARCHER">
+      <img
+        v-if="isDisabled"
+        src="../../../../assets/tiles/archer-disabled.png"
+        class="archer"
+        alt="Unit"
+      />
+      <img
+        v-else-if="isOwnUnit"
+        src="../../../../assets/tiles/archer-red.png"
+        class="archer"
+        alt="Unit"
+      />
+      <img
+        v-else-if="!isOwnUnit"
+        src="../../../../assets/tiles/archer-beige.png"
+        class="archer"
+        alt="Unit"
+      />
+    </template>
     <div class="countdown" :style="countdownStyle" v-if="nextMoveIn">
       {{ nextMoveIn }}
     </div>
@@ -181,6 +221,20 @@ function onMapTileClicked(mapTile: MapTileDto): void {
       width: 130%;
       height: 130%;
       margin-left: -5%;
+      margin-top: -25%;
+    }
+
+    &.dragon {
+      width: 175%;
+      height: 175%;
+      margin-left: -30%;
+      margin-top: -45%;
+    }
+
+    &.archer {
+      width: 150%;
+      height: 150%;
+      margin-left: -20%;
       margin-top: -25%;
     }
   }

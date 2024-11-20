@@ -5,6 +5,7 @@ import eu.dobschal.model.dto.UnitDto
 import eu.dobschal.model.dto.UserDto
 import eu.dobschal.model.dto.response.PricesResponseDto
 import eu.dobschal.model.enum.BuildingType
+import eu.dobschal.model.enum.Currency
 import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.BuildingRepository
 import eu.dobschal.repository.UnitRepository
@@ -36,9 +37,11 @@ class PriceService @Inject constructor(
                 UnitType.SPEARMAN -> SPEARMAN_BASE_PRICE
                 UnitType.SWORDSMAN -> SWORDSMAN_BASE_PRICE
                 UnitType.HORSEMAN -> HORSEMAN_BASE_PRICE
+                UnitType.DRAGON -> DRAGON_BASE_PRICE
+                UnitType.ARCHER -> ARCHER_BASE_PRICE
             }
             for (i in 0..1000) { // If a user has more than 1000 units this will fail...
-                val price = basePrice * 2.0.pow(i)
+                val price = basePrice * (UNIT_PRICE_FACTOR).pow(i)
                 prices.add(price.toInt())
             }
             prices
@@ -97,6 +100,8 @@ class PriceService @Inject constructor(
             UnitType.SPEARMAN -> SPEARMAN_MOVE_PRICE
             UnitType.SWORDSMAN -> SWORDSMAN_MOVE_PRICE
             UnitType.HORSEMAN -> HORSEMAN_MOVE_PRICE
+            UnitType.DRAGON -> DRAGON_MOVE_PRICE
+            UnitType.ARCHER -> ARCHER_MOVE_PRICE
         }
     }
 
@@ -153,5 +158,16 @@ class PriceService @Inject constructor(
             SELL_BEER_PRICE
         )
 
+    }
+
+    fun getUnitsCurrency(type: UnitType): Currency {
+        return when (type) {
+            UnitType.WORKER -> Currency.BEER
+            UnitType.SPEARMAN -> Currency.BEER
+            UnitType.SWORDSMAN -> Currency.BEER
+            UnitType.HORSEMAN -> Currency.BEER
+            UnitType.DRAGON -> Currency.GOLD
+            UnitType.ARCHER -> Currency.GOLD
+        }
     }
 }

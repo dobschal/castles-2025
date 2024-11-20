@@ -4,7 +4,7 @@ const val JWT_ISSUER = "https://castles.dobschal.eu"
 const val USER_ROLE = "user"
 const val MAP_MAX = 1000 // Maximum map size from -MAP_SIZE to MAP_SIZE in x and y direction
 const val START_BEER = 500
-
+const val UNIT_PRICE_FACTOR = 1.8
 const val UNITS_PER_CASTLE_LVL_1 = 3
 const val UNITS_PER_CASTLE_LVL_2 = 5
 
@@ -17,6 +17,12 @@ const val WORKER_MOVE_PRICE = 10
 const val SPEARMAN_MOVE_PRICE = 10
 const val SWORDSMAN_MOVE_PRICE = 10
 const val HORSEMAN_MOVE_PRICE = 15
+
+// Unit Prices for special units, Gold
+const val DRAGON_MOVE_PRICE = 20
+const val DRAGON_BASE_PRICE = 50
+const val ARCHER_MOVE_PRICE = 10
+const val ARCHER_BASE_PRICE = 10
 
 // Building Prices
 const val CITY_BASE_PRICE = 3200 // possible to building after having 3 villages
@@ -43,6 +49,8 @@ const val WORKER_MOVES_PER_HOUR = 5
 const val SPEARMAN_MOVES_PER_HOUR = 1
 const val SWORDSMAN_MOVES_PER_HOUR = 2
 const val HORSEMAN_MOVES_PER_HOUR = 3
+const val DRAGON_MOVES_PER_HOUR = 2
+const val ARCHER_MOVES_PER_HOUR = 2
 
 // Gold
 const val GOLD_STORAGE_PER_CITY = 500

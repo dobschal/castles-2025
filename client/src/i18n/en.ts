@@ -24,6 +24,8 @@ export const en = {
     SWORDSMAN: "Swordsman",
     SPEARMAN: "Spearman",
     HORSEMAN: "Horseman",
+    ARCHER: "Archer",
+    DRAGON: "Dragon",
   },
   buildingType: {
     VILLAGE: "Village",
@@ -44,6 +46,7 @@ export const en = {
     tooManyUnits: "You have reached the limit of units. Build more castles.",
     noCity: "You need a city first.",
     notEnoughGold: "Not enough gold available.",
+    unitCannotConquer: "This unit cannot conquer buildings.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -67,6 +70,7 @@ export const en = {
     action: "Login",
     toRegistration: "To registration",
     aboutTheGame: "More about the game",
+    whatsapp: "WhatsApp Channel",
   },
   startVillageAction: {
     text: "Please choose a location for your first village.",
@@ -77,6 +81,7 @@ export const en = {
     moveUnit: "Move unit ({0}/{1})",
     villageOf: "Village of {playerName}",
     upgradeToCity: "Upgrade to city",
+    selectUnit: "Select unit",
   },
   farmAction: {
     farmOf: "Farm of {playerName}",
@@ -105,6 +110,8 @@ export const en = {
     createSwordsman: "Create swordsman",
     createSpearman: "Create spearman",
     createHorseman: "Create horseman",
+    createDragon: "Create dragon",
+    createArcher: "Create archer",
     destroy: "Destroy castle",
     units: "Units...",
     upgrade: "Upgrade castle",
@@ -229,7 +236,7 @@ export const en = {
       "Here you can see all units and buildings of {playerName}. Click on it to see it on the map.",
   },
   marketAction: {
-    marketOf: "Market of {playerName}",
+    marketOf: "Beer Market of {playerName}",
     sellFor1Gold: "Sell beer for 1 gold",
     sellFor10Gold: "Sell beer for 10 gold",
   },

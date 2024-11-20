@@ -13,9 +13,7 @@ import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.EventType
 import eu.dobschal.model.enum.MapTileType
 import eu.dobschal.model.enum.UnitType
-import eu.dobschal.utils.START_BEER
-import eu.dobschal.utils.WORKER_BASE_PRICE
-import eu.dobschal.utils.WORKER_MOVE_PRICE
+import eu.dobschal.utils.*
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import jakarta.ws.rs.core.MediaType
@@ -718,7 +716,7 @@ class UnitResourceTest : BaseResourceTest() {
             .post(endpoint)
             .then()
             .statusCode(Response.Status.OK.statusCode)
-        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER - WORKER_BASE_PRICE * 2 * 2)
+        assert(userRepository.findById(user1!!.id!!)!!.beer == START_BEER - (WORKER_BASE_PRICE * UNIT_PRICE_FACTOR * UNIT_PRICE_FACTOR).toInt())
         assert(unitRepository.listAll().size == 3)
     }
 
@@ -912,7 +910,7 @@ class UnitResourceTest : BaseResourceTest() {
 
     @Test
     @WithDefaultUser
-    fun `Castles and villages are getting conquered when other unit is moving onto`() {
+    fun `Villages are getting conquered when other unit is moving onto`() {
         val mapTile = MapTile().apply {
             x = 3
             y = 3
@@ -933,13 +931,13 @@ class UnitResourceTest : BaseResourceTest() {
             type = UnitType.SWORDSMAN
         }
         unitRepository.save(unit)
-        val castle = Building().apply {
+        val village2 = Building().apply {
             x = 3
             y = 3
             user = user2
-            type = BuildingType.CASTLE
+            type = BuildingType.VILLAGE
         }
-        buildingRepository.save(castle)
+        buildingRepository.save(village2)
         val village = Building().apply {
             x = 3
             y = 50
@@ -1071,11 +1069,525 @@ class UnitResourceTest : BaseResourceTest() {
         assert(userUnitsBefore == userUnitsAfter)
     }
 
-//    @Test
-//    @WithDefaultUser
-//    fun `If I have only workers and the limit is reached_ I can still create units_ So worker do not count`() {
-//        TODO()
-//    }
+    @Test
+    @WithDefaultUser
+    fun `Markets are getting destroyed on conquer`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.SWORDSMAN
+        }
+        unitRepository.save(unit)
+        val market = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.MARKET
+        }
+        buildingRepository.save(market)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        assert(unitRepository.listAll().size == 2)
+        assert(buildingRepository.listAll().size == 1)
+        given()
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SWORDSMAN)
+        assert(eventRepository.listAll().size == 3)
+        assert(buildingRepository.listAll().size == 0)
+    }
 
+    @Test
+    @WithDefaultUser
+    fun `The max unit limit does not count for units of type WORKER`() {
+        val unit1 = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit1)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit2)
+        val unit3 = Unit().apply {
+            x = 4
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit3)
+        val village = Building().apply {
+            x = 1
+            y = 1
+            user = user1
+            type = BuildingType.VILLAGE
+        }
+        buildingRepository.save(village)
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val request = CreateUnitRequestDto(1, 1, UnitType.WORKER)
+        given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 4)
+        userRepository.setBeerTo(user1!!.id!!, 999999);
+        val request2 = CreateUnitRequestDto(4, 4, UnitType.SPEARMAN)
+        given()
+            .body(request2)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 5)
+    }
 
+    @Test
+    @WithDefaultUser
+    fun `The get units endpoint returns the total amount of units and the current limit`() {
+        val unit1 = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit1)
+        val unit2 = Unit().apply {
+            x = 3
+            y = 2
+            user = user1
+            type = UnitType.WORKER
+        }
+        unitRepository.save(unit2)
+        val unit3 = Unit().apply {
+            x = 4
+            y = 2
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit3)
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+        }
+        buildingRepository.save(castle)
+        val response = given()
+            .`when`()
+            .get("$endpoint?x1=0&x2=5&y1=0&y2=5")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().`as`(UnitsResponseDto::class.java)
+        assert(response.units.size == 3)
+        assert(response.unitsCount == 1)
+        assert(response.unitsLimit == UNITS_PER_CASTLE_LVL_1)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `A castle level 1 gives 25% chance to not lose`() {
+        val mapTile = MapTile().apply {
+            x = 4
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        var countAttackWins = 0
+        val runs = 50
+        for (i in 0 until runs) {
+            val unit1 = Unit().apply {
+                x = 3
+                y = 3
+                user = user1
+                type = UnitType.SPEARMAN
+            }
+            unitRepository.save(unit1)
+            val unit2 = Unit().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = UnitType.HORSEMAN
+            }
+            unitRepository.save(unit2)
+            val castle = Building().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = BuildingType.CASTLE
+                level = 1
+            }
+            buildingRepository.save(castle)
+            userRepository.setBeerTo(user1!!.id!!, 999)
+            val request = MoveUnitRequestDto(4, 4, unit1.id!!)
+            given()
+                .body(request)
+                .`when`()
+                .post("$endpoint/move")
+                .then()
+                .statusCode(Response.Status.OK.statusCode)
+            assert(unitRepository.listAll().size == 1)
+            if (unitRepository.listAll().first().type == UnitType.SPEARMAN) {
+                countAttackWins++
+            }
+            unitRepository.deleteAll()
+            buildingRepository.deleteAll()
+        }
+        assert(countAttackWins < runs * 0.9)
+        assert(countAttackWins > runs * 0.6)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `A castle level 2 gives 50% chance to not lose`() {
+        val mapTile = MapTile().apply {
+            x = 4
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        var countAttackWins = 0
+        val runs = 50
+        for (i in 0 until runs) {
+            val unit1 = Unit().apply {
+                x = 3
+                y = 3
+                user = user1
+                type = UnitType.SPEARMAN
+            }
+            unitRepository.save(unit1)
+            val unit2 = Unit().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = UnitType.HORSEMAN
+            }
+            unitRepository.save(unit2)
+            val castle = Building().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = BuildingType.CASTLE
+                level = 2
+            }
+            buildingRepository.save(castle)
+            userRepository.setBeerTo(user1!!.id!!, 999)
+            val request = MoveUnitRequestDto(4, 4, unit1.id!!)
+            given()
+                .body(request)
+                .`when`()
+                .post("$endpoint/move")
+                .then()
+                .statusCode(Response.Status.OK.statusCode)
+            assert(unitRepository.listAll().size == 1)
+            if (unitRepository.listAll().first().type == UnitType.SPEARMAN) {
+                countAttackWins++
+            }
+            unitRepository.deleteAll()
+            buildingRepository.deleteAll()
+        }
+        assert(countAttackWins < runs * 0.65)
+        assert(countAttackWins > runs * 0.35)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Castle defense does not exist on other buildings`() {
+        val mapTile = MapTile().apply {
+            x = 4
+            y = 4
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        var countAttackWins = 0
+        val runs = 10
+        for (i in 0 until runs) {
+            val unit1 = Unit().apply {
+                x = 3
+                y = 3
+                user = user1
+                type = UnitType.SPEARMAN
+            }
+            unitRepository.save(unit1)
+            val unit2 = Unit().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = UnitType.HORSEMAN
+            }
+            unitRepository.save(unit2)
+            val village = Building().apply {
+                x = 4
+                y = 4
+                user = user2
+                type = BuildingType.VILLAGE
+                level = 1
+            }
+            buildingRepository.save(village)
+            userRepository.setBeerTo(user1!!.id!!, 999)
+            val request = MoveUnitRequestDto(4, 4, unit1.id!!)
+            given()
+                .body(request)
+                .`when`()
+                .post("$endpoint/move")
+                .then()
+                .statusCode(Response.Status.OK.statusCode)
+            assert(unitRepository.listAll().size == 1)
+            if (unitRepository.listAll().first().type == UnitType.SPEARMAN) {
+                countAttackWins++
+            }
+            unitRepository.deleteAll()
+            buildingRepository.deleteAll()
+        }
+        assert(countAttackWins == runs)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `One can build dragons and archers`() {
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+            level = 2
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, 999)
+        val request = CreateUnitRequestDto(4, 4, UnitType.DRAGON)
+        val response = given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.DRAGON)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Amount of units is affecting the dragon price too`() {
+        val unit1 = Unit().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit1)
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+            level = 2
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, (DRAGON_BASE_PRICE * UNIT_PRICE_FACTOR).toInt() - 1)
+        val request = CreateUnitRequestDto(4, 4, UnitType.DRAGON)
+        val response = given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+            .extract().`as`(ErrorResponseDto::class.java)
+        logger.info { "Response: $response" }
+        assert(response.message == "serverError.notEnoughGold")
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.SPEARMAN)
+        userRepository.setGoldTo(user1!!.id!!, (DRAGON_BASE_PRICE * UNIT_PRICE_FACTOR).toInt())
+        val request2 = CreateUnitRequestDto(4, 4, UnitType.DRAGON)
+        given()
+            .body(request2)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 2)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons cannot move on opponent buildings`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.DRAGON
+        }
+        unitRepository.save(unit)
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = BuildingType.CASTLE
+            level = 1
+        }
+        buildingRepository.save(castle)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        given()
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(unitRepository.listAll().first().x == 2)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons can move on own buildings`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.PLAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.DRAGON
+        }
+        unitRepository.save(unit)
+        val castle = Building().apply {
+            x = 3
+            y = 3
+            user = user1
+            type = BuildingType.CASTLE
+            level = 1
+        }
+        buildingRepository.save(castle)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        userRepository.setGoldTo(user1!!.id!!, 999)
+        given()
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().first().x == 3)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `I cannot build a dragon on castle level 1`() {
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+            level = 1
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, 999)
+        val request = CreateUnitRequestDto(4, 4, UnitType.DRAGON)
+        given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.BAD_REQUEST.statusCode)
+        assert(unitRepository.listAll().size == 0)
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons can be build in castles level 2 for gold instead of beer`() {
+        val castle = Building().apply {
+            x = 4
+            y = 4
+            user = user1
+            type = BuildingType.CASTLE
+            level = 2
+        }
+        buildingRepository.save(castle)
+        userRepository.setGoldTo(user1!!.id!!, 999)
+        val request = CreateUnitRequestDto(4, 4, UnitType.DRAGON)
+        val response = given()
+            .body(request)
+            .`when`()
+            .post(endpoint)
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+            .extract().asString()
+        logger.info { "Response: $response" }
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.DRAGON)
+        assert(userRepository.findById(user1!!.id!!)?.gold == 999 - DRAGON_BASE_PRICE);
+        assert(userRepository.findById(user1!!.id!!)?.beer == START_BEER);
+    }
+
+    @Test
+    @WithDefaultUser
+    fun `Dragons win against all units except archers`() {
+        val mapTile = MapTile().apply {
+            x = 3
+            y = 3
+            type = MapTileType.MOUNTAIN
+        }
+        mapTileRepository.saveMapTiles(setOf(mapTile))
+        val unit2 = Unit().apply {
+            x = 3
+            y = 3
+            user = user2
+            type = UnitType.SPEARMAN
+        }
+        unitRepository.save(unit2)
+        val unit = Unit().apply {
+            x = 2
+            y = 2
+            user = user1
+            type = UnitType.DRAGON
+        }
+        unitRepository.save(unit)
+        userRepository.setGoldTo(user1!!.id!!, 999)
+        val request = MoveUnitRequestDto(3, 3, unit.id!!)
+        given()
+            .body(request)
+            .`when`()
+            .post("$endpoint/move")
+            .then()
+            .statusCode(Response.Status.OK.statusCode)
+        assert(unitRepository.listAll().size == 1)
+        assert(unitRepository.listAll().first().type == UnitType.DRAGON)
+    }
 }

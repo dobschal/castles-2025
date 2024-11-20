@@ -14,14 +14,20 @@
             movesPerHourLimit,
           ])
         }}
+        <GoldDisplay
+          v-if="isMoveCurrencyGold"
+          :gold="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
+        />
         <BeerDisplay
+          v-else
           :beer="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
         />
       </CButton>
       <CButton
+        v-if="unitsStore.activeUnit?.type === UnitType.WORKER"
         class="small with-icon"
         @click="areBuildingActionsVisible = true"
-        :disabled="unitsStore.activeUnit?.type !== UnitType.WORKER || isLoading"
+        :disabled="isLoading"
       >
         {{ t("unitAction.build") }}
       </CButton>
@@ -111,7 +117,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { ACTION, DIALOG, MAP_TILE_CLICKED } from "@/events.ts";
 import UnitMoveAction from "@/components/partials/game/actions/UnitMoveAction.vue";
-import BeerDisplay from "@/components/partials/game/BeerDisplay.vue";
+import BeerDisplay from "@/components/partials/game/displays/BeerDisplay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { useMapStore } from "@/store/mapStore.ts";
@@ -125,6 +131,7 @@ import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
+import GoldDisplay from "@/components/partials/game/displays/GoldDisplay.vue";
 
 // region variables
 
@@ -140,6 +147,12 @@ const areBuildingActionsVisible = ref(false);
 
 const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
+
+const isMoveCurrencyGold = computed(() => {
+  if (!activeUnit.value?.type) return;
+
+  return [UnitType.DRAGON, UnitType.ARCHER].includes(activeUnit.value?.type);
+});
 
 const activeUnit = computed(() => {
   return unitsStore.activeUnit;

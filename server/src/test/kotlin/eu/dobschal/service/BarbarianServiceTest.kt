@@ -4,6 +4,7 @@ import eu.dobschal.model.entity.Building
 import eu.dobschal.model.entity.MapTile
 import eu.dobschal.model.enum.BuildingType
 import eu.dobschal.model.enum.MapTileType
+import eu.dobschal.model.enum.UnitType
 import eu.dobschal.repository.*
 import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
@@ -87,6 +88,7 @@ class BarbarianServiceTest {
         val unit2 = unitRepository.listAll().first()
         assert(unit1.id == unit2.id)
         assert(unit1.x != unit2.x || unit1.y != unit2.y)
+        assert(unitRepository.listAll().none { it.type == UnitType.DRAGON || it.type == UnitType.ARCHER })
     }
 
 }

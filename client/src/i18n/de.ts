@@ -24,6 +24,8 @@ export const de = {
     SWORDSMAN: "Schwertkämpfer",
     SPEARMAN: "Speerträger",
     HORSEMAN: "Reiter",
+    DRAGON: "Drache",
+    ARCHER: "Bogenschütze",
   },
   buildingType: {
     VILLAGE: "Dorf",
@@ -45,6 +47,7 @@ export const de = {
     tooManyUnits: "Du hast das Limit an Einheiten erreicht. Baue mehr Burgen.",
     noCity: "Du benötigt zunächst eine Stadt.",
     notEnoughGold: "Nicht genug Gold vorhanden.",
+    unitCannotConquer: "Die Einheit keine fremden Gebäude erobern.",
   },
   serverSuccess: {
     beerCollected: "Bier erfolgreich gesammelt.",
@@ -69,6 +72,7 @@ export const de = {
     action: "Anmelden",
     toRegistration: "Zur Registrierung",
     aboutTheGame: "Mehr über das Spiel",
+    whatsapp: "WhatsApp Channel",
   },
   startVillageAction: {
     text: "Bitte wähle einen Standort für dein erstes Dorf.",
@@ -79,6 +83,7 @@ export const de = {
     moveUnit: "Einheit bewegen ({0}/{1})",
     villageOf: "Dorf von {playerName}",
     upgradeToCity: "Zu Stadt ausbauen",
+    selectUnit: "Einheit auswählen",
   },
   farmAction: {
     farmOf: "Farm von {playerName}",
@@ -109,6 +114,8 @@ export const de = {
     createSwordsman: "Schwertkämpfer erstellen",
     createSpearman: "Speerkämpfer erstellen",
     createHorseman: "Reiter erstellen",
+    createDragon: "Drachen erstellen",
+    createArcher: "Bogenschützen erstellen",
     destroy: "Burg zerstören",
     units: "Einheiten...",
     upgrade: "Burg ausbauen",

@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <h1>
+    <h1 @click="router.push('/')">
       <img src="@/assets/logo_white.svg" alt="Castles" />
       Castles
     </h1>

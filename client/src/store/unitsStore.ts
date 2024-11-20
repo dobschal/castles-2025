@@ -17,10 +17,14 @@ export const useUnitsStore = defineStore("units", () => {
   const activeUnit = ref<Optional<UnitEntity>>();
   const activeMoveUnit = ref<Optional<UnitEntity>>();
   const loadUnitsQueue = new Queue(500, 3);
-  const workerMovesPerHour = ref(-1);
-  const spearmanMovesPerHour = ref(-1);
-  const swordsmanMovesPerHour = ref(-1);
-  const horsemanMovesPerHour = ref(-1);
+  const workerMovesPerHour = ref(0);
+  const spearmanMovesPerHour = ref(0);
+  const swordsmanMovesPerHour = ref(0);
+  const horsemanMovesPerHour = ref(0);
+  const dragonMovesPerHour = ref(0);
+  const archerMovesPerHour = ref(0);
+  const unitsCount = ref(0);
+  const unitsLimit = ref(0);
 
   async function loadUnits(): Promise<void> {
     await loadUnitsQueue.add(async () => {
@@ -33,6 +37,10 @@ export const useUnitsStore = defineStore("units", () => {
         spearmanMovesPerHour.value = response.spearmanMovesPerHour;
         swordsmanMovesPerHour.value = response.swordsmanMovesPerHour;
         horsemanMovesPerHour.value = response.horsemanMovesPerHour;
+        dragonMovesPerHour.value = response.dragonMovesPerHour;
+        archerMovesPerHour.value = response.archerMovesPerHour;
+        unitsCount.value = response.unitsCount;
+        unitsLimit.value = response.unitsLimit;
       } catch (e) {
         handleFatalError(e);
       }
@@ -58,6 +66,10 @@ export const useUnitsStore = defineStore("units", () => {
         return spearmanMovesPerHour.value;
       case UnitType.HORSEMAN:
         return horsemanMovesPerHour.value;
+      case UnitType.DRAGON:
+        return dragonMovesPerHour.value;
+      case UnitType.ARCHER:
+        return archerMovesPerHour.value;
       default:
         return 0;
     }
@@ -99,5 +111,7 @@ export const useUnitsStore = defineStore("units", () => {
     spearmanMovesPerHour,
     swordsmanMovesPerHour,
     horsemanMovesPerHour,
+    unitsCount,
+    unitsLimit,
   };
 });

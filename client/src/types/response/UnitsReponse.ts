@@ -6,4 +6,8 @@ export interface UnitsResponse {
   spearmanMovesPerHour: number;
   swordsmanMovesPerHour: number;
   horsemanMovesPerHour: number;
+  dragonMovesPerHour: number;
+  archerMovesPerHour: number;
+  unitsCount: number;
+  unitsLimit: number;
 }

@@ -2,9 +2,16 @@
   <Page>
     <h1>Castles <small>of Beer and Dragons</small></h1>
     <p v-html="t('registration.intro')"></p>
-    <router-link class="link-to-wiki" :to="OpenWikiPageRoute.path">
-      > {{ t("login.aboutTheGame") }}
+    <router-link class="link" :to="OpenWikiPageRoute.path">
+      👉 {{ t("login.aboutTheGame") }}
     </router-link>
+    <a
+      class="link"
+      href="https://whatsapp.com/channel/0029Vavmqsc77qVZVlSsTL0Y"
+      target="_blank"
+    >
+      👉 {{ t("login.whatsapp") }}
+    </a>
     <h2>
       <CText path="login.title" />
     </h2>
@@ -107,7 +114,7 @@ form {
   margin-bottom: 2rem;
 }
 
-.link-to-wiki {
+.link {
   display: block;
   margin-bottom: 1rem;
   text-decoration: none;

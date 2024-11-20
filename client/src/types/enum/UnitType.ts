@@ -3,4 +3,6 @@ export enum UnitType {
   SPEARMAN = "SPEARMAN",
   SWORDSMAN = "SWORDSMAN",
   HORSEMAN = "HORSEMAN",
+  DRAGON = "DRAGON",
+  ARCHER = "ARCHER",
 }

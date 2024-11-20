@@ -5,4 +5,6 @@ enum class UnitType {
     SWORDSMAN, // wins against spearman, loses against horseman
     HORSEMAN, // wins against swordsman, loses against spearman
     SPEARMAN, // wins against horseman, loses against swordsman
+    DRAGON,
+    ARCHER
 }

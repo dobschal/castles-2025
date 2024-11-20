@@ -121,18 +121,18 @@
         class="building farm"
         alt="Building"
       />
-      <img
-        v-if="!isDisabled"
-        src="../../../../assets/tiles/farm-top-layer-min.png"
-        class="building-top-layer farm"
-        alt="Building"
-      />
-      <img
-        v-else
-        src="../../../../assets/tiles/farm-top-layer-disabled-min.png"
-        class="building-top-layer farm"
-        alt="Building"
-      />
+      <!--      <img-->
+      <!--        v-if="!isDisabled"-->
+      <!--        src="../../../../assets/tiles/farm-top-layer-min.png"-->
+      <!--        class="building-top-layer farm"-->
+      <!--        alt="Building"-->
+      <!--      />-->
+      <!--      <img-->
+      <!--        v-else-->
+      <!--        src="../../../../assets/tiles/farm-top-layer-disabled-min.png"-->
+      <!--        class="building-top-layer farm"-->
+      <!--        alt="Building"-->
+      <!--      />-->
     </template>
     <template v-if="building.type === BuildingType.BREWERY">
       <img

@@ -19,22 +19,22 @@
 
 <script setup lang="ts">
 import MapLayer from "@/components/partials/game/MapLayer.vue";
-import ActionOverlay from "@/components/partials/game/ActionOverlay.vue";
+import ActionOverlay from "@/components/partials/game/overlays/ActionOverlay.vue";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
-import EventsOverlay from "@/components/partials/game/EventsOverlay.vue";
+import EventsOverlay from "@/components/partials/game/overlays/EventsOverlay.vue";
 import { useActionStore } from "@/store/actionStore.ts";
-import StatsOverlay from "@/components/partials/game/StatsOverlay.vue";
+import StatsOverlay from "@/components/partials/game/overlays/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { useI18n } from "vue-i18n";
 import { DIALOG } from "@/events.ts";
 import { useTutorialStore } from "@/store/tutorialStore.ts";
-import TutorialOverlay from "@/components/partials/game/TutorialOverlay.vue";
-import ZoomOverlay from "@/components/partials/game/MapControlOverlay.vue";
+import TutorialOverlay from "@/components/partials/game/overlays/TutorialOverlay.vue";
+import ZoomOverlay from "@/components/partials/game/overlays/MapControlOverlay.vue";
 import { useRoute } from "vue-router";
 import router from "@/core/router.ts";
 import { Optional } from "@/types/core/Optional.ts";
