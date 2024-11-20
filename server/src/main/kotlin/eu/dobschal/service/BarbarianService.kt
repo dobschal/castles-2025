@@ -122,7 +122,9 @@ class BarbarianService @Inject constructor(
                     this.x = x
                     this.y = y
                     user = barbarianUser
-                    type = UnitType.entries.toTypedArray().filter { it != UnitType.WORKER }.random()
+                    type = UnitType.entries.toTypedArray()
+                        .filter { it != UnitType.WORKER && it != UnitType.DRAGON && it != UnitType.ARCHER }
+                        .random()
                 })
                 logger.info { "Created barbarian unit at $x, $y" }
             }

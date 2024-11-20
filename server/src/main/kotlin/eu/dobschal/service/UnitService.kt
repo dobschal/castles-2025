@@ -134,6 +134,9 @@ class UnitService @Inject constructor(
             throw BadRequestException("serverError.wrongUnitOwner")
         }
         val (conflictingBuilding, conflictingUnit) = getMoveConflictingBuildingsAndUnits(x, y, unit, user)
+        if (conflictingBuilding != null && conflictingBuilding.user?.id != user.id && (unit.type == UnitType.DRAGON || unit.type == UnitType.WORKER)) {
+            throw BadRequestException("serverError.unitCannotConquer")
+        }
         val isDistanceWrong = abs(unit.x!! - x) > 1 || abs(unit.y!! - y) > 1 || (unit.y == y && unit.x == x)
         if (isDistanceWrong) {
             throw BadRequestException("serverError.wrongDistance")
@@ -303,6 +306,12 @@ class UnitService @Inject constructor(
 
     private fun determineLooser(unit1: Unit, unit2: Unit): Unit {
         return when {
+            unit1.type == UnitType.DRAGON && unit2.type == UnitType.ARCHER -> unit1 // Archer wins against Dragon
+            unit1.type == UnitType.ARCHER && unit2.type == UnitType.DRAGON -> unit2 // Archer wins against Dragon
+            unit1.type == UnitType.DRAGON && unit2.type != UnitType.ARCHER -> unit2 // Dragon wins against everything else
+            unit1.type != UnitType.ARCHER && unit2.type == UnitType.DRAGON -> unit1 // Dragon wins against everything else
+            unit1.type == UnitType.ARCHER && unit2.type != UnitType.DRAGON -> unit1 // Archer loses against everything else
+            unit1.type != UnitType.DRAGON && unit2.type == UnitType.ARCHER -> unit2 // Archer loses against everything else
             unit1.type == UnitType.HORSEMAN && unit2.type == UnitType.SPEARMAN -> unit1 // Spearmen wins against Horseman
             unit1.type == UnitType.SPEARMAN && unit2.type == UnitType.SWORDSMAN -> unit1 // Swordsmen wins against Spearmen
             unit1.type == UnitType.SWORDSMAN && unit2.type == UnitType.HORSEMAN -> unit1 // Horseman wins against Swordsmen
