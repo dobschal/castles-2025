@@ -910,7 +910,7 @@ class UnitResourceTest : BaseResourceTest() {
 
     @Test
     @WithDefaultUser
-    fun `Castles and villages are getting conquered when other unit is moving onto`() {
+    fun `Villages are getting conquered when other unit is moving onto`() {
         val mapTile = MapTile().apply {
             x = 3
             y = 3
@@ -931,13 +931,13 @@ class UnitResourceTest : BaseResourceTest() {
             type = UnitType.SWORDSMAN
         }
         unitRepository.save(unit)
-        val castle = Building().apply {
+        val village2 = Building().apply {
             x = 3
             y = 3
             user = user2
-            type = BuildingType.CASTLE
+            type = BuildingType.VILLAGE
         }
-        buildingRepository.save(castle)
+        buildingRepository.save(village2)
         val village = Building().apply {
             x = 3
             y = 50
