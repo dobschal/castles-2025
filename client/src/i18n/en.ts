@@ -24,6 +24,8 @@ export const en = {
     SWORDSMAN: "Swordsman",
     SPEARMAN: "Spearman",
     HORSEMAN: "Horseman",
+    ARCHER: "Archer",
+    DRAGON: "Dragon",
   },
   buildingType: {
     VILLAGE: "Village",
@@ -44,6 +46,7 @@ export const en = {
     tooManyUnits: "You have reached the limit of units. Build more castles.",
     noCity: "You need a city first.",
     notEnoughGold: "Not enough gold available.",
+    unitCannotConquer: "This unit cannot conquer buildings.",
   },
   serverSuccess: {
     beerCollected: "Beer successfully collected.",
@@ -107,6 +110,8 @@ export const en = {
     createSwordsman: "Create swordsman",
     createSpearman: "Create spearman",
     createHorseman: "Create horseman",
+    createDragon: "Create dragon",
+    createArcher: "Create archer",
     destroy: "Destroy castle",
     units: "Units...",
     upgrade: "Upgrade castle",

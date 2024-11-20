@@ -14,7 +14,12 @@
             movesPerHourLimit,
           ])
         }}
+        <GoldDisplay
+          v-if="isMoveCurrencyGold"
+          :gold="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
+        />
         <BeerDisplay
+          v-else
           :beer="pricesStore.getMovePrice(unitsStore.activeUnit?.type)"
         />
       </CButton>
@@ -126,6 +131,7 @@ import { useTutorialStore } from "@/store/tutorialStore.ts";
 import { TutorialType } from "@/types/enum/TutorialType.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import { UnitGateway } from "@/gateways/UnitGateway.ts";
+import GoldDisplay from "@/components/partials/game/displays/GoldDisplay.vue";
 
 // region variables
 
@@ -141,6 +147,12 @@ const areBuildingActionsVisible = ref(false);
 
 const { t } = useI18n();
 const emit = defineEmits(["close-action"]);
+
+const isMoveCurrencyGold = computed(() => {
+  if (!activeUnit.value?.type) return;
+
+  return [UnitType.DRAGON, UnitType.ARCHER].includes(activeUnit.value?.type);
+});
 
 const activeUnit = computed(() => {
   return unitsStore.activeUnit;

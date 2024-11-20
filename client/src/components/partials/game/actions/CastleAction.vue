@@ -8,6 +8,24 @@
   </p>
   <template v-if="isOwnBuilding">
     <template v-if="unitMenuOpen">
+      <template v-if="level == 2">
+        <CButton
+          class="small with-icon"
+          @click="createUnit(UnitType.DRAGON)"
+          :disabled="!isBuildingDragonAvailable"
+        >
+          {{ t("castleAction.createDragon") }}
+          <GoldDisplay :gold="pricesStore.getCreationPrice(UnitType.DRAGON)" />
+        </CButton>
+        <CButton
+          class="small with-icon"
+          @click="createUnit(UnitType.ARCHER)"
+          :disabled="!isBuildingArcherAvailable"
+        >
+          {{ t("castleAction.createArcher") }}
+          <GoldDisplay :gold="pricesStore.getCreationPrice(UnitType.ARCHER)" />
+        </CButton>
+      </template>
       <CButton
         class="small with-icon"
         @click="createUnit(UnitType.SWORDSMAN)"
@@ -90,6 +108,14 @@ const { t } = useI18n();
 const zoomMapTileSizeBeforeAction = ref(100);
 const unitMenuOpen = ref(false);
 
+const isBuildingArcherAvailable = computed(() => {
+  return pricesStore.getCreationPrice(UnitType.ARCHER) <= authStore.user!.gold;
+});
+
+const isBuildingDragonAvailable = computed(() => {
+  return pricesStore.getCreationPrice(UnitType.DRAGON) <= authStore.user!.gold;
+});
+
 const isBuildingSwordsmanAvailable = computed(() => {
   return (
     pricesStore.getCreationPrice(UnitType.SWORDSMAN) <= authStore.user!.beer
@@ -115,6 +141,10 @@ const unitAtPosition = computed(() => {
       unit.y === buildingsStore.activeBuilding!.y
     );
   });
+});
+
+const level = computed(() => {
+  return buildingsStore.activeBuilding?.level;
 });
 
 const isOwnBuilding = computed(() => {
