@@ -19,9 +19,9 @@ const val SWORDSMAN_MOVE_PRICE = 10
 const val HORSEMAN_MOVE_PRICE = 15
 
 // Unit Prices for special units, Gold
-const val DRAGON_MOVE_PRICE = 20
+const val DRAGON_MOVE_PRICE = 10
 const val DRAGON_BASE_PRICE = 50
-const val ARCHER_MOVE_PRICE = 10
+const val ARCHER_MOVE_PRICE = 1
 const val ARCHER_BASE_PRICE = 10
 
 // Building Prices

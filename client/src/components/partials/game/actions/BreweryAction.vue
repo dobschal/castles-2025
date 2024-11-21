@@ -33,6 +33,7 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { BuildingGateway } from "@/gateways/BuildingGateway.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
+import SelectUnitButton from "@/components/partials/game/SelectUnitButton.vue";
 
 const mapStore = useMapStore();
 const buildingsStore = useBuildingsStore();
