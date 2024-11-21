@@ -75,6 +75,12 @@
       </CButton>
     </template>
   </template>
+  <template v-else>
+    <!-- Not own building -->
+    <CButton class="small" @click="close">
+      {{ t("general.close") }}
+    </CButton>
+  </template>
 </template>
 
 <script lang="ts" setup>
