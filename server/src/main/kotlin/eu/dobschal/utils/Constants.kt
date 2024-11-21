@@ -53,6 +53,6 @@ const val DRAGON_MOVES_PER_HOUR = 2
 const val ARCHER_MOVES_PER_HOUR = 2
 
 // Gold
-const val GOLD_STORAGE_PER_CITY = 500
+const val GOLD_STORAGE_PER_CITY = 300
 const val SELL_BEER_PRICE = 50 // 50 beer are 1 gold
 
