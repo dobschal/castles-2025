@@ -29,7 +29,7 @@ class BarbarianService @Inject constructor(
 
     val logger = KotlinLogging.logger {}
 
-    @Scheduled(every = "45m")
+    @Scheduled(every = "1h 5m")
     fun controlBarbarians() {
         logger.info { "Checking barbarians" }
         val t1 = System.currentTimeMillis()
@@ -38,7 +38,7 @@ class BarbarianService @Inject constructor(
             UUID.randomUUID().toString()
         )
         deleteOldBarbarianUnits(barbarianUser)
-        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 2).toInt()
+        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 3).toInt()
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!, listOf(UnitType.WORKER))
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
