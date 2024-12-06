@@ -32,7 +32,7 @@ const val FARM_BASE_PRICE = 50
 const val BREWERY_BASE_PRICE = 100
 const val MARKET_BASE_PRICE = 2100
 
-// Building Levelup Prices in Gold!!!
+// Building Level Up Prices in Gold!!!
 const val CITY_LEVEL_UP_PRICE = 0
 const val VILLAGE_LEVEL_UP_PRICE = 0
 const val CASTLE_LEVEL_UP_PRICE = 100

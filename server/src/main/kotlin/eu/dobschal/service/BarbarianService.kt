@@ -29,7 +29,7 @@ class BarbarianService @Inject constructor(
 
     val logger = KotlinLogging.logger {}
 
-    @Scheduled(every = "1h 5m")
+    @Scheduled(every = "65m")
     fun controlBarbarians() {
         logger.info { "Checking barbarians" }
         val t1 = System.currentTimeMillis()
@@ -38,7 +38,7 @@ class BarbarianService @Inject constructor(
             UUID.randomUUID().toString()
         )
         deleteOldBarbarianUnits(barbarianUser)
-        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 3).toInt()
+        val amountOfWantedBarbarianUnits = ceil(userRepository.countUsers().toDouble() * 2).toInt()
         val amountOfBarbarianUnits = unitRepository.countUnitsByUser(barbarianUser.id!!, listOf(UnitType.WORKER))
         val difference = amountOfWantedBarbarianUnits - amountOfBarbarianUnits
         if (difference > 0) {
@@ -62,6 +62,7 @@ class BarbarianService @Inject constructor(
         val mapTiles = mapTileRepository.listAll()
         val units = unitRepository.findAllByUser(barbarianUser.id!!)
         for (unit in units) {
+            // In case is n't a map tile yet, we stop, so the unit would stuck there, but that is fine
             findMapTileToMoveTo(unit, unit.x!!, unit.y!!, mapTiles, units, barbarianUser)?.let { (x, y) ->
                 try {
                     val (conflictingBuilding, conflictingUnit) = unitService.getMoveConflictingBuildingsAndUnits(
@@ -95,11 +96,24 @@ class BarbarianService @Inject constructor(
         units: List<Unit>,
         barbarianUser: User
     ): Pair<Int, Int>? {
+        val direction = unit.id!! % 4 // 0 means north, 1 east, 2 south and 3 west
         val possibleTiles =
             mapTiles.filter {
-                val xDiff = abs(it.x!! - x)
-                val yDiff = abs(it.y!! - y)
-                if (xDiff > 1 || yDiff > 1) {
+                val xDiff = it.x!! - x
+                val yDiff = it.y!! - y
+                if (abs(xDiff) > 1 || abs(yDiff) > 1) {
+                    return@filter false
+                }
+                if (direction == 0 && yDiff != -1) {
+                    return@filter false
+                }
+                if (direction == 1 && xDiff != 1) {
+                    return@filter false
+                }
+                if (direction == 2 && yDiff != 1) {
+                    return@filter false
+                }
+                if (direction == 3 && xDiff != -1) {
                     return@filter false
                 }
                 val hasConflictingUnit =
