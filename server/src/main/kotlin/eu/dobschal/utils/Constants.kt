@@ -20,9 +20,9 @@ const val HORSEMAN_MOVE_PRICE = 15
 
 // Unit Prices for special units, Gold
 const val DRAGON_MOVE_PRICE = 10
-const val DRAGON_BASE_PRICE = 50
+const val DRAGON_BASE_PRICE = 20
 const val ARCHER_MOVE_PRICE = 1
-const val ARCHER_BASE_PRICE = 10
+const val ARCHER_BASE_PRICE = 8
 
 // Building Prices
 const val CITY_BASE_PRICE = 3200 // possible to building after having 3 villages
@@ -32,7 +32,7 @@ const val FARM_BASE_PRICE = 50
 const val BREWERY_BASE_PRICE = 100
 const val MARKET_BASE_PRICE = 2100
 
-// Building Levelup Prices in Gold!!!
+// Building Level Up Prices in Gold!!!
 const val CITY_LEVEL_UP_PRICE = 0
 const val VILLAGE_LEVEL_UP_PRICE = 0
 const val CASTLE_LEVEL_UP_PRICE = 100
@@ -53,6 +53,6 @@ const val DRAGON_MOVES_PER_HOUR = 2
 const val ARCHER_MOVES_PER_HOUR = 2
 
 // Gold
-const val GOLD_STORAGE_PER_CITY = 500
+const val GOLD_STORAGE_PER_CITY = 250
 const val SELL_BEER_PRICE = 50 // 50 beer are 1 gold
 
