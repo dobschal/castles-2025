@@ -1,14 +1,14 @@
 <template>
   <div class="event-tile">
     <img
-      v-if="!laterEvent && event.type === EventType.UNIT_MOVED"
+      v-show="!laterEvent && event.type === EventType.UNIT_MOVED"
       src="@/assets/arrow.svg"
       alt="Arrow"
       class="move"
       :class="arrowDirection"
     />
     <img
-      v-if="
+      v-show="
         !laterEvent &&
         (event.type === EventType.LOST_UNIT ||
           event.type === EventType.BUILDING_CONQUERED)

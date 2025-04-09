@@ -7,53 +7,59 @@
     @mouseup="onMouseUp"
     :class="[mapTile.state]"
   >
-    <div v-if="mapTile.state !== MapTileState.FORBIDDEN" class="image-wrapper">
+    <div
+      v-show="mapTile.state !== MapTileState.FORBIDDEN"
+      class="image-wrapper"
+    >
       <img
-        v-if="mapTile.type === MapTileType.FOREST"
+        v-show="mapTile.type === MapTileType.FOREST"
         :src="forestTile"
         class="forest"
         alt="Forest"
       />
       <img
-        v-else-if="mapTile.type === MapTileType.PLAIN"
+        v-show="mapTile.type === MapTileType.PLAIN"
         :src="plainTile"
         class="plain"
         alt="Plain"
       />
       <img
-        v-else-if="mapTile.type === MapTileType.WATER"
+        v-show="mapTile.type === MapTileType.WATER"
         :src="waterTile"
         class="water"
         alt="Water"
       />
       <img
-        v-else-if="mapTile.type === MapTileType.MOUNTAIN"
+        v-show="mapTile.type === MapTileType.MOUNTAIN"
         :src="mountainTile"
         class="mountain"
         alt="Mountain"
       />
     </div>
-    <div v-else class="image-wrapper">
+    <div
+      v-show="mapTile.state === MapTileState.FORBIDDEN"
+      class="image-wrapper"
+    >
       <img
-        v-if="mapTile.type === MapTileType.FOREST"
+        v-show="mapTile.type === MapTileType.FOREST"
         src="@/assets/tiles/forest-disabled-min.png"
         class="forest"
         alt="Forest"
       />
       <img
-        v-else-if="mapTile.type === MapTileType.PLAIN"
+        v-show="mapTile.type === MapTileType.PLAIN"
         src="@/assets/tiles/plain-disabled-min.png"
         class="plain"
         alt="Plain"
       />
       <img
-        v-else-if="mapTile.type === MapTileType.WATER"
+        v-show="mapTile.type === MapTileType.WATER"
         src="@/assets/tiles/water-disabled-min.png"
         class="water"
         alt="Water"
       />
       <img
-        v-else-if="mapTile.type === MapTileType.MOUNTAIN"
+        v-show="mapTile.type === MapTileType.MOUNTAIN"
         src="@/assets/tiles/mountain-disabled-min.png"
         class="mountain"
         alt="Mountain"
@@ -64,19 +70,22 @@
       <UnitTile v-if="unit" :unit="unit" :map-tile="mapTile" />
     </template>
     <div
-      v-if="mapTile.state !== MapTileState.FORBIDDEN"
+      v-show="mapTile.state !== MapTileState.FORBIDDEN"
       class="image-top-layer-wrapper"
     >
       <img
-        v-if="mapTile.type === MapTileType.FOREST"
+        v-show="mapTile.type === MapTileType.FOREST"
         :src="forestTileTopLayer"
         class="forest-top-layer"
         alt="Forest"
       />
     </div>
-    <div v-else class="image-top-layer-wrapper">
+    <div
+      v-show="mapTile.state === MapTileState.FORBIDDEN"
+      class="image-top-layer-wrapper"
+    >
       <img
-        v-if="mapTile.type === MapTileType.FOREST"
+        v-show="mapTile.type === MapTileType.FOREST"
         src="@/assets/tiles/forest-top-layer-disabled-min.png"
         class="forest-top-layer"
         alt="Forest"
@@ -97,11 +106,11 @@ import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import BuildingTile from "@/components/partials/game/tiles/BuildingTile.vue";
 import { computed, onMounted, ref } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
-import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
-import { Optional } from "@/types/core/Optional.ts";
 import { useUnitsStore } from "@/store/unitsStore.ts";
 import UnitTile from "@/components/partials/game/tiles/UnitTile.vue";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
+import { Optional } from "@/types/core/Optional.ts";
+import { BuildingEntity } from "@/types/model/BuildingEntity.ts";
 
 const isLazy = ref(false);
 const buildingsStore = useBuildingsStore();

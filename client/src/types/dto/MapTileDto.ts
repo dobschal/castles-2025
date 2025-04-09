@@ -3,4 +3,5 @@ import { MapTileState } from "@/types/enum/MapTileState.ts";
 
 export interface MapTileDto extends MapTileEntity {
   state: MapTileState;
+  style: Record<string, string | number>;
 }

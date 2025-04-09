@@ -120,12 +120,29 @@ export const useMapStore = defineStore("map", () => {
         );
         const mapTileIds = new Set(mapTiles.value.map((tile) => tile.id));
         const newMapTileIds = new Set(response.map((tile) => tile.id));
+
+        const tileSize = mapTileSize.value;
+        const tileSizeHalf = tileSize / 2;
+
         // Add all map tiles that are in response and not in the current map
         // Filter the ones that are in the current map and not in the response
         mapTiles.value = [
           ...response.filter((newTile) => !mapTileIds.has(newTile.id)),
           ...mapTiles.value.filter((tile) => newMapTileIds.has(tile.id)),
-        ];
+        ].map((mapTile) => {
+          const x = mapTile.x * tileSize - tileSizeHalf;
+          const y = mapTile.y * tileSize - tileSizeHalf;
+
+          mapTile.style = {
+            width: tileSize + "px",
+            height: tileSize + "px",
+            left: x + "px",
+            top: y + "px",
+            zIndex: 99 - mapTile.x + mapTile.y,
+          };
+
+          return mapTile;
+        });
       } catch (e) {
         handleFatalError(e);
       }

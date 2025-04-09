@@ -3,7 +3,7 @@
     <MapTile
       v-for="mapTile in mapStore.mapTiles"
       :key="mapTile.id"
-      :style="getMapTileStyle(mapTile)"
+      :style="mapTile.style"
       :map-tile="mapTile"
     />
     <template v-if="authStore.showEventsOnMap && !actionStore.isActionActive">
@@ -11,7 +11,7 @@
         :key="event.id"
         v-for="event in eventsStore.events"
         :event="event"
-        :style="getMapTileStyle(event)"
+        :style="event.style"
       />
     </template>
   </div>
@@ -25,17 +25,8 @@ import { Optional } from "@/types/core/Optional.ts";
 import { isTouchDevice } from "@/core/util.ts";
 import EventTile from "@/components/partials/game/tiles/EventTile.vue";
 import { useEventsStore } from "@/store/eventsStore.ts";
-import { PointDto } from "@/types/dto/PointDto.ts";
 import { useActionStore } from "@/store/actionStore.ts";
 import { useAuthStore } from "@/store/authStore.ts";
-
-interface MapTileStyle {
-  left: string;
-  top: string;
-  zIndex: number;
-  width: string;
-  height: string;
-}
 
 // region variables
 
@@ -82,19 +73,6 @@ onBeforeUnmount(() => {
 function getMapStyle(): Record<string, string> {
   return {
     transform: `translateX(${mapStore.offsetX}px) translateY(${mapStore.offsetY}px) rotate(-45deg)`,
-  };
-}
-
-function getMapTileStyle(mapTile: PointDto): MapTileStyle {
-  const x = mapTile.x * mapStore.mapTileSize - mapStore.mapTileSize / 2;
-  const y = mapTile.y * mapStore.mapTileSize - mapStore.mapTileSize / 2;
-
-  return {
-    width: mapStore.mapTileSize + "px",
-    height: mapStore.mapTileSize + "px",
-    left: x + "px",
-    top: y + "px",
-    zIndex: 99 - mapTile.x + mapTile.y,
   };
 }
 
