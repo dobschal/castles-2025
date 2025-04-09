@@ -1,6 +1,6 @@
 <template>
   <div class="map-wrapper" :class="{ loading: isLoading }">
-    <MapLayer></MapLayer>
+    <canvas ref="canvas"></canvas>
   </div>
   <div v-if="isLoading" class="loading-indicator">
     <img src="@/assets/logo_black.svg" alt="Castles" />
@@ -18,7 +18,6 @@
 </template>
 
 <script setup lang="ts">
-import MapLayer from "@/components/partials/game/MapLayer.vue";
 import ActionOverlay from "@/components/partials/game/overlays/ActionOverlay.vue";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useBuildingsStore } from "@/store/buildingsStore.ts";
@@ -28,7 +27,6 @@ import { useUnitsStore } from "@/store/unitsStore.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import EventsOverlay from "@/components/partials/game/overlays/EventsOverlay.vue";
 import { useActionStore } from "@/store/actionStore.ts";
-import StatsOverlay from "@/components/partials/game/overlays/StatsOverlay.vue";
 import { usePricesStore } from "@/store/pricesStore.ts";
 import { useI18n } from "vue-i18n";
 import { DIALOG } from "@/events.ts";
@@ -38,6 +36,8 @@ import ZoomOverlay from "@/components/partials/game/overlays/MapControlOverlay.v
 import { useRoute } from "vue-router";
 import router from "@/core/router.ts";
 import { Optional } from "@/types/core/Optional.ts";
+import { useMapRenderer } from "@/composables/game/MapRenderer.ts";
+import StatsOverlay from "@/components/partials/game/overlays/StatsOverlay.vue";
 
 const buildingsStore = useBuildingsStore();
 const mapStore = useMapStore();
@@ -53,12 +53,14 @@ const isLoading = ref(false);
 const { t } = useI18n();
 const route = useRoute();
 let eventLoopTimeout: ReturnType<typeof setTimeout>;
-
+const canvas = ref<HTMLCanvasElement>();
 const assetHolder = ref<Optional<HTMLDivElement>>();
 const images = import.meta.glob("@/assets/tiles/*-min.png");
 const cachedImageAssets: Array<HTMLImageElement> = [];
 const assetsToLoad = ref(0);
 const assetsLoaded = ref(0);
+
+useMapRenderer(canvas);
 
 onMounted(async () => {
   isMounted = true;
@@ -150,9 +152,12 @@ async function keepLoadingEvents(): Promise<void> {
     }
 
     await eventsStore.loadEvents();
-    eventLoopTimeout = setTimeout(() => {
-      if (isMounted) keepLoadingEvents();
-    }, 1000);
+
+    // TODO: Turn back on...
+
+    // eventLoopTimeout = setTimeout(() => {
+    //   if (isMounted) keepLoadingEvents();
+    // }, 1000);
   } catch (e) {
     console.error("Error while loading events: ", e);
     DIALOG.dispatch({

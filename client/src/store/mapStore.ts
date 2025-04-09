@@ -6,6 +6,7 @@ import { MapGateway } from "@/gateways/MapGateway.ts";
 import { handleFatalError } from "@/core/util.ts";
 import { PointDto } from "@/types/dto/PointDto.ts";
 import { Queue } from "@/core/Queue.ts";
+import { Optional } from "@/types/core/Optional.ts";
 
 export const useMapStore = defineStore("map", () => {
   const mapTiles = ref<Array<MapTileDto>>([]);
@@ -15,7 +16,7 @@ export const useMapStore = defineStore("map", () => {
   const offsetX = ref(-1);
   const offsetY = ref(-1);
   const mapControlsDisabled = ref(false);
-  const loadMapQueue = new Queue(200, 3);
+  const loadMapQueue = new Queue(100, 3);
   const allowedZoomMapTileSizes = [
     10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 1000,
   ];
@@ -63,6 +64,26 @@ export const useMapStore = defineStore("map", () => {
     const y = Math.round(rotatedScreenY / mapTileSize.value);
 
     centerPosition.value = { x, y };
+  }
+
+  function findTileFromScreenPosition(
+    screenX: number,
+    screenY: number,
+  ): Optional<MapTileDto> {
+    screenX = screenX - offsetX.value;
+    screenY = screenY - 64 - offsetY.value; // 64px is the height of the top bar
+
+    const rotatedScreenX = screenX * cos - screenY * sin;
+    const rotatedScreenY = screenX * sin + screenY * cos;
+
+    const x = Math.round(rotatedScreenX / mapTileSize.value);
+    const y = Math.round(rotatedScreenY / mapTileSize.value);
+
+    console.log(
+      `findTileFromScreenPosition: ${screenX}, ${screenY} => ${x}, ${y}`,
+    );
+
+    return mapTiles.value.find((tile) => tile.x === x && tile.y === y);
   }
 
   function findMaxZoomInMapTileSize(): number {
@@ -121,28 +142,12 @@ export const useMapStore = defineStore("map", () => {
         const mapTileIds = new Set(mapTiles.value.map((tile) => tile.id));
         const newMapTileIds = new Set(response.map((tile) => tile.id));
 
-        const tileSize = mapTileSize.value;
-        const tileSizeHalf = tileSize / 2;
-
         // Add all map tiles that are in response and not in the current map
         // Filter the ones that are in the current map and not in the response
         mapTiles.value = [
           ...response.filter((newTile) => !mapTileIds.has(newTile.id)),
           ...mapTiles.value.filter((tile) => newMapTileIds.has(tile.id)),
-        ].map((mapTile) => {
-          const x = mapTile.x * tileSize - tileSizeHalf;
-          const y = mapTile.y * tileSize - tileSizeHalf;
-
-          mapTile.style = {
-            width: tileSize + "px",
-            height: tileSize + "px",
-            left: x + "px",
-            top: y + "px",
-            zIndex: 99 - mapTile.x + mapTile.y,
-          };
-
-          return mapTile;
-        });
+        ].sort((a, b) => b.x - a.x || a.y - b.y);
       } catch (e) {
         handleFatalError(e);
       }
@@ -211,5 +216,6 @@ export const useMapStore = defineStore("map", () => {
     offsetY,
     mapTileSize,
     isOnCurrentMap,
+    findTileFromScreenPosition,
   };
 });

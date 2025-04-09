@@ -17,23 +17,8 @@ export const useEventsStore = defineStore("event", () => {
   let lastLoadY2 = 0;
 
   async function loadEvents(): Promise<void> {
-    const tileSize = mapStore.mapTileSize;
-    const tileSizeHalf = tileSize / 2;
-
-    function toDtoWithStyle(e: EventEntity): EventDto {
-      const event = e as EventDto;
-      const x = event.x * tileSize - tileSizeHalf;
-      const y = event.y * tileSize - tileSizeHalf;
-
-      event.style = {
-        width: tileSize + "px",
-        height: tileSize + "px",
-        left: x + "px",
-        top: y + "px",
-        zIndex: 99 - event.x + event.y,
-      };
-
-      return event;
+    function toDto(e: EventEntity): EventDto {
+      return e as EventDto;
     }
 
     if (
@@ -46,7 +31,7 @@ export const useEventsStore = defineStore("event", () => {
         mapStore.currentMapRange,
         events.value?.[0]?.id,
       );
-      response.forEach((event) => events.value.unshift(toDtoWithStyle(event)));
+      response.forEach((event) => events.value.unshift(toDto(event)));
     } else {
       lastLoadX1 = mapStore.currentMapRange.x1;
       lastLoadX2 = mapStore.currentMapRange.x2;
@@ -54,7 +39,7 @@ export const useEventsStore = defineStore("event", () => {
       lastLoadY2 = mapStore.currentMapRange.y2;
       events.value = (
         await EventGateway.instance.getEvents(mapStore.currentMapRange)
-      ).map(toDtoWithStyle);
+      ).map(toDto);
     }
   }
 

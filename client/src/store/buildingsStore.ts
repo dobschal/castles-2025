@@ -17,12 +17,13 @@ import { BuildingType } from "@/types/enum/BuildingType.ts";
 import { useAuthStore } from "@/store/authStore.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
 import { EventType } from "@/types/enum/EventType.ts";
+import { BuildingDto } from "@/types/dto/BuildingDto.ts";
 
 export const useBuildingsStore = defineStore("buildings", () => {
   const mapStore = useMapStore();
   const authStore = useAuthStore();
   const eventsStore = useEventsStore();
-  const buildings = ref<Array<BuildingEntity>>([]);
+  const buildings = ref<Array<BuildingDto>>([]);
   const startVillage = ref<Optional<BuildingEntity>>();
   const activeBuilding = ref<Optional<BuildingEntity>>();
   const loadBuildingsQueue = new Queue(500, 3);
@@ -58,7 +59,13 @@ export const useBuildingsStore = defineStore("buildings", () => {
         const response = await BuildingGateway.instance.getBuildings(
           mapStore.currentMapRange,
         );
-        buildings.value = response.buildings;
+        buildings.value = response.buildings.map((buildingEntity) => {
+          const buildingDto = buildingEntity as BuildingDto;
+          buildingDto.isOwnBuilding =
+            authStore.user?.id === buildingEntity.user.id;
+
+          return buildingDto;
+        });
         breweryBeerProductionPerHour.value =
           response.breweryBeerProductionPerHour;
         breweryBeerStorage.value = response.breweryBeerStorage;

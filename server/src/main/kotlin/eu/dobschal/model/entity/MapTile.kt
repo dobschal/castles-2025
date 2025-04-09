@@ -13,7 +13,7 @@ import java.time.LocalDateTime
     ),
     NamedQuery(
         name = "MapTile.findMapTilesBetween",
-        query = "select id, x, y, type, createdAt from MapTile where x >= ?1 and x < ?2 and y >= ?3 and y < ?4"
+        query = "select id, x, y, type, createdAt from MapTile where x >= ?1 and x < ?2 and y >= ?3 and y < ?4 ORDER BY x DESC, y ASC"
     )
 )
 class MapTile {
