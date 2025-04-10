@@ -13,29 +13,31 @@ import plainTileForbidden from "@/assets/tiles/plain-disabled-min.png";
 import { MapTileType } from "@/types/enum/MapTileType.ts";
 import { Optional } from "@/types/core/Optional.ts";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
+import { RenderLayers } from "@/types/core/RenderLayers.ts";
+import { Ref } from "vue";
+import { loadImage } from "@/core/util.ts";
 
 interface MapTileRenderer {
-  render: (
-    layer: number,
-    canvasContext: CanvasRenderingContext2D,
-    mapTile: MapTileDto,
-  ) => void;
+  register: (mapTile: MapTileDto) => void;
 }
 
-export const useMapTileRenderer = function (): MapTileRenderer {
+export const useMapTileRenderer = function (
+  context: Ref<Optional<CanvasRenderingContext2D>>,
+  layers: Ref<RenderLayers>,
+): MapTileRenderer {
   // region member variables
 
   const mapStore = useMapStore();
-  const forstTileImage = _loadImage(forestTile);
-  const forstTileImageForbidden = _loadImage(forestTileForbidden);
-  const mountainTileImage = _loadImage(mountainTile);
-  const mountainTileImageForbidden = _loadImage(mountainTileForbidden);
-  const waterTileImage = _loadImage(waterTile);
-  const waterTileImageForbidden = _loadImage(waterTileForbidden);
-  const plainTileImage = _loadImage(plainTile);
-  const plainTileImageForbidden = _loadImage(plainTileForbidden);
-  const forestTileTopLayerImage = _loadImage(forestTileTopLayer);
-  const forestTileTopLayerImageForbidden = _loadImage(
+  const forstTileImage = loadImage(forestTile);
+  const forstTileImageForbidden = loadImage(forestTileForbidden);
+  const mountainTileImage = loadImage(mountainTile);
+  const mountainTileImageForbidden = loadImage(mountainTileForbidden);
+  const waterTileImage = loadImage(waterTile);
+  const waterTileImageForbidden = loadImage(waterTileForbidden);
+  const plainTileImage = loadImage(plainTile);
+  const plainTileImageForbidden = loadImage(plainTileForbidden);
+  const forestTileTopLayerImage = loadImage(forestTileTopLayer);
+  const forestTileTopLayerImageForbidden = loadImage(
     forstTileTopLayerForbidden,
   );
 
@@ -44,28 +46,31 @@ export const useMapTileRenderer = function (): MapTileRenderer {
   // public methods
 
   return {
-    render,
+    register,
   };
 
-  function render(
-    layer: number,
-    canvasContext: CanvasRenderingContext2D,
-    mapTile: MapTileDto,
-  ): void {
-    const image = _getImageByType(
-      mapTile.type,
-      layer,
-      mapTile.state === MapTileState.FORBIDDEN,
-    );
-    _drawImage(canvasContext, mapTile, image);
+  function register(mapTile: MapTileDto): void {
+    layers.value[0].push(() => _render(0, mapTile));
+
+    if (mapTile.type === MapTileType.FOREST) {
+      layers.value[4].push(() => _render(4, mapTile));
+    }
   }
 
   // endregion
 
   // region private methods
 
+  function _render(layer: number, mapTile: MapTileDto): void {
+    const image = _getImageByType(
+      mapTile.type,
+      layer,
+      mapTile.state === MapTileState.FORBIDDEN,
+    );
+    _drawImage(mapTile, image);
+  }
+
   function _drawImage(
-    canvasContext: CanvasRenderingContext2D,
     mapTile: MapTileDto,
     image: Optional<HTMLImageElement>,
   ): void {
@@ -77,7 +82,7 @@ export const useMapTileRenderer = function (): MapTileRenderer {
     // a bit to look good
     const realSize = mapStore.mapTileSize * 1.4;
 
-    canvasContext.drawImage(
+    context.value?.drawImage(
       image,
       mapTile.x * mapStore.mapTileSize - realSize / 2,
       mapTile.y * mapStore.mapTileSize - realSize / 2,
@@ -107,13 +112,6 @@ export const useMapTileRenderer = function (): MapTileRenderer {
         ? forestTileTopLayerImageForbidden
         : forestTileTopLayerImage;
     }
-  }
-
-  function _loadImage(source: string): HTMLImageElement {
-    const image = new Image();
-    image.src = source;
-
-    return image;
   }
 
   // endregion

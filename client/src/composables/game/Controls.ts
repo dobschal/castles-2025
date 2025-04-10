@@ -4,6 +4,8 @@ import { isTouchDevice } from "@/core/util.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { Optional } from "@/types/core/Optional.ts";
 
+// TODO: Apply click on touch too
+
 export const useControls = function (
   canvas: Ref<Optional<HTMLCanvasElement>>,
 ): void {

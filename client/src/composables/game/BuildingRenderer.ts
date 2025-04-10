@@ -3,7 +3,6 @@ import { Optional } from "@/types/core/Optional.ts";
 import { useMapStore } from "@/store/mapStore.ts";
 import { BuildingType } from "@/types/enum/BuildingType.ts";
 import { BuildingDto } from "@/types/dto/BuildingDto.ts";
-import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
 
 import villageOwned from "@/assets/tiles/village-red-roof-min.png";
@@ -33,83 +32,116 @@ import breweryForbidden from "@/assets/tiles/brewery-disabled-min.png";
 import breweryForeground from "@/assets/tiles/brewery-top-layer-min.png";
 import breweryForbiddenForeground from "@/assets/tiles/brewery-top-layer-disabled-min.png";
 
-// TODO: Animate Beerbubbles
+import castleLevel1Owned from "@/assets/tiles/castle-level-1-red-roof-min.png";
+import castleLevel1Enemy from "@/assets/tiles/castle-level-1-beige-roof-min.png";
+import castleLevel1Forbidden from "@/assets/tiles/castle-level-1-disabled-min.png";
 
-// TODO: Add castles
+import castleLevel2Owned from "@/assets/tiles/castle-level-2-red-roof.png";
+import castleLevel2Enemy from "@/assets/tiles/castle-level-2-beige-roof.png";
+import castleLevel2Forbidden from "@/assets/tiles/castle-level-2-disabled.png";
+import castleLevel2OwnedForeground from "@/assets/tiles/castle-level-2-red-roof-foreground.png";
+import castleLevel2EnemyForeground from "@/assets/tiles/castle-level-2-beige-roof-foreground.png";
+import castleLevel2ForbiddenForeground from "@/assets/tiles/castle-level-2-disabled-foreground.png";
+import { Ref } from "vue";
+import { RenderLayers } from "@/types/core/RenderLayers.ts";
+import { loadImage } from "@/core/util.ts";
+
+// TODO: Add avatar --> correct layer and add name of player
+
+// TODO: Animate Beerbubbles --> probably a UI element?
+
+// TODO: Pass the canvas conect to the use function directly...
+
+// TODO: Position on load is wrong...
+
+// TODO: Remove all calculations from the render function and move them to the setup function
 
 interface BuildingRenderer {
-  render(
-    layer: number,
-    canvasContext: CanvasRenderingContext2D,
-    building: BuildingDto,
-    mapTile: MapTileDto,
-  ): void;
+  register(building: BuildingDto): void;
 }
 
-export const useBuildingRenderer = function (): BuildingRenderer {
+export const useBuildingRenderer = function (
+  context: Ref<Optional<CanvasRenderingContext2D>>,
+  layers: Ref<RenderLayers>,
+): BuildingRenderer {
   const mapStore = useMapStore();
 
-  const villageOwnedImage = _loadImage(villageOwned);
-  const villageEnemyImage = _loadImage(villageEnemy);
-  const villageForbiddenImage = _loadImage(villageForbidden);
-  const villageForegroundImage = _loadImage(villageForeground);
-  const villageForbiddenForegroundImage = _loadImage(
-    villageForbiddenForeground,
+  const villageOwnedImage = loadImage(villageOwned);
+  const villageEnemyImage = loadImage(villageEnemy);
+  const villageForbiddenImage = loadImage(villageForbidden);
+  const villageForegroundImage = loadImage(villageForeground);
+  const villageForbiddenForegroundImage = loadImage(villageForbiddenForeground);
+
+  const marketOwnedImage = loadImage(marketOwned);
+  const marketEnemyImage = loadImage(marketEnemy);
+  const marketForbiddenImage = loadImage(marketForbidden);
+
+  const cityOwnedImage = loadImage(cityOwned);
+  const cityEnemyImage = loadImage(cityEnemy);
+  const cityForbiddenImage = loadImage(cityForbidden);
+  const cityOwnedForegroundImage = loadImage(cityOwnedForeground);
+  const cityEnemyForegroundImage = loadImage(cityEnemyForeground);
+  const cityForbiddenForegroundImage = loadImage(cityForbiddenForeground);
+
+  const farmOwnedImage = loadImage(farmOwned);
+  const farmEnemyImage = loadImage(farmEnemy);
+  const farmForbiddenImage = loadImage(farmForbidden);
+
+  const breweryOwnedImage = loadImage(breweryOwned);
+  const breweryEnemyImage = loadImage(breweryEnemy);
+  const breweryForbiddenImage = loadImage(breweryForbidden);
+  const breweryForegroundImage = loadImage(breweryForeground);
+  const breweryForbiddenForegroundImage = loadImage(breweryForbiddenForeground);
+
+  const castleLevel1OwnedImage = loadImage(castleLevel1Owned);
+  const castleLevel1EnemyImage = loadImage(castleLevel1Enemy);
+  const castleLevel1ForbiddenImage = loadImage(castleLevel1Forbidden);
+
+  const castleLevel2OwnedImage = loadImage(castleLevel2Owned);
+  const castleLevel2EnemyImage = loadImage(castleLevel2Enemy);
+  const castleLevel2ForbiddenImage = loadImage(castleLevel2Forbidden);
+  const castleLevel2OwnedForegroundImage = loadImage(
+    castleLevel2OwnedForeground,
   );
-
-  const marketOwnedImage = _loadImage(marketOwned);
-  const marketEnemyImage = _loadImage(marketEnemy);
-  const marketForbiddenImage = _loadImage(marketForbidden);
-
-  const cityOwnedImage = _loadImage(cityOwned);
-  const cityEnemyImage = _loadImage(cityEnemy);
-  const cityForbiddenImage = _loadImage(cityForbidden);
-  const cityOwnedForegroundImage = _loadImage(cityOwnedForeground);
-  const cityEnemyForegroundImage = _loadImage(cityEnemyForeground);
-  const cityForbiddenForegroundImage = _loadImage(cityForbiddenForeground);
-
-  const farmOwnedImage = _loadImage(farmOwned);
-  const farmEnemyImage = _loadImage(farmEnemy);
-  const farmForbiddenImage = _loadImage(farmForbidden);
-
-  const breweryOwnedImage = _loadImage(breweryOwned);
-  const breweryEnemyImage = _loadImage(breweryEnemy);
-  const breweryForbiddenImage = _loadImage(breweryForbidden);
-  const breweryForegroundImage = _loadImage(breweryForeground);
-  const breweryForbiddenForegroundImage = _loadImage(
-    breweryForbiddenForeground,
+  const castleLevel2EnemyForegroundImage = loadImage(
+    castleLevel2EnemyForeground,
+  );
+  const castleLevel2ForbiddenForegroundImage = loadImage(
+    castleLevel2ForbiddenForeground,
   );
 
   return {
-    render,
+    register,
   };
 
   // public methods
 
-  function render(
-    layer: number,
-    canvasContext: CanvasRenderingContext2D,
-    building: BuildingDto,
-    mapTile: MapTileDto,
-  ): void {
-    const image = _getImageByType(
-      building.type,
-      layer,
-      building.isOwnBuilding,
-      mapTile.state === MapTileState.FORBIDDEN,
-    );
-    _drawImage(canvasContext, building, image);
+  function register(building: BuildingDto): void {
+    layers.value[1].push(() => _render(1, building));
+    layers.value[4].push(() => _render(3, building));
   }
 
   // endregion
 
   // region private methods
 
+  function _render(layer: number, building: BuildingDto): void {
+    const image = _getImageByType(
+      building.type,
+      layer,
+      building.isOwnBuilding,
+      building.mapTile?.state === MapTileState.FORBIDDEN,
+      building.level,
+    );
+    _drawImage(building, image);
+  }
+
   function _getImageByType(
     type: BuildingType,
     layer: number,
     isOwnBuilding: boolean,
     isForbidden: boolean,
+    level: number,
   ): Optional<HTMLImageElement> {
     if (layer === 1) {
       switch (type) {
@@ -143,8 +175,22 @@ export const useBuildingRenderer = function (): BuildingRenderer {
           if (isOwnBuilding) return breweryOwnedImage;
 
           return breweryEnemyImage;
+        case BuildingType.CASTLE:
+          if (level === 1) {
+            if (isForbidden) return castleLevel1ForbiddenImage;
+
+            if (isOwnBuilding) return castleLevel1OwnedImage;
+
+            return castleLevel1EnemyImage;
+          } else if (level === 2) {
+            if (isForbidden) return castleLevel2ForbiddenImage;
+
+            if (isOwnBuilding) return castleLevel2OwnedImage;
+
+            return castleLevel2EnemyImage;
+          }
       }
-    } else {
+    } else if (layer === 3) {
       switch (type) {
         case BuildingType.VILLAGE:
           if (isForbidden) return villageForbiddenForegroundImage;
@@ -164,12 +210,19 @@ export const useBuildingRenderer = function (): BuildingRenderer {
           if (isForbidden) return breweryForbiddenForegroundImage;
 
           return breweryForegroundImage;
+        case BuildingType.CASTLE:
+          if (level === 2) {
+            if (isForbidden) return castleLevel2ForbiddenForegroundImage;
+
+            if (isOwnBuilding) return castleLevel2OwnedForegroundImage;
+
+            return castleLevel2EnemyForegroundImage;
+          }
       }
     }
   }
 
   function _drawImage(
-    canvasContext: CanvasRenderingContext2D,
     building: BuildingEntity,
     image: Optional<HTMLImageElement>,
   ): void {
@@ -181,20 +234,13 @@ export const useBuildingRenderer = function (): BuildingRenderer {
     // a bit to look good
     const realSize = mapStore.mapTileSize * 1.4;
 
-    canvasContext.drawImage(
+    context.value?.drawImage(
       image,
       building.x * mapStore.mapTileSize - realSize / 2,
       building.y * mapStore.mapTileSize - realSize / 2,
       realSize,
       realSize,
     );
-  }
-
-  function _loadImage(source: string): HTMLImageElement {
-    const image = new Image();
-    image.src = source;
-
-    return image;
   }
 
   // endregion

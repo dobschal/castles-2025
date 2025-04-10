@@ -9,11 +9,14 @@ import { Queue } from "@/core/Queue.ts";
 import { EventType } from "@/types/enum/EventType.ts";
 import { UnitType } from "@/types/enum/UnitType.ts";
 import { useEventsStore } from "@/store/eventsStore.ts";
+import { UnitDto } from "@/types/dto/UnitDto.ts";
+import { useAuthStore } from "@/store/authStore.ts";
 
 export const useUnitsStore = defineStore("units", () => {
-  const units = ref<Array<UnitEntity>>([]);
+  const units = ref<Array<UnitDto>>([]);
   const mapStore = useMapStore();
   const eventsStore = useEventsStore();
+  const authStore = useAuthStore();
   const activeUnit = ref<Optional<UnitEntity>>();
   const activeMoveUnit = ref<Optional<UnitEntity>>();
   const loadUnitsQueue = new Queue(500, 3);
@@ -32,7 +35,12 @@ export const useUnitsStore = defineStore("units", () => {
         const response = await UnitGateway.instance.getUnits(
           mapStore.currentMapRange,
         );
-        units.value = response.units;
+        units.value = response.units.map((unitEntity) => {
+          const unitDto = unitEntity as UnitDto;
+          unitDto.isOwnUnit = unitEntity.user.id === authStore.user?.id;
+
+          return unitDto;
+        });
         workerMovesPerHour.value = response.workerMovesPerHour;
         spearmanMovesPerHour.value = response.spearmanMovesPerHour;
         swordsmanMovesPerHour.value = response.swordsmanMovesPerHour;

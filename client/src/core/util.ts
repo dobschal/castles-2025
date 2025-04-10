@@ -1,6 +1,7 @@
 import { TOAST } from "@/events.ts";
 import { ref } from "vue";
 import { Optional } from "@/types/core/Optional.ts";
+import { PointDto } from "@/types/dto/PointDto.ts";
 
 let componentCounter = 0;
 
@@ -53,4 +54,25 @@ export function parseServerDateString(dateString: Optional<string>): Date {
   const timestamp = Date.parse(dateString + (isDevMode ? "" : "Z"));
 
   return new Date(timestamp);
+}
+
+export function ensure<Type>(value: Type | null | undefined): Type {
+  if (typeof value === "undefined" || value === null) {
+    throw new Error("Fatal: Expected value to be set, but got: " + value);
+  }
+
+  return value;
+}
+
+export function atSamePosition(obj1: PointDto): (obj2: PointDto) => boolean {
+  return (obj2: PointDto) => {
+    return obj2.x === obj1.x && obj2.y === obj1.y;
+  };
+}
+
+export function loadImage(source: string): HTMLImageElement {
+  const image = new Image();
+  image.src = source;
+
+  return image;
 }
