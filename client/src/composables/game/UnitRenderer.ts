@@ -36,6 +36,8 @@ interface UnitRenderer {
 export const useUnitRenderer = function (
   context: Ref<Optional<CanvasRenderingContext2D>>,
   layers: Ref<RenderLayers>,
+  fps: Ref<number>,
+  frame: Ref<number>,
 ): UnitRenderer {
   const mapStore = useMapStore();
 

@@ -3,6 +3,6 @@ export interface UserEntity {
   beer: number;
   username: string;
   createdAt: string;
-  avatarId: null | number;
+  avatarId: number;
   gold: number;
 }

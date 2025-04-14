@@ -15,7 +15,7 @@ import { Optional } from "@/types/core/Optional.ts";
 import { MapTileState } from "@/types/enum/MapTileState.ts";
 import { RenderLayers } from "@/types/core/RenderLayers.ts";
 import { Ref } from "vue";
-import { loadImage } from "@/core/util.ts";
+import { ensure, loadImage } from "@/core/util.ts";
 
 interface MapTileRenderer {
   register: (mapTile: MapTileDto) => void;
@@ -24,6 +24,7 @@ interface MapTileRenderer {
 export const useMapTileRenderer = function (
   context: Ref<Optional<CanvasRenderingContext2D>>,
   layers: Ref<RenderLayers>,
+  fps: Ref<number>,
 ): MapTileRenderer {
   // region member variables
 
@@ -50,6 +51,7 @@ export const useMapTileRenderer = function (
   };
 
   function register(mapTile: MapTileDto): void {
+    mapTile.renderFrame++;
     layers.value[0].push(() => _render(0, mapTile));
 
     if (mapTile.type === MapTileType.FOREST) {
@@ -80,15 +82,26 @@ export const useMapTileRenderer = function (
 
     // The images have a padding to all side and need to overlap
     // a bit to look good
+    const animationFrames = fps.value / 3;
     const realSize = mapStore.mapTileSize * 1.4;
+    let animationOffset = 0;
 
-    context.value?.drawImage(
+    const ctx = ensure(context.value);
+
+    if (mapTile.renderFrame < animationFrames) {
+      animationOffset =
+        (realSize / 2) * (1 - mapTile.renderFrame / animationFrames);
+      ctx.globalAlpha = mapTile.renderFrame / animationFrames;
+    }
+
+    ctx.drawImage(
       image,
-      mapTile.x * mapStore.mapTileSize - realSize / 2,
-      mapTile.y * mapStore.mapTileSize - realSize / 2,
+      mapTile.x * mapStore.mapTileSize - realSize / 2 - animationOffset,
+      mapTile.y * mapStore.mapTileSize - realSize / 2 + animationOffset,
       realSize,
       realSize,
     );
+    ctx.globalAlpha = 1;
   }
 
   function _getImageByType(

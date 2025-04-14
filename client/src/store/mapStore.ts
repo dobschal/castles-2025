@@ -79,10 +79,6 @@ export const useMapStore = defineStore("map", () => {
     const x = Math.round(rotatedScreenX / mapTileSize.value);
     const y = Math.round(rotatedScreenY / mapTileSize.value);
 
-    console.log(
-      `findTileFromScreenPosition: ${screenX}, ${screenY} => ${x}, ${y}`,
-    );
-
     return mapTiles.value.find((tile) => tile.x === x && tile.y === y);
   }
 

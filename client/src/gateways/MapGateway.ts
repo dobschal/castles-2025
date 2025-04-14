@@ -18,6 +18,7 @@ export class MapGateway extends Gateway {
     return response.map((mapTile) => ({
       ...mapTile,
       state: MapTileState.DEFAULT,
+      renderFrame: 0,
     }));
   }
 }

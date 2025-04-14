@@ -46,15 +46,9 @@ import { Ref } from "vue";
 import { RenderLayers } from "@/types/core/RenderLayers.ts";
 import { loadImage } from "@/core/util.ts";
 
-// TODO: Add avatar --> correct layer and add name of player
-
 // TODO: Animate Beerbubbles --> probably a UI element?
 
-// TODO: Pass the canvas conect to the use function directly...
-
 // TODO: Position on load is wrong...
-
-// TODO: Remove all calculations from the render function and move them to the setup function
 
 interface BuildingRenderer {
   register(building: BuildingDto): void;
@@ -63,6 +57,8 @@ interface BuildingRenderer {
 export const useBuildingRenderer = function (
   context: Ref<Optional<CanvasRenderingContext2D>>,
   layers: Ref<RenderLayers>,
+  fps: Ref<number>,
+  frame: Ref<number>,
 ): BuildingRenderer {
   const mapStore = useMapStore();
 

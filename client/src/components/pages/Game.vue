@@ -152,12 +152,9 @@ async function keepLoadingEvents(): Promise<void> {
     }
 
     await eventsStore.loadEvents();
-
-    // TODO: Turn back on...
-
-    // eventLoopTimeout = setTimeout(() => {
-    //   if (isMounted) keepLoadingEvents();
-    // }, 1000);
+    eventLoopTimeout = setTimeout(() => {
+      if (isMounted) keepLoadingEvents();
+    }, 1000);
   } catch (e) {
     console.error("Error while loading events: ", e);
     DIALOG.dispatch({
@@ -194,7 +191,13 @@ async function loadAssets(): Promise<void> {
 
   await Promise.all(promises);
 
-  console.info("Loaded ", promises.length, " assets in", Date.now() - t1, "ms");
+  console.info(
+    "[Game] Loaded ",
+    promises.length,
+    " image assets in",
+    Date.now() - t1,
+    "ms",
+  );
 }
 </script>
 

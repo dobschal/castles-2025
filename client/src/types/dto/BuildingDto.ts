@@ -4,4 +4,5 @@ import { MapTileDto } from "@/types/dto/MapTileDto.ts";
 export interface BuildingDto extends BuildingEntity {
   isOwnBuilding: boolean;
   mapTile?: MapTileDto;
+  collectableBeer: number;
 }

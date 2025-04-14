@@ -63,6 +63,7 @@ export const useBuildingsStore = defineStore("buildings", () => {
           const buildingDto = buildingEntity as BuildingDto;
           buildingDto.isOwnBuilding =
             authStore.user?.id === buildingEntity.user.id;
+          buildingDto.collectableBeer = calculateBeerToCollect(buildingEntity);
 
           return buildingDto;
         });

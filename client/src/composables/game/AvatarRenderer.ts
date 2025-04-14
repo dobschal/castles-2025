@@ -12,6 +12,8 @@ interface AvatarRenderer {
 export const useAvatarRenderer = function (
   context: Ref<Optional<CanvasRenderingContext2D>>,
   layers: Ref<RenderLayers>,
+  fps: Ref<number>,
+  frame: Ref<number>,
 ): AvatarRenderer {
   const mapStore = useMapStore();
   const avatarImages = new Map<number, HTMLImageElement>();
@@ -23,14 +25,17 @@ export const useAvatarRenderer = function (
   };
 
   function register(building: BuildingDto): void {
+    if (
+      typeof building.user.avatarId === "undefined" ||
+      building.user.avatarId === null
+    ) {
+      building.user.avatarId = 0;
+    }
+
     layers.value[1].push(() => _render(building));
   }
 
   function _render(building: BuildingDto): void {
-    if (!building.user.avatarId) {
-      building.user.avatarId = 1;
-    }
-
     const ctx = ensure(context.value);
 
     // To show the image correctly, we need to rotate the canvas back and forth
@@ -69,10 +74,6 @@ export const useAvatarRenderer = function (
   }
 
   function _drawImage(building: BuildingDto): void {
-    if (!building.user.avatarId) {
-      return;
-    }
-
     let avatarImage = avatarImages.get(building.user.avatarId);
 
     if (!avatarImage) {
