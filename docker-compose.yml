@@ -4,7 +4,7 @@ services:
     image: dobschal/castles-2025:client-latest
     restart: always
     environment:
-      - API_URL=https://castles.dobschal.eu/api
+      - API_URL=https://castles.games/api
     ports:
       - "4001:80"
     networks:

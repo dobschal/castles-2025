@@ -48,7 +48,7 @@ The nginx config should like:
 ```nginx
 server {
 
-	server_name castles.dobschal.eu;
+	server_name castles.games;
 	
 	client_max_body_size 50M;
  

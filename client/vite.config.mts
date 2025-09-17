@@ -24,7 +24,7 @@ export default defineConfig({
   },
   server: {
     open: true,
-    host: "castles.dobschal.eu",
+    host: "castles.games",
     origin: "http://localhost:5173",
     cors: true,
   },
