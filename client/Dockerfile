@@ -1,5 +1,5 @@
 # build stage
-FROM node:18.19-alpine as build-stage
+FROM node:20.19-alpine AS build-stage
 
 RUN apk --no-cache add --virtual native-deps \
     g++ gcc libgcc libstdc++ linux-headers make python3 && \
@@ -24,7 +24,7 @@ RUN npm run build
 
 
 # deploy stage
-FROM nginx:stable-alpine as production-stage
+FROM nginx:stable-alpine AS production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
